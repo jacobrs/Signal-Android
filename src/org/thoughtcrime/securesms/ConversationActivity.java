@@ -49,10 +49,12 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -240,6 +242,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   protected HidingLinearLayout     quickAttachmentToggle;
   private   QuickAttachmentDrawer  quickAttachmentDrawer;
   private   InputPanel             inputPanel;
+  private   GestureDetector        swipeDetector;
+  private   View.OnTouchListener   swipeListener;
 
   private Recipient  recipient;
   private long       threadId;
@@ -288,6 +292,17 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
         initializeDraft();
       }
     });
+
+    swipeDetector = new GestureDetector(new SwipeGestureDetector());
+    swipeListener = new View.OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        return swipeDetector.onTouchEvent(event);
+      }
+    };
+
+    container.setOnTouchListener(swipeListener);
+
   }
 
   @Override
@@ -572,6 +587,19 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     Permissions.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+  }
+
+  private void onRightSwipe(){
+    //TODO implement returning to the conversation list activity
+    Log.d(TAG, "You have swiped right in the Conversation Activity!");
+  }
+
+  //Need this to stop scrolling catching all touch inputs to allow swipes to be detected
+  @Override
+  public boolean dispatchTouchEvent(MotionEvent event){
+    super.dispatchTouchEvent(event);
+
+    return this.swipeDetector.onTouchEvent(event);
   }
 
   //////// Event Handlers
@@ -2111,6 +2139,30 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
         });
         builder.show();
       }
+    }
+  }
+
+  private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
+
+    //Min swiping distance & velocity so back swipe isn't triggered accidentally
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+      try {
+        //Difference between the x coordinate of the first even (downpush)
+        // and the second event (let go)
+        float diff = e1.getX() - e2.getX();
+
+        // Right swipe
+        if (-diff > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+          ConversationActivity.this.onRightSwipe();
+        }
+      } catch (Exception e) {
+        Log.w(TAG, e);
+      }
+      return false;
     }
   }
 }
