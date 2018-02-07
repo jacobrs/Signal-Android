@@ -590,8 +590,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   }
 
   private void onRightSwipe(){
-    //TODO implement returning to the conversation list activity
-    Log.d(TAG, "You have swiped right in the Conversation Activity!");
+    // Trigger the event that handles returning to the conversation list activity (which is also triggered by pressing back button).
+    handleReturnToConversationList();
   }
 
   //Need this to stop scrolling catching all touch inputs to allow swipes to be detected
