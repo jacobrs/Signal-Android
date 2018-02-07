@@ -2145,8 +2145,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
 
     //Min swiping distance & velocity so back swipe isn't triggered accidentally
-    private static final int SWIPE_MIN_DISTANCE = 120;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    private static final int MIN_SWIPE_DISTANCE = 120;
+    private static final int MIN_SWIPE_VELOCITY = 100;
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -2156,7 +2156,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
         float diff = e1.getX() - e2.getX();
 
         // Right swipe
-        if (-diff > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+        if (-diff > MIN_SWIPE_DISTANCE && Math.abs(velocityX) > MIN_SWIPE_VELOCITY) {
           ConversationActivity.this.onRightSwipe();
         }
       } catch (Exception e) {
