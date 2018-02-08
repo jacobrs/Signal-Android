@@ -611,10 +611,11 @@ public class ConversationListFragment extends Fragment
 
       if (archive) {
         new SnackbarAsyncTask<Long>(getView(),
-                getResources().getQuantityString(R.plurals.ConversationListFragment_moved_conversations_to_inbox, 1, 1),
-                getString(R.string.ConversationListFragment_undo),
+                getResources().getString(R.string.ConversationListFragment_deleting),
+                "",
                 getResources().getColor(R.color.amber_500),
                 Snackbar.LENGTH_LONG, false)
+
         {
           @Override
           protected void executeAction(@Nullable Long parameter) {
@@ -628,8 +629,8 @@ public class ConversationListFragment extends Fragment
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
       } else {
         new SnackbarAsyncTask<Long>(getView(),
-                getResources().getQuantityString(R.plurals.ConversationListFragment_conversations_archived, 1, 1),
-                getString(R.string.ConversationListFragment_undo),
+                getResources().getString(R.string.ConversationListFragment_deleting),
+                "",
                 getResources().getColor(R.color.amber_500),
                 Snackbar.LENGTH_LONG, false)
         {
