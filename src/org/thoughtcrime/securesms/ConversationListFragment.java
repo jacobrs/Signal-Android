@@ -668,20 +668,19 @@ public class ConversationListFragment extends Fragment
         Paint p        = new Paint();
         float alpha    = 1.0f - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
 
-        if (dX > 0) {
+        if (dX < 0) {
           Bitmap icon;
 
-          if (archive) icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_unarchive_white_36dp);
-          else         icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_archive_white_36dp);
+          icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_delete_white_24dp);
 
-          if (alpha > 0) p.setColor(getResources().getColor(R.color.green_500));
+          if (alpha > 0) p.setColor(getResources().getColor(R.color.red_500));
           else           p.setColor(Color.WHITE);
 
-          c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
+          c.drawRect(itemView.getRight()+ dX, (float) itemView.getTop(), (float)itemView.getRight(),
                   (float) itemView.getBottom(), p);
 
           c.drawBitmap(icon,
-                  (float) itemView.getLeft() + getResources().getDimension(R.dimen.conversation_list_fragment_archive_padding),
+                  (float) itemView.getRight() - getResources().getDimension(R.dimen.conversation_list_fragment_archive_padding) - icon.getWidth()/2,
                   (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight())/2,
                   p);
         }
