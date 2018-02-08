@@ -589,9 +589,10 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     Permissions.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
   }
 
-  private void onRightSwipe(){
+  public void onRightSwipe(){
     // Trigger the event that handles returning to the conversation list activity (which is also triggered by pressing back button).
     handleReturnToConversationList();
+    Log.d(TAG, "You have flung! Yay");
   }
 
   //Need this to stop scrolling catching all touch inputs to allow swipes to be detected
