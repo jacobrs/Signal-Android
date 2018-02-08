@@ -618,7 +618,7 @@ public class ConversationListFragment extends Fragment
         {
           @Override
           protected void executeAction(@Nullable Long parameter) {
-            DatabaseFactory.getThreadDatabase(getActivity()).unarchiveConversation(threadId);
+            DatabaseFactory.getThreadDatabase(getActivity()).deleteConversation(threadId);
           }
 
           @Override
@@ -635,7 +635,7 @@ public class ConversationListFragment extends Fragment
         {
           @Override
           protected void executeAction(@Nullable Long parameter) {
-            DatabaseFactory.getThreadDatabase(getActivity()).archiveConversation(threadId);
+            DatabaseFactory.getThreadDatabase(getActivity()).deleteConversation(threadId);
 
             if (unreadCount > 0) {
               List<MarkedMessageInfo> messageIds = DatabaseFactory.getThreadDatabase(getActivity()).setRead(threadId, false);
