@@ -156,6 +156,7 @@ import org.thoughtcrime.securesms.util.GroupUtil;
 import org.thoughtcrime.securesms.util.IdentityUtil;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.ServiceUtil;
+import org.thoughtcrime.securesms.util.SwipeGestureDetector;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
@@ -293,7 +294,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       }
     });
 
-    swipeDetector = new GestureDetector(new SwipeGestureDetector());
+    swipeDetector = new GestureDetector(new SwipeGestureDetector(ConversationActivity.this));
     swipeListener = new View.OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
@@ -2143,27 +2144,5 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     }
   }
 
-  private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
 
-    //Min swiping distance & velocity so back swipe isn't triggered accidentally
-    private static final int MIN_SWIPE_DISTANCE = 120;
-    private static final int MIN_SWIPE_VELOCITY = 100;
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-      try {
-        //Difference between the x coordinate of the first even (downpush)
-        // and the second event (let go)
-        float diff = e1.getX() - e2.getX();
-
-        // Right swipe
-        if (-diff > MIN_SWIPE_DISTANCE && Math.abs(velocityX) > MIN_SWIPE_VELOCITY) {
-          ConversationActivity.this.onRightSwipe();
-        }
-      } catch (Exception e) {
-        Log.w(TAG, e);
-      }
-      return false;
-    }
-  }
 }
