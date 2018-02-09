@@ -624,7 +624,7 @@ public class ConversationListFragment extends Fragment
 
           @Override
           protected void reverseAction(@Nullable Long parameter) {
-            DatabaseFactory.getThreadDatabase(getActivity()).archiveConversation(threadId);
+            //unused
           }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
       } else {
@@ -647,12 +647,7 @@ public class ConversationListFragment extends Fragment
 
           @Override
           protected void reverseAction(@Nullable Long parameter) {
-            DatabaseFactory.getThreadDatabase(getActivity()).unarchiveConversation(threadId);
-
-            if (unreadCount > 0) {
-              DatabaseFactory.getThreadDatabase(getActivity()).incrementUnread(threadId, unreadCount);
-              MessageNotifier.updateNotification(getActivity(), masterSecret);
-            }
+              //Unused
           }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
       }
