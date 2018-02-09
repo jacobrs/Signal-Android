@@ -1,12 +1,13 @@
 package org.thoughtcrime.securesms.util;
 
-import android.os.SystemClock;
 import android.view.MotionEvent;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.common.internal.PowerMockJUnitRunnerDelegate;
 import org.thoughtcrime.securesms.ConversationActivity;
 
 import static org.mockito.Mockito.mock;
@@ -17,20 +18,29 @@ import static org.mockito.Mockito.verify;
  */
 
 @RunWith(PowerMockRunner.class)
+@PrepareForTest({MotionEvent.class, ConversationActivity.class, SwipeGestureDetector.class})
 public class SwipeGesturedetectorUnitTest {
 
+    private ConversationActivity mockConversationActivity;
+    private SwipeGestureDetector testSwiper;
+    private MotionEvent motionEvent1;
+    private MotionEvent motionEvent2;
+
+    @Before
+    public void setUp() throws Exception {
+        mockConversationActivity = PowerMockito.mock(ConversationActivity.class);
+        testSwiper = new SwipeGestureDetector(mockConversationActivity);
+        motionEvent1 = PowerMockito.mock(MotionEvent.class);
+        motionEvent2 = PowerMockito.mock(MotionEvent.class);
+    }
+
     @Test
-    public void testOnFling(){
-        ConversationActivity mockConversationActivity = mock(ConversationActivity.class);
+    public void testOnFling() throws Exception {
 
-        //2 motion events, making sure the x coordinate difference is greater than the threshold for swiping
-        MotionEvent motionEvent1 = MotionEvent.obtain(200, 300, MotionEvent.ACTION_DOWN, 100.0f, 100.0f, 0);
-        MotionEvent motionEvent2 = MotionEvent.obtain(400, 500, MotionEvent.ACTION_UP, 300.0f, 100.0f, 0);
-
-        SwipeGestureDetector testSwiper = new SwipeGestureDetector(mockConversationActivity);
+        motionEvent1 = MotionEvent.obtain(200, 300, 0, 100.0f, 100.0f, 0);
+        motionEvent2 = MotionEvent.obtain(400, 500, 1, 300.0f, 100.0f, 0);
 
         testSwiper.onFling(motionEvent1, motionEvent2, 200.0f, 0.0f);
-
         verify(mockConversationActivity).onRightSwipe();
     }
 }
