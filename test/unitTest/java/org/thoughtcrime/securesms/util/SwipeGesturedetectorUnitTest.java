@@ -42,7 +42,7 @@ public class SwipeGesturedetectorUnitTest {
 
         PowerMockito.mockStatic(MotionEvent.class);
         PowerMockito.mockStatic(Math.class);
-         stwhen(MotionEvent.obtain(200, 300, 0, 100.0f, 100.0f, 0)).
+        when(MotionEvent.obtain(200, 300, 0, 100.0f, 100.0f, 0)).
                 thenReturn(motionEvent1);
         when(MotionEvent.obtain(400, 500, 1, 300.0f, 100.0f, 0)).
                 thenReturn(motionEvent2);
