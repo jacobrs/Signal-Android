@@ -15,10 +15,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-/**
- * Created by Claudia on 2018-02-09.
- */
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({MotionEvent.class, ConversationActivity.class, SwipeGestureDetector.class})
 public class SwipeGesturedetectorUnitTest {
@@ -29,7 +25,7 @@ public class SwipeGesturedetectorUnitTest {
     private MotionEvent motionEvent2;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         mockConversationActivity = PowerMockito.mock(ConversationActivity.class);
         testSwiper = new SwipeGestureDetector(mockConversationActivity);
@@ -38,7 +34,7 @@ public class SwipeGesturedetectorUnitTest {
     }
 
     @Test
-    public void testOnFling() throws Exception {
+    public void testOnFling() {
 
         PowerMockito.mockStatic(MotionEvent.class);
         PowerMockito.mockStatic(Math.class);
