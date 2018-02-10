@@ -241,6 +241,10 @@ android {
         javaMaxHeapSize "4g"
     }
 
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
     defaultConfig {
         versionCode 327
         versionName "4.14.10"

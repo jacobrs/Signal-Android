@@ -49,10 +49,12 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -154,6 +156,7 @@ import org.thoughtcrime.securesms.util.GroupUtil;
 import org.thoughtcrime.securesms.util.IdentityUtil;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.ServiceUtil;
+import org.thoughtcrime.securesms.util.SwipeGestureDetector;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
@@ -240,6 +243,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   protected HidingLinearLayout     quickAttachmentToggle;
   private   QuickAttachmentDrawer  quickAttachmentDrawer;
   private   InputPanel             inputPanel;
+  private   GestureDetector        swipeDetector;
+  private   View.OnTouchListener   swipeListener;
 
   private Recipient  recipient;
   private long       threadId;
@@ -288,6 +293,17 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
         initializeDraft();
       }
     });
+
+    swipeDetector = new GestureDetector(new SwipeGestureDetector(ConversationActivity.this));
+    swipeListener = new View.OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        return swipeDetector.onTouchEvent(event);
+      }
+    };
+
+    container.setOnTouchListener(swipeListener);
+
   }
 
   @Override
@@ -572,6 +588,19 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     Permissions.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+  }
+
+  public void onRightSwipe(){
+    // Trigger the event that handles returning to the conversation list activity (which is also triggered by pressing back button).
+    handleReturnToConversationList();
+  }
+
+  //Need this to stop scrolling catching all touch inputs to allow swipes to be detected
+  @Override
+  public boolean dispatchTouchEvent(MotionEvent event){
+    super.dispatchTouchEvent(event);
+
+    return this.swipeDetector.onTouchEvent(event);
   }
 
   //////// Event Handlers
@@ -2113,4 +2142,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       }
     }
   }
+
+
 }
