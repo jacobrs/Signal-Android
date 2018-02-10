@@ -12,7 +12,7 @@ public class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListene
 
     //Min swiping distance & velocity so back swipe isn't triggered accidentally
     private static final int SWIPE_MIN_DISTANCE = 120;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 100;
 
     ConversationActivity conversationActivity;
 
@@ -26,9 +26,9 @@ public class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListene
             //Difference between the x coordinate of the first even (downpush)
             // and the second event (let go)
             float diff = e1.getX() - e2.getX();
-
+            float absoluteVelocity = Math.abs(velocityX);
             // Right swipe
-            if (-diff > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+            if (-diff > SWIPE_MIN_DISTANCE && absoluteVelocity > SWIPE_THRESHOLD_VELOCITY) {
                 conversationActivity.onRightSwipe();
             }
         } catch (Exception e) {

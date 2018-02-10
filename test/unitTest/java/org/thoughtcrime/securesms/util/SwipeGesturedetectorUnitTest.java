@@ -10,8 +10,10 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.thoughtcrime.securesms.ConversationActivity;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by Claudia on 2018-02-09.
@@ -28,6 +30,7 @@ public class SwipeGesturedetectorUnitTest {
 
     @Before
     public void setUp() throws Exception {
+
         mockConversationActivity = PowerMockito.mock(ConversationActivity.class);
         testSwiper = new SwipeGestureDetector(mockConversationActivity);
         motionEvent1 = PowerMockito.mock(MotionEvent.class);
@@ -36,6 +39,18 @@ public class SwipeGesturedetectorUnitTest {
 
     @Test
     public void testOnFling() throws Exception {
+
+        PowerMockito.mockStatic(MotionEvent.class);
+        PowerMockito.mockStatic(Math.class);
+         stwhen(MotionEvent.obtain(200, 300, 0, 100.0f, 100.0f, 0)).
+                thenReturn(motionEvent1);
+        when(MotionEvent.obtain(400, 500, 1, 300.0f, 100.0f, 0)).
+                thenReturn(motionEvent2);
+
+        when(motionEvent1.getX()).thenReturn(100.0f);
+        when(motionEvent2.getX()).thenReturn(300.0f);
+        when(Math.abs(200.0f)).thenReturn(200.0f);
+
 
         motionEvent1 = MotionEvent.obtain(200, 300, 0, 100.0f, 100.0f, 0);
         motionEvent2 = MotionEvent.obtain(400, 500, 1, 300.0f, 100.0f, 0);
