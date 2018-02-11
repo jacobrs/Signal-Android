@@ -575,6 +575,9 @@ public class ConversationListFragment extends Fragment
     }
   }
 
+  public void deleteConversationThread( long threadId){
+    DatabaseFactory.getThreadDatabase(getActivity()).deleteConversation(threadId);
+  }
 
   private class DeleteListenerCallback extends ItemTouchHelper.SimpleCallback {
 
@@ -619,7 +622,7 @@ public class ConversationListFragment extends Fragment
         {
           @Override
           protected void executeAction(@Nullable Long parameter) {
-            DatabaseFactory.getThreadDatabase(getActivity()).deleteConversation(threadId);
+            deleteConversationThread(threadId);
           }
 
           @Override
@@ -636,7 +639,7 @@ public class ConversationListFragment extends Fragment
         {
           @Override
           protected void executeAction(@Nullable Long parameter) {
-            DatabaseFactory.getThreadDatabase(getActivity()).deleteConversation(threadId);
+            deleteConversationThread(threadId);
 
             if (unreadCount > 0) {
               List<MarkedMessageInfo> messageIds = DatabaseFactory.getThreadDatabase(getActivity()).setRead(threadId, false);
