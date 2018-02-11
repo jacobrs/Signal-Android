@@ -7,14 +7,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
-
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.verifyPrivate;
-
-/**
- * Created by Bryce on 2/11/2018.
- */
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DatabaseFactory.class)
