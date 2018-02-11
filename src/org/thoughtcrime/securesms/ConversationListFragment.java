@@ -137,6 +137,7 @@ public class ConversationListFragment extends Fragment
     list.addItemDecoration(new InsetDividerItemDecoration(getActivity()));
 
     new ItemTouchHelper(new ArchiveListenerCallback()).attachToRecyclerView(list);
+    new ItemTouchHelper(new DeleteListenerCallback()).attachToRecyclerView(list);
 
     return view;
   }
@@ -458,68 +459,68 @@ public class ConversationListFragment extends Fragment
 
   private class ArchiveListenerCallback extends ItemTouchHelper.SimpleCallback {
 
-    ArchiveListenerCallback() {
-      super(0, ItemTouchHelper.RIGHT);
-    }
+                ArchiveListenerCallback() {
+                  super(0, ItemTouchHelper.RIGHT);
+                }
 
-    @Override
-    public boolean onMove(RecyclerView recyclerView,
-                          RecyclerView.ViewHolder viewHolder,
-                          RecyclerView.ViewHolder target)
-    {
-      return false;
-    }
+                @Override
+                public boolean onMove(RecyclerView recyclerView,
+                                      RecyclerView.ViewHolder viewHolder,
+                                      RecyclerView.ViewHolder target)
+                {
+                  return false;
+                }
 
-    @Override
-    public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-      if (viewHolder.itemView instanceof ConversationListItemAction) {
-        return 0;
-      }
+                @Override
+                public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                  if (viewHolder.itemView instanceof ConversationListItemAction) {
+                    return 0;
+                  }
 
-      if (actionMode != null) {
-        return 0;
-      }
+                  if (actionMode != null) {
+                    return 0;
+                  }
 
-      return super.getSwipeDirs(recyclerView, viewHolder);
-    }
+                  return super.getSwipeDirs(recyclerView, viewHolder);
+                }
 
-    @SuppressLint("StaticFieldLeak")
-    @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-      final long threadId    = ((ConversationListItem)viewHolder.itemView).getThreadId();
-      final int  unreadCount = ((ConversationListItem)viewHolder.itemView).getUnreadCount();
+                @SuppressLint("StaticFieldLeak")
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                  final long threadId    = ((ConversationListItem)viewHolder.itemView).getThreadId();
+                  final int  unreadCount = ((ConversationListItem)viewHolder.itemView).getUnreadCount();
 
-      if (archive) {
-        new SnackbarAsyncTask<Long>(getView(),
-                                    getResources().getQuantityString(R.plurals.ConversationListFragment_moved_conversations_to_inbox, 1, 1),
-                                    getString(R.string.ConversationListFragment_undo),
-                                    getResources().getColor(R.color.amber_500),
-                                    Snackbar.LENGTH_LONG, false)
-        {
-          @Override
-          protected void executeAction(@Nullable Long parameter) {
-            DatabaseFactory.getThreadDatabase(getActivity()).unarchiveConversation(threadId);
-          }
+                  if (archive) {
+                    new SnackbarAsyncTask<Long>(getView(),
+                            getResources().getQuantityString(R.plurals.ConversationListFragment_moved_conversations_to_inbox, 1, 1),
+                            getString(R.string.ConversationListFragment_undo),
+                            getResources().getColor(R.color.amber_500),
+                            Snackbar.LENGTH_LONG, false)
+                    {
+                      @Override
+                      protected void executeAction(@Nullable Long parameter) {
+                        DatabaseFactory.getThreadDatabase(getActivity()).unarchiveConversation(threadId);
+                      }
 
-          @Override
-          protected void reverseAction(@Nullable Long parameter) {
-            DatabaseFactory.getThreadDatabase(getActivity()).archiveConversation(threadId);
-          }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
-      } else {
-        new SnackbarAsyncTask<Long>(getView(),
-                                    getResources().getQuantityString(R.plurals.ConversationListFragment_conversations_archived, 1, 1),
-                                    getString(R.string.ConversationListFragment_undo),
-                                    getResources().getColor(R.color.amber_500),
-                                    Snackbar.LENGTH_LONG, false)
-        {
-          @Override
-          protected void executeAction(@Nullable Long parameter) {
-            DatabaseFactory.getThreadDatabase(getActivity()).archiveConversation(threadId);
+                      @Override
+                      protected void reverseAction(@Nullable Long parameter) {
+                        DatabaseFactory.getThreadDatabase(getActivity()).archiveConversation(threadId);
+                      }
+                    }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
+                  } else {
+                    new SnackbarAsyncTask<Long>(getView(),
+                            getResources().getQuantityString(R.plurals.ConversationListFragment_conversations_archived, 1, 1),
+                            getString(R.string.ConversationListFragment_undo),
+                            getResources().getColor(R.color.amber_500),
+                            Snackbar.LENGTH_LONG, false)
+                    {
+                      @Override
+                      protected void executeAction(@Nullable Long parameter) {
+                        DatabaseFactory.getThreadDatabase(getActivity()).archiveConversation(threadId);
 
-            if (unreadCount > 0) {
-              List<MarkedMessageInfo> messageIds = DatabaseFactory.getThreadDatabase(getActivity()).setRead(threadId, false);
-              MessageNotifier.updateNotification(getActivity(), masterSecret);
+                        if (unreadCount > 0) {
+                          List<MarkedMessageInfo> messageIds = DatabaseFactory.getThreadDatabase(getActivity()).setRead(threadId, false);
+                          MessageNotifier.updateNotification(getActivity(), masterSecret);
               MarkReadReceiver.process(getActivity(), messageIds);
             }
           }
@@ -564,6 +565,120 @@ public class ConversationListFragment extends Fragment
                        (float) itemView.getLeft() + getResources().getDimension(R.dimen.conversation_list_fragment_archive_padding),
                        (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight())/2,
                        p);
+        }
+
+        viewHolder.itemView.setAlpha(alpha);
+        viewHolder.itemView.setTranslationX(dX);
+      } else {
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+      }
+    }
+  }
+
+
+  private class DeleteListenerCallback extends ItemTouchHelper.SimpleCallback {
+
+    DeleteListenerCallback() {
+      super(0, ItemTouchHelper.LEFT);
+    }
+
+    @Override
+    public boolean onMove(RecyclerView recyclerView,
+                          RecyclerView.ViewHolder viewHolder,
+                          RecyclerView.ViewHolder target)
+    {
+      return false;
+    }
+
+    @Override
+    public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+      if (viewHolder.itemView instanceof ConversationListItemAction) {
+        return 0;
+      }
+
+      if (actionMode != null) {
+        return 0;
+      }
+
+      return super.getSwipeDirs(recyclerView, viewHolder);
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+      final long threadId    = ((ConversationListItem)viewHolder.itemView).getThreadId();
+      final int  unreadCount = ((ConversationListItem)viewHolder.itemView).getUnreadCount();
+
+      if (archive) {
+        new SnackbarAsyncTask<Long>(getView(),
+                getResources().getString(R.string.ConversationListFragment_deleting),
+                "",
+                getResources().getColor(R.color.amber_500),
+                Snackbar.LENGTH_LONG, false)
+
+        {
+          @Override
+          protected void executeAction(@Nullable Long parameter) {
+            DatabaseFactory.getThreadDatabase(getActivity()).deleteConversation(threadId);
+          }
+
+          @Override
+          protected void reverseAction(@Nullable Long parameter) {
+            //unused
+          }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
+      } else {
+        new SnackbarAsyncTask<Long>(getView(),
+                getResources().getString(R.string.ConversationListFragment_deleting),
+                "",
+                getResources().getColor(R.color.amber_500),
+                Snackbar.LENGTH_LONG, false)
+        {
+          @Override
+          protected void executeAction(@Nullable Long parameter) {
+            DatabaseFactory.getThreadDatabase(getActivity()).deleteConversation(threadId);
+
+            if (unreadCount > 0) {
+              List<MarkedMessageInfo> messageIds = DatabaseFactory.getThreadDatabase(getActivity()).setRead(threadId, false);
+              MessageNotifier.updateNotification(getActivity(), masterSecret);
+              MarkReadReceiver.process(getActivity(), messageIds);
+            }
+          }
+
+          @Override
+          protected void reverseAction(@Nullable Long parameter) {
+              //Unused
+          }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
+      }
+    }
+
+    @Override
+    public void onChildDraw(Canvas c, RecyclerView recyclerView,
+                            RecyclerView.ViewHolder viewHolder,
+                            float dX, float dY, int actionState,
+                            boolean isCurrentlyActive)
+    {
+      if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+        View  itemView = viewHolder.itemView;
+        Paint p        = new Paint();
+        float alpha    = 1.0f - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
+
+        if (dX < 0) {
+          Bitmap icon;
+
+          icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_delete_white_24dp);
+
+          if (alpha > 0) p.setColor(getResources().getColor(R.color.red_500));
+          else           p.setColor(Color.WHITE);
+
+          c.drawRect(itemView.getRight()+ dX, (float) itemView.getTop(), (float)itemView.getRight(),
+                  (float) itemView.getBottom(), p);
+
+          c.drawBitmap(icon,
+                  (float) itemView.getRight() - getResources().getDimension(R.dimen.conversation_list_fragment_archive_padding) - icon.getWidth()/2,
+                  (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight())/2,
+                  p);
         }
 
         viewHolder.itemView.setAlpha(alpha);
