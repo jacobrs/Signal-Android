@@ -5,6 +5,11 @@
           android:icon="?menu_info_icon"
           app:showAsAction="always" />
 
+    <item android:title="Pin message"
+        android:id="@+id/menu_context_pin_message"
+        android:icon="?menu_pin_icon"
+        app:showAsAction="always" />
+
     <item android:title="@string/conversation_context__menu_delete_message"
         android:id="@+id/menu_context_delete_message"
         android:icon="?menu_trash_icon"
@@ -30,4 +35,5 @@
           android:visible="false"
           android:icon="?menu_save_icon"
           app:showAsAction="always" />
+
 </menu>
