@@ -454,6 +454,28 @@ public class MmsDatabase extends MessagingDatabase {
     return result;
   }
 
+  public void setMessagesUnread(long threadId, long messageId) {
+    setMessagesUnread(THREAD_ID + " = ? AND " + ID + " = ? AND "+ READ + " <> 0", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
+  }
+
+  private void setMessagesUnread(String where, String[] arguments){
+    SQLiteDatabase          database  = databaseHelper.getWritableDatabase();
+
+    database.beginTransaction();
+    try {
+      ContentValues contentValues = new ContentValues();
+      contentValues.put(READ, 0);
+
+      database.update(TABLE_NAME, contentValues, where, arguments);
+      database.setTransactionSuccessful();
+    } finally {
+      database.endTransaction();
+    }
+
+    long threadId = Long.parseLong(arguments[0]);
+    notifyConversationListeners(threadId);
+  }
+
   public List<Pair<Long, Long>> setTimestampRead(SyncMessageId messageId, long expireStarted) {
     SQLiteDatabase         database        = databaseHelper.getWritableDatabase();
     List<Pair<Long, Long>> expiring        = new LinkedList<>();

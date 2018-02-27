@@ -53,6 +53,7 @@ import android.widget.Toast;
 import org.thoughtcrime.securesms.ConversationAdapter.HeaderViewHolder;
 import org.thoughtcrime.securesms.ConversationAdapter.ItemClickListener;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
+import org.thoughtcrime.securesms.database.Database;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.MmsSmsDatabase;
 import org.thoughtcrime.securesms.database.RecipientDatabase;
@@ -403,6 +404,19 @@ public class ConversationFragment extends Fragment
                        Toast.LENGTH_LONG).show();
       }
     });
+  }
+
+  private void handleMarkAsUnread(final Set<MessageRecord> messageRecords){
+      final int numberOfMessages = messageRecords.size();
+      DatabaseFactory.getThreadDatabase(getContext()).incrementUnread(threadId, numberOfMessages);
+
+      for(MessageRecord messageRecord : messageRecords) {
+        if(messageRecord.isMms()){
+          DatabaseFactory.getMmsDatabase(getContext()).setMessagesUnread(threadId, messageRecord.getId());
+        }else {
+          DatabaseFactory.getSmsDatabase(getContext()).setMessagesUnread(threadId, messageRecord.getId());
+        }
+      }
   }
 
   @Override
