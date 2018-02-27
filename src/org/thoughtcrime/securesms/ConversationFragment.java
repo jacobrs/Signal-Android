@@ -63,6 +63,8 @@ import org.thoughtcrime.securesms.database.model.MessageRecord;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.mms.OutgoingMediaMessage;
 import org.thoughtcrime.securesms.mms.Slide;
+import org.thoughtcrime.securesms.notifications.MessageNotifier;
+import org.thoughtcrime.securesms.notifications.PendingMessageNotificationBuilder;
 import org.thoughtcrime.securesms.profiles.UnknownSenderView;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.sms.MessageSender;
@@ -411,12 +413,14 @@ public class ConversationFragment extends Fragment
       DatabaseFactory.getThreadDatabase(getContext()).incrementUnread(threadId, numberOfMessages);
 
       for(MessageRecord messageRecord : messageRecords) {
-        if(messageRecord.isMms()){
+        if (messageRecord.isMms()) {
           DatabaseFactory.getMmsDatabase(getContext()).setMessagesUnread(threadId, messageRecord.getId());
-        }else {
+        } else {
           DatabaseFactory.getSmsDatabase(getContext()).setMessagesUnread(threadId, messageRecord.getId());
         }
       }
+
+    MessageNotifier.notifyMessagesPending(this.getContext());
   }
 
   @Override
@@ -672,6 +676,10 @@ public class ConversationFragment extends Fragment
           return true;
         case R.id.menu_context_save_attachment:
           handleSaveAttachment((MediaMmsMessageRecord)getSelectedMessageRecord());
+          actionMode.finish();
+          return true;
+        case R.id.menu_context_mark_as_unread:
+          handleMarkAsUnread(getListAdapter().getSelectedItems());
           actionMode.finish();
           return true;
       }
