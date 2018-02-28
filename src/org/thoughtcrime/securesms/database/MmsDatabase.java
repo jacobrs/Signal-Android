@@ -57,6 +57,7 @@ import org.thoughtcrime.securesms.mms.OutgoingGroupMediaMessage;
 import org.thoughtcrime.securesms.mms.OutgoingMediaMessage;
 import org.thoughtcrime.securesms.mms.OutgoingSecureMediaMessage;
 import org.thoughtcrime.securesms.mms.SlideDeck;
+import org.thoughtcrime.securesms.notifications.MessageNotifier;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientFormattingException;
 import org.thoughtcrime.securesms.util.JsonUtils;
@@ -108,7 +109,7 @@ public class MmsDatabase extends MessagingDatabase {
     NETWORK_FAILURE + " TEXT DEFAULT NULL," + "d_rpt" + " INTEGER, " +
     SUBSCRIPTION_ID + " INTEGER DEFAULT -1, " + EXPIRES_IN + " INTEGER DEFAULT 0, " +
     EXPIRE_STARTED + " INTEGER DEFAULT 0, " + NOTIFIED + " INTEGER DEFAULT 0, " +
-    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0);";
+    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0, "+ MARKED_UNREAD +" INTEGER DEFAULT 0);";
 
   public static final String[] CREATE_INDEXS = {
     "CREATE INDEX IF NOT EXISTS mms_thread_id_index ON " + TABLE_NAME + " (" + THREAD_ID + ");",
@@ -455,7 +456,7 @@ public class MmsDatabase extends MessagingDatabase {
   }
 
   public void setMessagesUnread(long threadId, long messageId) {
-    setMessagesUnread(THREAD_ID + " = ? AND " + ID + " = ? AND "+ READ + " <> 0", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
+    setMessagesUnread(THREAD_ID + " = ? AND " + ID + " = ? AND "+ READ + " <> 0 AND " + MARKED_UNREAD + " = 0", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
   }
 
   private void setMessagesUnread(String where, String[] arguments){
@@ -465,6 +466,7 @@ public class MmsDatabase extends MessagingDatabase {
     try {
       ContentValues contentValues = new ContentValues();
       contentValues.put(READ, 0);
+      contentValues.put(MARKED_UNREAD, 1);
 
       database.update(TABLE_NAME, contentValues, where, arguments);
       database.setTransactionSuccessful();
@@ -1113,7 +1115,7 @@ public class MmsDatabase extends MessagingDatabase {
                                        new LinkedList<NetworkFailure>(),
                                        message.getSubscriptionId(),
                                        message.getExpiresIn(),
-                                       System.currentTimeMillis(), 0);
+                                       System.currentTimeMillis(), 0, 0);
     }
   }
 
@@ -1166,6 +1168,7 @@ public class MmsDatabase extends MessagingDatabase {
       int       deliveryReceiptCount = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.DELIVERY_RECEIPT_COUNT));
       int       readReceiptCount     = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.READ_RECEIPT_COUNT));
       int       subscriptionId       = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.SUBSCRIPTION_ID));
+      int       markedUnread         = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.MARKED_UNREAD));
 
       if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
         readReceiptCount = 0;
@@ -1187,7 +1190,7 @@ public class MmsDatabase extends MessagingDatabase {
                                               addressDeviceId, dateSent, dateReceived, deliveryReceiptCount, threadId,
                                               contentLocationBytes, messageSize, expiry, status,
                                               transactionIdBytes, mailbox, subscriptionId, slideDeck,
-                                              readReceiptCount);
+                                              readReceiptCount, markedUnread);
     }
 
     private MediaMmsMessageRecord getMediaMmsMessageRecord(Cursor cursor) {
@@ -1207,6 +1210,7 @@ public class MmsDatabase extends MessagingDatabase {
       int                subscriptionId       = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.SUBSCRIPTION_ID));
       long               expiresIn            = cursor.getLong(cursor.getColumnIndexOrThrow(MmsDatabase.EXPIRES_IN));
       long               expireStarted        = cursor.getLong(cursor.getColumnIndexOrThrow(MmsDatabase.EXPIRE_STARTED));
+      int                markedUnread         = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.MARKED_UNREAD));
 
       if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
         readReceiptCount = 0;
@@ -1221,7 +1225,7 @@ public class MmsDatabase extends MessagingDatabase {
                                        addressDeviceId, dateSent, dateReceived, deliveryReceiptCount,
                                        threadId, body, slideDeck, partCount, box, mismatches,
                                        networkFailures, subscriptionId, expiresIn, expireStarted,
-                                       readReceiptCount);
+                                       readReceiptCount, markedUnread);
     }
 
     private Recipient getRecipientFor(String serialized) {

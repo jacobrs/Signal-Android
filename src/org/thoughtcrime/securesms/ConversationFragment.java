@@ -419,8 +419,12 @@ public class ConversationFragment extends Fragment
           DatabaseFactory.getSmsDatabase(getContext()).setMessagesUnread(threadId, messageRecord.getId());
         }
       }
+      MessageNotifier.notifyMessagesPending(this.getContext());
 
-    MessageNotifier.notifyMessagesPending(this.getContext());
+      Intent intent = new Intent(this.getActivity(),ConversationListActivity.class);
+      intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      startActivity(intent);
+      this.getActivity().finish();
   }
 
   @Override

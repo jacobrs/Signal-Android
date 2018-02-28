@@ -790,6 +790,7 @@
     <string name="conversation_item_sent__pending_approval_description">Pending Approval</string>
     <string name="conversation_item_sent__delivered_description">Delivered</string>
     <string name="conversation_item_sent__message_read">Message read</string>
+    <string name="conversation_item_marked_as_unread">Message marked as unread</string>
 
     <!-- conversation_item_received -->
     <string name="conversation_item_received__contact_photo_description">Contact photo</string>
