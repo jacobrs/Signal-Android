@@ -13,6 +13,7 @@ import org.thoughtcrime.securesms.mms.MediaConstraints;
 import org.thoughtcrime.securesms.mms.MediaStream;
 import org.thoughtcrime.securesms.mms.MmsException;
 import org.thoughtcrime.securesms.transport.UndeliverableMessageException;
+import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.Util;
 import org.whispersystems.jobqueue.JobParameters;
 
@@ -64,6 +65,8 @@ public abstract class SendJob extends MasterSecretJob {
         } else if (constraints.canResize(attachment)) {
           MediaStream resized = constraints.getResizedMedia(context, masterSecret, attachment);
           results.add(attachmentDatabase.updateAttachmentData(masterSecret, attachment, resized));
+        } else if(MediaUtil.isVideo(attachment)) {
+
         } else {
           throw new UndeliverableMessageException("Size constraints could not be met!");
         }
