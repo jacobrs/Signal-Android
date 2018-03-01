@@ -3,8 +3,6 @@ package org.thoughtcrime.securesms.jobs;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.iceteck.silicompressorr.SiliCompressor;
-
 import org.thoughtcrime.securesms.BuildConfig;
 import org.thoughtcrime.securesms.TextSecureExpiredException;
 import org.thoughtcrime.securesms.attachments.Attachment;
@@ -18,6 +16,7 @@ import org.thoughtcrime.securesms.transport.UndeliverableMessageException;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.Util;
 import org.whispersystems.jobqueue.JobParameters;
+import com.iceteck.silicompressorr.SiliCompressor;
 import org.whispersystems.libsignal.logging.Log;
 
 import java.io.IOException;
