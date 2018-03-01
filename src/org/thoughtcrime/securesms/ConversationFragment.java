@@ -226,6 +226,8 @@ public class ConversationFragment extends Fragment
     if (messageRecords.size() > 1) {
       menu.findItem(R.id.menu_context_forward).setVisible(false);
       menu.findItem(R.id.menu_context_details).setVisible(false);
+      menu.findItem(R.id.menu_context_pin_message).setVisible(false);
+      menu.findItem(R.id.menu_context_unpin_message).setVisible(false);
       menu.findItem(R.id.menu_context_save_attachment).setVisible(false);
       menu.findItem(R.id.menu_context_resend).setVisible(false);
       menu.findItem(R.id.menu_context_copy).setVisible(!actionMessage);
@@ -241,6 +243,12 @@ public class ConversationFragment extends Fragment
       menu.findItem(R.id.menu_context_forward).setVisible(!actionMessage);
       menu.findItem(R.id.menu_context_details).setVisible(!actionMessage);
       menu.findItem(R.id.menu_context_copy).setVisible(!actionMessage);
+      if(messageRecord.isPinned()){
+					menu.findItem(R.id.menu_context_unpin_message).setVisible(!actionMessage);
+			}
+			else{
+					menu.findItem(R.id.menu_context_pin_message).setVisible(!actionMessage);
+			}
     }
   }
 
@@ -407,26 +415,24 @@ public class ConversationFragment extends Fragment
     });
   }
 
-  private void handlePinMessage(final Set<MessageRecord> messageRecords) {
-    	//For every message returned, toggle pin attribute
-			final int messagesCount = messageRecords.size();
-			for (MessageRecord messageRecord : messageRecords) {
-					boolean currentlyPinned = messageRecord.isPinned();
-					if(messageRecord.isMms()){
-							if(currentlyPinned){
-									DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
-							}else{
-									DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsPinned(threadId, messageRecord.getId());
-							}
-					}else{
-							if(currentlyPinned){
-									DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
-							}else{
-									DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsPinned(threadId, messageRecord.getId());
-							}
-					}
+  private void handlePinMessage(final MessageRecord messageRecord) {
+	//For every message returned, toggle pin attribute
+			if(messageRecord.isMms()){
+					DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsPinned(threadId, messageRecord.getId());
+			}else{
+					DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsPinned(threadId, messageRecord.getId());
 			}
-  }
+	}
+
+	private void handleUnpinMessage(final MessageRecord messageRecord) {
+		//For every message returned, toggle pin attribute
+		if(messageRecord.isMms()){
+				DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
+		}else{
+				DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
+		}
+	}
+		
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -617,6 +623,12 @@ public class ConversationFragment extends Fragment
 
         actionMode = ((AppCompatActivity)getActivity()).startSupportActionMode(actionModeCallback);
       }
+		if(messageRecord.isPinned()){
+				actionMode.getMenu().findItem(R.id.menu_context_unpin_message).setVisible(true);
+		}
+		else{
+				actionMode.getMenu().findItem(R.id.menu_context_pin_message).setVisible(true);
+		}
     }
   }
 
@@ -684,9 +696,17 @@ public class ConversationFragment extends Fragment
           actionMode.finish();
           return true;
         case R.id.menu_context_pin_message:
-					handlePinMessage(getListAdapter().getSelectedItems());
+					handlePinMessage(getSelectedMessageRecord());
         	actionMode.finish();
         	return true;
+			  case R.id.menu_context_unpin_message:
+					handleUnpinMessage(getSelectedMessageRecord());
+					actionMode.finish();
+					return true;
+
+
+
+
       }
 
       return false;

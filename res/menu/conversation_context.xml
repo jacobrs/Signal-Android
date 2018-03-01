@@ -8,6 +8,13 @@
     <item android:title="Pin message"
         android:id="@+id/menu_context_pin_message"
         android:icon="?menu_pin_icon"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item android:title="Unpin message"
+        android:id="@+id/menu_context_unpin_message"
+        android:icon="?menu_unpin_icon"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item android:title="@string/conversation_context__menu_delete_message"
