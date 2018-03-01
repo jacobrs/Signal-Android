@@ -600,12 +600,20 @@ public class ConversationFragment extends Fragment
 
     @Override
     public void onItemClick(MessageRecord messageRecord) {
+      if(actionMode == null && messageRecord.isMarkedAsUnread()) {
+        if (messageRecord.isMms()) {
+          DatabaseFactory.getMmsDatabase(getContext()).removeMarkAsUnread(messageRecord.getThreadId(), messageRecord.getId());
+        } else {
+          DatabaseFactory.getSmsDatabase(getContext()).removeMarkAsUnread(messageRecord.getThreadId(), messageRecord.getId());
+        }
+      }
       if (actionMode != null) {
         ((ConversationAdapter) list.getAdapter()).toggleSelection(messageRecord);
         list.getAdapter().notifyDataSetChanged();
 
         setCorrectMenuVisibility(actionMode.getMenu());
       }
+
     }
 
     @Override

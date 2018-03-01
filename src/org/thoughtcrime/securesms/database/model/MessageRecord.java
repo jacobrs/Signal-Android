@@ -92,7 +92,7 @@ public abstract class MessageRecord extends DisplayRecord {
     return MmsSmsColumns.Types.isAsymmetricEncryption(type);
   }
 
-  public int isMarkedAsUnread() { return this.markedAsUnread; }
+  public boolean isMarkedAsUnread() { return this.markedAsUnread != 0; }
 
   @Override
   public SpannableString getDisplayBody() {

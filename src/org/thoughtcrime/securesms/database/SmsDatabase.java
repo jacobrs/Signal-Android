@@ -432,6 +432,29 @@ public class SmsDatabase extends MessagingDatabase {
     notifyConversationListeners(threadId);
   }
 
+  public void removeMarkAsUnread(long threadId, long messageId) {
+    removeMarkAsUnread(THREAD_ID + " = ? AND " + ID + " = ? AND " + MARKED_UNREAD + " <> 0", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
+  }
+
+  private void removeMarkAsUnread(String where, String[] arguments){
+    SQLiteDatabase          database  = databaseHelper.getWritableDatabase();
+
+    database.beginTransaction();
+    try {
+      ContentValues contentValues = new ContentValues();
+      contentValues.put(READ, 1);
+      contentValues.put(MARKED_UNREAD, 0);
+
+      database.update(TABLE_NAME, contentValues, where, arguments);
+      database.setTransactionSuccessful();
+    } finally {
+      database.endTransaction();
+    }
+
+    long threadId = Long.parseLong(arguments[0]);
+    notifyConversationListeners(threadId);
+  }
+
   protected Pair<Long, Long> updateMessageBodyAndType(long messageId, String body, long maskOff, long maskOn) {
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
     db.execSQL("UPDATE " + TABLE_NAME + " SET " + BODY + " = ?, " +
