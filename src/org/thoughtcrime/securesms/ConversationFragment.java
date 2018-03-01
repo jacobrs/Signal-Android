@@ -53,6 +53,8 @@ import android.widget.Toast;
 import org.thoughtcrime.securesms.ConversationAdapter.HeaderViewHolder;
 import org.thoughtcrime.securesms.ConversationAdapter.ItemClickListener;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
+import org.thoughtcrime.securesms.crypto.MasterSecretUnion;
+import org.thoughtcrime.securesms.database.Database;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.MmsSmsDatabase;
 import org.thoughtcrime.securesms.database.RecipientDatabase;
@@ -406,18 +408,24 @@ public class ConversationFragment extends Fragment
   }
 
   private void handlePinMessage(final Set<MessageRecord> messageRecords) {
-    	//For every message returned, set an attribute for it as Pinned=True
-			int                 messagesCount = messageRecords.size();
-			AlertDialog.Builder builder       = new AlertDialog.Builder(getActivity());
-
-			builder.setIconAttribute(R.attr.dialog_alert_icon);
-			builder.setTitle(getActivity().getResources().getQuantityString(R.plurals.ConversationFragment_delete_selected_messages, messagesCount, messagesCount));
-			builder.setMessage(getActivity().getResources().getQuantityString(R.plurals.ConversationFragment_this_will_permanently_delete_all_n_selected_messages, messagesCount, messagesCount));
-			builder.setCancelable(true);
-
-			builder.setPositiveButton("Test", null);
-			builder.setNegativeButton(android.R.string.cancel, null);
-			builder.show();
+    	//For every message returned, toggle pin attribute
+			final int messagesCount = messageRecords.size();
+			for (MessageRecord messageRecord : messageRecords) {
+					boolean currentlyPinned = messageRecord.isPinned();
+					if(messageRecord.isMms()){
+							if(currentlyPinned){
+									DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
+							}else{
+									DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsPinned(threadId, messageRecord.getId());
+							}
+					}else{
+							if(currentlyPinned){
+									DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
+							}else{
+									DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsPinned(threadId, messageRecord.getId());
+							}
+					}
+			}
   }
 
   @Override
@@ -675,7 +683,7 @@ public class ConversationFragment extends Fragment
           handleSaveAttachment((MediaMmsMessageRecord)getSelectedMessageRecord());
           actionMode.finish();
           return true;
-        case R.id.menu_context_pin_message: //Put proper pinning id here
+        case R.id.menu_context_pin_message:
 					handlePinMessage(getListAdapter().getSelectedItems());
         	actionMode.finish();
         	return true;
