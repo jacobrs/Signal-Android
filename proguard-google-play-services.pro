@@ -17,3 +17,4 @@
 -keepnames class * implements android.os.Parcelable {
     public static final ** CREATOR;
 }
+-dontwarn com.googlecode.mp4parser.**

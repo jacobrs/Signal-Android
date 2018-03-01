@@ -16,8 +16,10 @@ import org.thoughtcrime.securesms.transport.UndeliverableMessageException;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.Util;
 import org.whispersystems.jobqueue.JobParameters;
+import com.iceteck.silicompressorr.SiliCompressor;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,17 +62,18 @@ public abstract class SendJob extends MasterSecretJob {
 
     for (Attachment attachment : attachments) {
       try {
+        if(MediaUtil.isVideo(attachment)) {
+          SiliCompressor.with(context).compressVideo(attachment.getDataUri(),attachment.getLocation());
+        }
         if (constraints.isSatisfied(context, masterSecret, attachment)) {
           results.add(attachment);
         } else if (constraints.canResize(attachment)) {
           MediaStream resized = constraints.getResizedMedia(context, masterSecret, attachment);
           results.add(attachmentDatabase.updateAttachmentData(masterSecret, attachment, resized));
-        } else if(MediaUtil.isVideo(attachment)) {
-
         } else {
           throw new UndeliverableMessageException("Size constraints could not be met!");
         }
-      } catch (IOException | MmsException e) {
+      } catch (IOException | MmsException |URISyntaxException e ) {
         throw new UndeliverableMessageException(e);
       }
     }
