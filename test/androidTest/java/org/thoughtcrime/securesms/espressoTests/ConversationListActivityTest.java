@@ -1,7 +1,11 @@
-package org.thoughtcrime.securesms;
+package org.thoughtcrime.securesms.espressoTests;
 
 
+import android.support.test.espresso.UiController;
+import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.contrib.RecyclerViewActions;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -11,11 +15,14 @@ import android.view.ViewParent;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.thoughtcrime.securesms.ConversationListActivity;
+import org.thoughtcrime.securesms.R;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -43,12 +50,6 @@ public class ConversationListActivityTest {
 
     @Test
     public void conversationListActivityTest() {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         ViewInteraction pulsingFloatingActionButton = onView(
                 allOf(withId(R.id.fab), withContentDescription("New conversation"),
                         childAtPosition(
@@ -59,12 +60,31 @@ public class ConversationListActivityTest {
                         isDisplayed()));
         pulsingFloatingActionButton.perform(click());
 
-        ViewInteraction recyclerView = onView(
-                allOf(withId(R.id.recycler_view),
+        ViewInteraction appCompatEditText3 = onView(
+                allOf(withId(R.id.search_view),
                         childAtPosition(
-                                withId(R.id.swipe_refresh),
-                                0)));
-        recyclerView.perform(actionOnItemAtPosition(0, click()));
+                                allOf(withId(R.id.toggle_container),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                0)),
+                                0),
+                        isDisplayed()));
+        appCompatEditText3.perform(replaceText("5144022093"), closeSoftKeyboard());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withId(R.id.recycler_view))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         ViewInteraction composeText = onView(
                 allOf(withId(R.id.embedded_text_editor), withContentDescription("Message composition"),
@@ -75,18 +95,7 @@ public class ConversationListActivityTest {
                                                 0)),
                                 1),
                         isDisplayed()));
-        composeText.perform(click());
-
-        ViewInteraction composeText2 = onView(
-                allOf(withId(R.id.embedded_text_editor), withContentDescription("Message composition"),
-                        childAtPosition(
-                                allOf(withId(R.id.compose_bubble),
-                                        childAtPosition(
-                                                withClassName(is("android.widget.FrameLayout")),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        composeText2.perform(replaceText("T"), closeSoftKeyboard());
+        composeText.perform(replaceText("S"), closeSoftKeyboard());
 
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
@@ -97,8 +106,19 @@ public class ConversationListActivityTest {
             e.printStackTrace();
         }
 
+        ViewInteraction composeText2 = onView(
+                allOf(withId(R.id.embedded_text_editor), withText("S"), withContentDescription("Message composition"),
+                        childAtPosition(
+                                allOf(withId(R.id.compose_bubble),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.FrameLayout")),
+                                                0)),
+                                1),
+                        isDisplayed()));
+        composeText2.perform(replaceText("Sup"));
+
         ViewInteraction composeText3 = onView(
-                allOf(withId(R.id.embedded_text_editor), withText("T"), withContentDescription("Message composition"),
+                allOf(withId(R.id.embedded_text_editor), withText("Sup"), withContentDescription("Message composition"),
                         childAtPosition(
                                 allOf(withId(R.id.compose_bubble),
                                         childAtPosition(
@@ -106,53 +126,28 @@ public class ConversationListActivityTest {
                                                 0)),
                                 1),
                         isDisplayed()));
-        composeText3.perform(click());
+        composeText3.perform(closeSoftKeyboard());
 
-        ViewInteraction composeText4 = onView(
-                allOf(withId(R.id.embedded_text_editor), withText("T"), withContentDescription("Message composition"),
-                        childAtPosition(
-                                allOf(withId(R.id.compose_bubble),
-                                        childAtPosition(
-                                                withClassName(is("android.widget.FrameLayout")),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        composeText4.perform(replaceText("Test"));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        ViewInteraction composeText5 = onView(
-                allOf(withId(R.id.embedded_text_editor), withText("Test"), withContentDescription("Message composition"),
-                        childAtPosition(
-                                allOf(withId(R.id.compose_bubble),
-                                        childAtPosition(
-                                                withClassName(is("android.widget.FrameLayout")),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        composeText5.perform(closeSoftKeyboard());
-
-        ViewInteraction sendButton = onView(
-                allOf(withId(R.id.send_button), withContentDescription("Signal"),
-                        childAtPosition(
-                                allOf(withId(R.id.button_toggle),
-                                        childAtPosition(
-                                                withId(R.id.bottom_panel),
-                                                1)),
-                                1),
-                        isDisplayed()));
-        sendButton.perform(click());
+        onView(withId(R.id.send_button)).perform(click());
 
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(10000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
 
-        ViewInteraction appCompatTextView = onView(
+        ViewInteraction appCompatTextView2 = onView(
                 allOf(withId(R.id.title), withText("Conversation settings"),
                         childAtPosition(
                                 childAtPosition(
@@ -160,7 +155,7 @@ public class ConversationListActivityTest {
                                         0),
                                 0),
                         isDisplayed()));
-        appCompatTextView.perform(click());
+        appCompatTextView2.perform(click());
 
         ViewInteraction recyclerView2 = onView(
                 allOf(withId(R.id.list),
@@ -169,23 +164,23 @@ public class ConversationListActivityTest {
                                 0)));
         recyclerView2.perform(actionOnItemAtPosition(1, click()));
 
-        ViewInteraction appCompatEditText6 = onView(
+        ViewInteraction appCompatEditText4 = onView(
                 allOf(withId(android.R.id.edit),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.widget.ScrollView")),
                                         0),
                                 1)));
-        appCompatEditText6.perform(scrollTo(), replaceText("test"), closeSoftKeyboard());
+        appCompatEditText4.perform(scrollTo(), replaceText("test"), closeSoftKeyboard());
 
-        ViewInteraction appCompatButton3 = onView(
+        ViewInteraction appCompatButton2 = onView(
                 allOf(withId(android.R.id.button1), withText("OK"),
                         childAtPosition(
                                 childAtPosition(
                                         withId(R.id.buttonPanel),
                                         0),
                                 3)));
-        appCompatButton3.perform(scrollTo(), click());
+        appCompatButton2.perform(scrollTo(), click());
 
         ViewInteraction appCompatImageButton = onView(
                 allOf(withContentDescription("Navigate up"),
@@ -198,7 +193,7 @@ public class ConversationListActivityTest {
                         isDisplayed()));
         appCompatImageButton.perform(click());
 
-        ViewInteraction textView = onView(
+        ViewInteraction textView2 = onView(
                 allOf(withId(R.id.title), withText("test"),
                         childAtPosition(
                                 allOf(withId(R.id.content),
@@ -207,7 +202,7 @@ public class ConversationListActivityTest {
                                                 2)),
                                 0),
                         isDisplayed()));
-        textView.check(matches(withText("test")));
+        textView2.check(matches(withText("test")));
 
     }
 

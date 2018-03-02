@@ -1,7 +1,8 @@
-package org.thoughtcrime.securesms;
+package org.thoughtcrime.securesms.espressoTests;
 
 
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -11,10 +12,13 @@ import android.view.ViewParent;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.thoughtcrime.securesms.ConversationListActivity;
+import org.thoughtcrime.securesms.R;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -44,7 +48,7 @@ public class GetFakeVerifiedTest {
         }
 
         ViewInteraction circularProgressButton = onView(
-                allOf(withId(R.id.registerButton), withText("Register"),
+                Matchers.allOf(ViewMatchers.withId(R.id.registerButton), withText("Register"),
                         childAtPosition(
                                 allOf(withId(R.id.registration_container),
                                         childAtPosition(
