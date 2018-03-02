@@ -9,5 +9,9 @@
 -dontwarn org.hamcrest.**
 -dontwarn org.mockito.**
 -dontwarn com.squareup.**
+-dontwarn org.junit.**
+-dontwarn junit.**
+-dontwarn sun.misc.**
+-dontwarn android.support.test.**
 
 -dontobfuscate
