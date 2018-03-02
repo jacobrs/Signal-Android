@@ -29,6 +29,7 @@
         android:visibility="gone"
         tools:visibility="visible"
         android:layout_gravity="bottom"
+        android:tint="@color/blue_500"
         android:contentDescription="@string/conversation_item_marked_as_unread" />
 
 </merge>

@@ -222,6 +222,11 @@ public class ConversationFragment extends Fragment
         actionMessage = true;
         break;
       }
+
+      if(messageRecord.isMarkedAsUnread()){
+        menu.findItem(R.id.menu_context_mark_as_unread).setVisible(false);
+        break;
+      }
     }
 
     if (messageRecords.size() > 1) {
