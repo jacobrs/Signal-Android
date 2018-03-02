@@ -81,7 +81,7 @@ public class SmsDatabase extends MessagingDatabase {
     DELIVERY_RECEIPT_COUNT + " INTEGER DEFAULT 0," + SUBJECT + " TEXT, " + BODY + " TEXT, " +
     MISMATCHED_IDENTITIES + " TEXT DEFAULT NULL, " + SERVICE_CENTER + " TEXT, " + SUBSCRIPTION_ID + " INTEGER DEFAULT -1, " +
     EXPIRES_IN + " INTEGER DEFAULT 0, " + EXPIRE_STARTED + " INTEGER DEFAULT 0, " + NOTIFIED + " DEFAULT 0, " +
-    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0," + MARKED_UNREAD +" INTEGER DEFAULT 0);";
+    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0," + READ_REMINDER +" INTEGER DEFAULT 0);";
 
   public static final String[] CREATE_INDEXS = {
     "CREATE INDEX IF NOT EXISTS sms_thread_id_index ON " + TABLE_NAME + " (" + THREAD_ID + ");",
@@ -99,7 +99,7 @@ public class SmsDatabase extends MessagingDatabase {
       PROTOCOL, READ, STATUS, TYPE,
       REPLY_PATH_PRESENT, SUBJECT, BODY, SERVICE_CENTER, DELIVERY_RECEIPT_COUNT,
       MISMATCHED_IDENTITIES, SUBSCRIPTION_ID, EXPIRES_IN, EXPIRE_STARTED,
-      NOTIFIED, READ_RECEIPT_COUNT, MARKED_UNREAD
+      NOTIFIED, READ_RECEIPT_COUNT, READ_REMINDER
   };
 
   private static final EarlyReceiptCache earlyDeliveryReceiptCache = new EarlyReceiptCache();
@@ -411,7 +411,7 @@ public class SmsDatabase extends MessagingDatabase {
   }
 
   public void setMessagesUnread(long threadId, long messageId) {
-    setMessagesUnread(THREAD_ID + " = ? AND " + ID + " = ? AND "+ READ + " <> 0 AND " + MARKED_UNREAD + " = 0", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
+    setMessagesUnread(THREAD_ID + " = ? AND " + ID + " = ? AND "+ READ + " <> 0 AND " + READ_REMINDER + " = 0", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
   }
 
   private void setMessagesUnread(String where, String[] arguments){
@@ -420,7 +420,7 @@ public class SmsDatabase extends MessagingDatabase {
     try {
       ContentValues contentValues = new ContentValues();
       contentValues.put(READ, 0);
-      contentValues.put(MARKED_UNREAD, 1);
+      contentValues.put(READ_REMINDER, 1);
 
       database.update(TABLE_NAME, contentValues, where, arguments);
       database.setTransactionSuccessful();
@@ -432,18 +432,18 @@ public class SmsDatabase extends MessagingDatabase {
     notifyConversationListeners(threadId);
   }
 
-  public void removeMarkAsUnread(long threadId, long messageId) {
-    removeMarkAsUnread(THREAD_ID + " = ? AND " + ID + " = ? AND " + MARKED_UNREAD + " <> 0", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
+  public void removeReadReminder(long threadId, long messageId) {
+    removeReadReminder(THREAD_ID + " = ? AND " + ID + " = ? AND " + READ_REMINDER + " <> 0", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
   }
 
-  private void removeMarkAsUnread(String where, String[] arguments){
+  private void removeReadReminder(String where, String[] arguments){
     SQLiteDatabase          database  = databaseHelper.getWritableDatabase();
 
     database.beginTransaction();
     try {
       ContentValues contentValues = new ContentValues();
       contentValues.put(READ, 1);
-      contentValues.put(MARKED_UNREAD, 0);
+      contentValues.put(READ_REMINDER, 0);
 
       database.update(TABLE_NAME, contentValues, where, arguments);
       database.setTransactionSuccessful();
@@ -887,7 +887,7 @@ public class SmsDatabase extends MessagingDatabase {
       int     subscriptionId       = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.SUBSCRIPTION_ID));
       long    expiresIn            = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.EXPIRES_IN));
       long    expireStarted        = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.EXPIRE_STARTED));
-      int     markedAsUnread       = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.MARKED_UNREAD));
+      int     readReminder       = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.READ_REMINDER));
 
       if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
         readReceiptCount = 0;
@@ -902,7 +902,7 @@ public class SmsDatabase extends MessagingDatabase {
                                   addressDeviceId,
                                   dateSent, dateReceived, deliveryReceiptCount, type,
                                   threadId, status, mismatches, subscriptionId,
-                                  expiresIn, expireStarted, readReceiptCount, markedAsUnread);
+                                  expiresIn, expireStarted, readReceiptCount, readReminder);
     }
 
     private List<IdentityKeyMismatch> getMismatches(String document) {

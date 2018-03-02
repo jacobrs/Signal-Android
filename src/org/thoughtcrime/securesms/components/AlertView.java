@@ -40,7 +40,7 @@ public class AlertView extends LinearLayout {
 
     approvalIndicator = (ImageView) findViewById(R.id.pending_approval_indicator);
     failedIndicator   = (ImageView) findViewById(R.id.sms_failed_indicator);
-    unreadIndicator   = (ImageView) findViewById(R.id.marked_unread_indicator);
+    unreadIndicator   = (ImageView) findViewById(R.id.read_reminder);
 
     if (attrs != null) {
       TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.AlertView, 0, 0);

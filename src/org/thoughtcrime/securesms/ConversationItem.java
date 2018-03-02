@@ -442,7 +442,7 @@ public class ConversationItem extends LinearLayout
       setFailedStatusIcons();
     } else if (messageRecord.isPendingInsecureSmsFallback()) {
       setFallbackStatusIcons();
-    } else if(messageRecord.isMarkedAsUnread()) {
+    } else if(messageRecord.readReminderSet()) {
       setUnreadStatusIcons();
     }else {
       alertView.setNone();
@@ -676,7 +676,7 @@ public class ConversationItem extends LinearLayout
         handleApproveIdentity();
       } else if (messageRecord.isPendingInsecureSmsFallback()) {
         handleMessageApproval();
-      } else if(messageRecord.isMarkedAsUnread()){
+      } else if(messageRecord.readReminderSet()){
         alertView.setNone();
       }
     }

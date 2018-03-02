@@ -53,7 +53,6 @@ import android.widget.Toast;
 import org.thoughtcrime.securesms.ConversationAdapter.HeaderViewHolder;
 import org.thoughtcrime.securesms.ConversationAdapter.ItemClickListener;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
-import org.thoughtcrime.securesms.database.Database;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.MmsSmsDatabase;
 import org.thoughtcrime.securesms.database.RecipientDatabase;
@@ -64,7 +63,6 @@ import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.mms.OutgoingMediaMessage;
 import org.thoughtcrime.securesms.mms.Slide;
 import org.thoughtcrime.securesms.notifications.MessageNotifier;
-import org.thoughtcrime.securesms.notifications.PendingMessageNotificationBuilder;
 import org.thoughtcrime.securesms.profiles.UnknownSenderView;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.sms.MessageSender;
@@ -223,7 +221,7 @@ public class ConversationFragment extends Fragment
         break;
       }
 
-      if(messageRecord.isMarkedAsUnread()){
+      if(messageRecord.readReminderSet()){
         menu.findItem(R.id.menu_context_mark_as_unread).setVisible(false);
         break;
       }
@@ -605,11 +603,11 @@ public class ConversationFragment extends Fragment
 
     @Override
     public void onItemClick(MessageRecord messageRecord) {
-      if(actionMode == null && messageRecord.isMarkedAsUnread()) {
+      if(actionMode == null && messageRecord.readReminderSet()) {
         if (messageRecord.isMms()) {
-          DatabaseFactory.getMmsDatabase(getContext()).removeMarkAsUnread(messageRecord.getThreadId(), messageRecord.getId());
+          DatabaseFactory.getMmsDatabase(getContext()).removeReadReminder(messageRecord.getThreadId(), messageRecord.getId());
         } else {
-          DatabaseFactory.getSmsDatabase(getContext()).removeMarkAsUnread(messageRecord.getThreadId(), messageRecord.getId());
+          DatabaseFactory.getSmsDatabase(getContext()).removeReadReminder(messageRecord.getThreadId(), messageRecord.getId());
         }
       }
       if (actionMode != null) {

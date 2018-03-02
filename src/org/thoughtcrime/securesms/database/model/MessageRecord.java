@@ -53,7 +53,7 @@ public abstract class MessageRecord extends DisplayRecord {
   private final int                       subscriptionId;
   private final long                      expiresIn;
   private final long                      expireStarted;
-  private final int                       markedAsUnread;
+  private final int                       readReminder;
 
   MessageRecord(Context context, long id, Body body, Recipient conversationRecipient,
                 Recipient individualRecipient, int recipientDeviceId,
@@ -62,7 +62,7 @@ public abstract class MessageRecord extends DisplayRecord {
                 List<IdentityKeyMismatch> mismatches,
                 List<NetworkFailure> networkFailures,
                 int subscriptionId, long expiresIn, long expireStarted,
-                int readReceiptCount, int markedUnread)
+                int readReceiptCount, int reminderToRead)
   {
     super(context, body, conversationRecipient, dateSent, dateReceived,
           threadId, deliveryStatus, deliveryReceiptCount, type, readReceiptCount);
@@ -74,7 +74,7 @@ public abstract class MessageRecord extends DisplayRecord {
     this.subscriptionId      = subscriptionId;
     this.expiresIn           = expiresIn;
     this.expireStarted       = expireStarted;
-    this.markedAsUnread      = markedUnread;
+    this.readReminder        = reminderToRead;
   }
 
   public abstract boolean isMms();
@@ -92,7 +92,7 @@ public abstract class MessageRecord extends DisplayRecord {
     return MmsSmsColumns.Types.isAsymmetricEncryption(type);
   }
 
-  public boolean isMarkedAsUnread() { return this.markedAsUnread != 0; }
+  public boolean readReminderSet() { return this.readReminder != 0; }
 
   @Override
   public SpannableString getDisplayBody() {

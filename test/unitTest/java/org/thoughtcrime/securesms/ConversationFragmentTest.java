@@ -1,39 +1,27 @@
 package org.thoughtcrime.securesms;
 
 import android.content.Context;
-import android.provider.Telephony;
 import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-import org.spongycastle.math.field.PolynomialExtensionField;
-import org.thoughtcrime.securesms.ConversationFragment;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.MmsDatabase;
 import org.thoughtcrime.securesms.database.SmsDatabase;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
-import org.thoughtcrime.securesms.database.documents.IdentityKeyMismatch;
-import org.thoughtcrime.securesms.database.documents.NetworkFailure;
-import org.thoughtcrime.securesms.database.model.DisplayRecord;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
-import org.thoughtcrime.securesms.notifications.MessageNotifier;
-import org.thoughtcrime.securesms.recipients.Recipient;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -65,7 +53,7 @@ public class ConversationFragmentTest {
         when(DatabaseFactory.getSmsDatabase(mockContext)).thenReturn(mockSmsDb);
 
         mockMessageRecord = PowerMockito.mock(MessageRecord.class);
-        PowerMockito.when(mockMessageRecord.isMarkedAsUnread()).thenReturn(true);
+        PowerMockito.when(mockMessageRecord.readReminderSet()).thenReturn(true);
         PowerMockito.when(mockMessageRecord.isMms()).thenReturn(false);
         PowerMockito.when(mockMessageRecord.getId()).thenReturn(messageId);
     }
@@ -100,21 +88,21 @@ public class ConversationFragmentTest {
     }
 
     @Test
-    public void removeMarkAsUnreadCallsToDb(){
+    public void removeUnreadReminderCallsToDb(){
         ConversationFragment conversationFragment = new ConversationFragment();
 
-        when(mockMessageRecord.isMarkedAsUnread()).thenReturn(true);
+        when(mockMessageRecord.readReminderSet()).thenReturn(true);
 
         try{
 
             Whitebox.invokeMethod(conversationFragment, "onItemClick", mockMessageRecord);
 
-            verify(mockSmsDb).removeMarkAsUnread(threadId, messageId);
-            verify(mockMmsDb, times(0)).removeMarkAsUnread(threadId, messageId);
+            verify(mockSmsDb).removeReadReminder(threadId, messageId);
+            verify(mockMmsDb, times(0)).removeReadReminder(threadId, messageId);
 
             when(mockMessageRecord.isMms()).thenReturn(true);
-            verify(mockMmsDb).removeMarkAsUnread(threadId, messageId);
-            verify(mockSmsDb, times(0)).removeMarkAsUnread(threadId, messageId);
+            verify(mockMmsDb).removeReadReminder(threadId, messageId);
+            verify(mockSmsDb, times(0)).removeReadReminder(threadId, messageId);
 
         } catch(Exception e){
             Log.d(TAG, e.getMessage());

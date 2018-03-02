@@ -34,7 +34,7 @@ public class SmsDatabaseTest {
     private String tableName;
 
     private String dbMarkUnreadString;
-    private String dbRemoveMarkUnreadString;
+    private String dbRemoveReadReminderString;
 
     private String[] dbUpdateArgs = new String[2];
 
@@ -56,8 +56,8 @@ public class SmsDatabaseTest {
 
         tableName = "sms";
 
-        dbMarkUnreadString = "thread_id = ? AND _id = ? AND read <> 0 AND marked_unread = 0";
-        dbRemoveMarkUnreadString = "thread_id = ? AND _id = ? AND marked_unread <> 0";
+        dbMarkUnreadString = "thread_id = ? AND _id = ? AND read <> 0 AND read_reminder = 0";
+        dbRemoveReadReminderString = "thread_id = ? AND _id = ? AND read_reminder <> 0";
 
         dbUpdateArgs[0] = String.valueOf(threadId);
         dbUpdateArgs[1] = String.valueOf(messageId);
@@ -188,7 +188,7 @@ public class SmsDatabaseTest {
             assertEquals(testContents.get("read"), ((ContentValues) args[1]).get("read"));
             assertEquals(testContents.get("marked_unread"), ((ContentValues) args[1]).get("marked_unread"));
 
-            assertEquals(dbRemoveMarkUnreadString, args[2]);
+            assertEquals(dbRemoveReadReminderString, args[2]);
 
             assert(args[3].getClass().isArray());
             assertEquals(dbUpdateArgs[0], ((String[])args[3])[0]);
@@ -202,9 +202,9 @@ public class SmsDatabaseTest {
             assertEquals(true, messageUnread);
             assertEquals(1, testMarkAsUnreadStatus);
 
-            smsDatabase.removeMarkAsUnread(threadId, messageId);
+            smsDatabase.removeReadReminder(threadId, messageId);
 
-            PowerMockito.verifyPrivate(smsDatabase).invoke("removeMarkAsUnread", dbRemoveMarkUnreadString, dbUpdateArgs);
+            PowerMockito.verifyPrivate(smsDatabase).invoke("removeReadReminder", dbRemoveReadReminderString, dbUpdateArgs);
             verify(mockSql.update(tableName, testContents, dbMarkUnreadString, dbUpdateArgs));
 
             assertEquals(0, testMarkAsUnreadStatus);
@@ -235,7 +235,7 @@ public class SmsDatabaseTest {
             assertEquals(testContents.get("read"), ((ContentValues) args[1]).get("read"));
             assertEquals(testContents.get("marked_unread"), ((ContentValues) args[1]).get("marked_unread"));
 
-            assertEquals(dbRemoveMarkUnreadString, args[2]);
+            assertEquals(dbRemoveReadReminderString, args[2]);
 
             assert(args[3].getClass().isArray());
             assertEquals(dbUpdateArgs[0], ((String[])args[3])[0]);
@@ -250,9 +250,9 @@ public class SmsDatabaseTest {
             assertEquals(false, messageUnread);
             assertEquals(0, testMarkAsUnreadStatus);
 
-            smsDatabase.removeMarkAsUnread(threadId, messageId);
+            smsDatabase.removeReadReminder(threadId, messageId);
 
-            PowerMockito.verifyPrivate(smsDatabase).invoke("removeMarkAsUnread", dbRemoveMarkUnreadString, dbUpdateArgs);
+            PowerMockito.verifyPrivate(smsDatabase).invoke("removeReadReminder", dbRemoveReadReminderString, dbUpdateArgs);
             verify(mockSql.update(tableName, testContents, dbMarkUnreadString, dbUpdateArgs));
 
             assertEquals(0, testMarkAsUnreadStatus);
