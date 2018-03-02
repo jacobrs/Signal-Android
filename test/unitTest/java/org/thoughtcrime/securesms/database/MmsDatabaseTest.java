@@ -19,14 +19,12 @@ import org.thoughtcrime.securesms.ApplicationContext;
 import org.whispersystems.jobqueue.JobManager;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DatabaseFactory.class)
-public class SmsDatabaseTest {
-    private static final String TAG = SmsDatabaseTest.class.getSimpleName();
+public class MmsDatabaseTest {
+    private static final String TAG = MmsDatabaseTest.class.getSimpleName();
 
     private long threadId;
     private long messageId;
@@ -56,7 +54,7 @@ public class SmsDatabaseTest {
         messageId = 1112;
         testMarkAsUnreadStatus = 0;
 
-        tableName = "sms";
+        tableName = "mms";
 
         dbMarkUnreadString = "thread_id = ? AND _id = ? AND read <> 0 AND marked_unread = 0";
         dbRemoveMarkUnreadString = "thread_id = ? AND _id = ? AND marked_unread <> 0";
@@ -80,7 +78,7 @@ public class SmsDatabaseTest {
     @Test
     public void markMessageAsUnreadTest() {
 
-        SmsDatabase smsDatabase = new SmsDatabase(mockContext, mockSqlHelper);
+        MmsDatabase mmsDatabase = new MmsDatabase(mockContext, mockSqlHelper);
         testContents.put("read", 0);
         testContents.put("mark_unread", 1);
 
@@ -109,9 +107,9 @@ public class SmsDatabaseTest {
             assertEquals(false, messageUnread);
             assertEquals(0, testMarkAsUnreadStatus);
 
-            smsDatabase.setMessagesUnread(threadId, messageId);
+            mmsDatabase.setMessagesUnread(threadId, messageId);
 
-            PowerMockito.verifyPrivate(smsDatabase).invoke("setMessagesAsUnread", dbMarkUnreadString, dbUpdateArgs);
+            PowerMockito.verifyPrivate(mmsDatabase).invoke("setMessagesAsUnread", dbMarkUnreadString, dbUpdateArgs);
 
             //verify that the database function was called with the proper arguments
             verify(mockSql.update(tableName, testContents, dbMarkUnreadString, dbUpdateArgs));
@@ -132,7 +130,7 @@ public class SmsDatabaseTest {
         testContents.put("read", 0);
         testContents.put("mark_unread", 1);
 
-        SmsDatabase smsDatabase = new SmsDatabase(mockContext, mockSqlHelper);
+        MmsDatabase mmsDatabase = new MmsDatabase(mockContext, mockSqlHelper);
         PowerMockito.doAnswer((Answer) invocation -> {
             Object[] args = invocation.getArguments();
 
@@ -158,7 +156,9 @@ public class SmsDatabaseTest {
             assertEquals(true, messageUnread);
             assertEquals(1, testMarkAsUnreadStatus);
 
-            PowerMockito.verifyPrivate(smsDatabase).invoke("setMessagesAsUnread", dbMarkUnreadString, dbUpdateArgs);
+            mmsDatabase.setMessagesUnread(threadId, messageId);
+
+            PowerMockito.verifyPrivate(mmsDatabase).invoke("setMessagesAsUnread", dbMarkUnreadString, dbUpdateArgs);
             verify(mockSql.update(tableName, testContents, dbMarkUnreadString, dbUpdateArgs));
 
             assertEquals(1, testMarkAsUnreadStatus);
@@ -170,7 +170,7 @@ public class SmsDatabaseTest {
 
     @Test
     public void unmarkMessageAsUnread(){
-        SmsDatabase smsDatabase = new SmsDatabase(mockContext, mockSqlHelper);
+        MmsDatabase mmsDatabase = new MmsDatabase(mockContext, mockSqlHelper);
 
         messageUnread = true;
         testMarkAsUnreadStatus = 1;
@@ -202,7 +202,9 @@ public class SmsDatabaseTest {
             assertEquals(true, messageUnread);
             assertEquals(1, testMarkAsUnreadStatus);
 
-            PowerMockito.verifyPrivate(smsDatabase).invoke("removeMarkAsUnread", dbRemoveMarkUnreadString, dbUpdateArgs);
+            mmsDatabase.removeMarkAsUnread(threadId, messageId);
+
+            PowerMockito.verifyPrivate(mmsDatabase).invoke("removeMarkAsUnread", dbRemoveMarkUnreadString, dbUpdateArgs);
             verify(mockSql.update(tableName, testContents, dbMarkUnreadString, dbUpdateArgs));
 
             assertEquals(0, testMarkAsUnreadStatus);
@@ -215,7 +217,7 @@ public class SmsDatabaseTest {
 
     @Test
     public void unmarkMessageAsUnreadNothingHappens(){
-        SmsDatabase smsDatabase = new SmsDatabase(mockContext, mockSqlHelper);
+        MmsDatabase mmsDatabase = new MmsDatabase(mockContext, mockSqlHelper);
 
         messageUnread = false;
         testMarkAsUnreadStatus = 0;
@@ -248,7 +250,9 @@ public class SmsDatabaseTest {
             assertEquals(false, messageUnread);
             assertEquals(0, testMarkAsUnreadStatus);
 
-            PowerMockito.verifyPrivate(smsDatabase).invoke("removeMarkAsUnread", dbRemoveMarkUnreadString, dbUpdateArgs);
+            mmsDatabase.removeMarkAsUnread(threadId, messageId);
+
+            PowerMockito.verifyPrivate(mmsDatabase).invoke("removeMarkAsUnread", dbRemoveMarkUnreadString, dbUpdateArgs);
             verify(mockSql.update(tableName, testContents, dbMarkUnreadString, dbUpdateArgs));
 
             assertEquals(0, testMarkAsUnreadStatus);

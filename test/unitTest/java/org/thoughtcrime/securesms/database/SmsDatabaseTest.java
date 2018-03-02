@@ -251,7 +251,7 @@ public class SmsDatabaseTest {
             assertEquals(0, testMarkAsUnreadStatus);
 
             smsDatabase.removeMarkAsUnread(threadId, messageId);
-            
+
             PowerMockito.verifyPrivate(smsDatabase).invoke("removeMarkAsUnread", dbRemoveMarkUnreadString, dbUpdateArgs);
             verify(mockSql.update(tableName, testContents, dbMarkUnreadString, dbUpdateArgs));
 
