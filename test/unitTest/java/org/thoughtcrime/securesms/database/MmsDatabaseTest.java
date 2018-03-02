@@ -19,6 +19,8 @@ import org.thoughtcrime.securesms.ApplicationContext;
 import org.whispersystems.jobqueue.JobManager;
 
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(PowerMockRunner.class)
@@ -156,8 +158,6 @@ public class SmsDatabaseTest {
             assertEquals(true, messageUnread);
             assertEquals(1, testMarkAsUnreadStatus);
 
-            smsDatabase.setMessagesUnread(threadId, messageId);
-
             PowerMockito.verifyPrivate(smsDatabase).invoke("setMessagesAsUnread", dbMarkUnreadString, dbUpdateArgs);
             verify(mockSql.update(tableName, testContents, dbMarkUnreadString, dbUpdateArgs));
 
@@ -201,8 +201,6 @@ public class SmsDatabaseTest {
         try {
             assertEquals(true, messageUnread);
             assertEquals(1, testMarkAsUnreadStatus);
-
-            smsDatabase.removeMarkAsUnread(threadId, messageId);
 
             PowerMockito.verifyPrivate(smsDatabase).invoke("removeMarkAsUnread", dbRemoveMarkUnreadString, dbUpdateArgs);
             verify(mockSql.update(tableName, testContents, dbMarkUnreadString, dbUpdateArgs));
@@ -250,8 +248,6 @@ public class SmsDatabaseTest {
             assertEquals(false, messageUnread);
             assertEquals(0, testMarkAsUnreadStatus);
 
-            smsDatabase.removeMarkAsUnread(threadId, messageId);
-            
             PowerMockito.verifyPrivate(smsDatabase).invoke("removeMarkAsUnread", dbRemoveMarkUnreadString, dbUpdateArgs);
             verify(mockSql.update(tableName, testContents, dbMarkUnreadString, dbUpdateArgs));
 
