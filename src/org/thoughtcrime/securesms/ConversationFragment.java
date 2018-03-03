@@ -432,7 +432,6 @@ public class ConversationFragment extends Fragment
 				DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
 		}
 	}
-		
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {

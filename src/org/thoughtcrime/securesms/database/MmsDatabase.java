@@ -415,8 +415,6 @@ public class MmsDatabase extends MessagingDatabase {
   }
 
   public void markMessagesAsPinned(long threadId, long messageId){
-    //markMessagesAsPinned(THREAD_ID + " = ? AND " + ID + " = ?", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
-
     markMessagesAsPinned(THREAD_ID + " = ? AND " + ID + " = ? AND "+ PINNED + " = 0", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
   }
 
