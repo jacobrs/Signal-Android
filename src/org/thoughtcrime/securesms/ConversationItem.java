@@ -442,7 +442,9 @@ public class ConversationItem extends LinearLayout
       setFailedStatusIcons();
     } else if (messageRecord.isPendingInsecureSmsFallback()) {
       setFallbackStatusIcons();
-    } else {
+    } else if(messageRecord.readReminderSet()) {
+      setUnreadStatusIcons();
+    }else {
       alertView.setNone();
 
       if      (!messageRecord.isOutgoing())  deliveryStatusIndicator.setNone();
@@ -519,6 +521,10 @@ public class ConversationItem extends LinearLayout
     deliveryStatusIndicator.setNone();
     indicatorText.setVisibility(View.VISIBLE);
     indicatorText.setText(R.string.ConversationItem_click_to_approve_unencrypted);
+  }
+
+  private void setUnreadStatusIcons(){
+    alertView.setUnread();
   }
 
   private void setMinimumWidth() {
@@ -670,6 +676,8 @@ public class ConversationItem extends LinearLayout
         handleApproveIdentity();
       } else if (messageRecord.isPendingInsecureSmsFallback()) {
         handleMessageApproval();
+      } else if(messageRecord.readReminderSet()){
+        alertView.setNone();
       }
     }
   }

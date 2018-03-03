@@ -790,6 +790,7 @@
     <string name="conversation_item_sent__pending_approval_description">Pending Approval</string>
     <string name="conversation_item_sent__delivered_description">Delivered</string>
     <string name="conversation_item_sent__message_read">Message read</string>
+    <string name="conversation_item_read_reminder">Message marked as unread</string>
 
     <!-- conversation_item_received -->
     <string name="conversation_item_received__contact_photo_description">Contact photo</string>
@@ -1188,6 +1189,7 @@
     <string name="conversation_context__menu_delete_message">Delete message</string>
     <string name="conversation_context__menu_forward_message">Forward message</string>
     <string name="conversation_context__menu_resend_message">Resend message</string>
+    <string name="conversation_context__menu_mark_message_as_unread">Mark message as unread</string>
 
     <!-- conversation_context_image -->
     <string name="conversation_context_image__save_attachment">Save attachment</string>

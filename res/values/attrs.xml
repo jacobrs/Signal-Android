@@ -106,6 +106,7 @@
     <attr name="menu_info_icon" format="reference" />
     <attr name="menu_forward_icon" format="reference" />
     <attr name="menu_save_icon" format="reference" />
+    <attr name="menu_mark_as_unread_icon" format="reference" />
 
     <attr name="pref_icon_tint" format="color"/>
 
