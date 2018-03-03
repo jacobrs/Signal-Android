@@ -12,6 +12,7 @@ import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.mms.MediaConstraints;
 import org.thoughtcrime.securesms.mms.MediaStream;
 import org.thoughtcrime.securesms.mms.MmsException;
+import org.thoughtcrime.securesms.mms.PartAuthority;
 import org.thoughtcrime.securesms.transport.UndeliverableMessageException;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.Util;
@@ -19,6 +20,8 @@ import org.whispersystems.jobqueue.JobParameters;
 import com.iceteck.silicompressorr.SiliCompressor;
 import org.whispersystems.libsignal.logging.Log;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
@@ -64,16 +67,8 @@ public abstract class SendJob extends MasterSecretJob {
     for (Attachment attachment : attachments) {
       try {
         if(MediaUtil.isVideo(attachment)) {
-          Log.d(TAG, "Is a video of size " + attachment.getSize());
-          // The attachment location is null, which will cause an error when passed to compressor method.
-          // If null, given a spaced value for now.
-          String location = attachment.getLocation() == null ? " " : attachment.getLocation();
-          String filePath = SiliCompressor.with(context).compressVideo(attachment.getDataUri(), location);
-          Attachment resizedAttachment = attachmentDatabase.updateAttachmentLocation(attachment, filePath);
-          Log.d(TAG, "Is a video of NEW size " + resizedAttachment.getSize());
-          results.add(resizedAttachment);
-        }
-        if (constraints.isSatisfied(context, masterSecret, attachment)) {
+          results.add(attachmentDatabase.updateAttachmentData(masterSecret, attachment, constraints.getCompressedVideo(context, masterSecret, attachment)));
+        }else if (constraints.isSatisfied(context, masterSecret, attachment)) {
           results.add(attachment);
         } else if (constraints.canResize(attachment)) {
           MediaStream resized = constraints.getResizedMedia(context, masterSecret, attachment);
@@ -81,7 +76,7 @@ public abstract class SendJob extends MasterSecretJob {
         } else {
           throw new UndeliverableMessageException("Size constraints could not be met!");
         }
-      } catch (IOException | MmsException | URISyntaxException e ) {
+      } catch (IOException | MmsException e ) {
         throw new UndeliverableMessageException(e);
       }
     }

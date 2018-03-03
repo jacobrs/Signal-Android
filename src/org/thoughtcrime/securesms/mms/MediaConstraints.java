@@ -7,16 +7,23 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 
+import com.iceteck.silicompressorr.SiliCompressor;
+
 import org.thoughtcrime.securesms.attachments.Attachment;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
 import org.thoughtcrime.securesms.mms.DecryptableStreamUriLoader.DecryptableUri;
 import org.thoughtcrime.securesms.util.BitmapDecodingException;
 import org.thoughtcrime.securesms.util.BitmapUtil;
 import org.thoughtcrime.securesms.util.MediaUtil;
+import org.thoughtcrime.securesms.util.Util;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 
 public abstract class MediaConstraints {
   private static final String TAG = MediaConstraints.class.getSimpleName();
@@ -80,6 +87,27 @@ public abstract class MediaConstraints {
       return new MediaStream(new ByteArrayInputStream(BitmapUtil.createScaledBytes(context, new DecryptableUri(masterSecret, attachment.getDataUri()), this)),
                              MediaUtil.IMAGE_JPEG);
     } catch (BitmapDecodingException e) {
+      throw new IOException(e);
+    }
+  }
+
+  public MediaStream getCompressedVideo(@NonNull Context context,
+                                     @NonNull MasterSecret masterSecret,
+                                     @NonNull Attachment attachment)
+          throws IOException
+  {
+    try {
+      byte [] data = Util.readFully(PartAuthority.getAttachmentStream(context, masterSecret, attachment.getDataUri()));
+      String fileName= String.valueOf(Math.abs(Util.getSecureRandom().nextLong()));
+      String path = context.getCacheDir().toString()+"/"+fileName+attachment.getContentType().replace('/','.');
+      FileOutputStream out = new FileOutputStream(path);
+      out.write(data);
+      String output = SiliCompressor.with(context).compressVideo(path,context.getCacheDir().toString() );
+      out.close();
+      File file = new File(path);
+      file.delete();
+      return new MediaStream(new FileInputStream(output),attachment.getContentType());
+    } catch (URISyntaxException e) {
       throw new IOException(e);
     }
   }
