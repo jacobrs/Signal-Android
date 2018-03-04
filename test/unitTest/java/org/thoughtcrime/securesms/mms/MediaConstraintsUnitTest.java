@@ -10,16 +10,20 @@ import com.iceteck.silicompressorr.SiliCompressor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.thoughtcrime.securesms.attachments.Attachment;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
 import org.thoughtcrime.securesms.util.Util;
 
+
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.security.SecureRandom;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
@@ -30,30 +34,34 @@ import static org.mockito.Mockito.when;
 public class MediaConstraintsUnitTest {
 
     private static final String TAG = MediaConstraintsUnitTest.class.getSimpleName();
-
+    @PrepareForTest({Util.class , PartAuthority.class})
     @Test
-    public void testGetCompressedVideo(){
+    public void testGetCompressedVideo() throws IOException{
 
         // Mocking classes
         MediaConstraints mockMediaConstraint = mock(MediaConstraints.class);
         MasterSecret mockMasterSecret = mock(MasterSecret.class);
         Attachment mockAttachment = mock(Attachment.class);
         Context mockContext = PowerMockito.mock(Context.class);
-        PowerMockito.mockStatic(Uri.class);
         PowerMockito.mockStatic(Parcelable.class);
 
         // Variables
-        String cacheDir = "/data/user/0/org.thoughtcrime.securesms/cache";
+        String cacheDir = "./";
         File file = new File(cacheDir);
-        String testVideoUri = "content://org.thoughtcrime.securesms/part/1520130802982/13";
-
+        //need to find a way to actually load a test file
+        Path path = Paths.get(this.getClass().getClassLoader().getResource("sampleTestVideo1080p22MB.mp4").getPath());
+        byte[] data = Files.readAllBytes(path);
         // Stubbing
+        PowerMockito.when(Util.readFully(null)).thenReturn(data);
+        PowerMockito.when(PartAuthority.getAttachmentStream(mockContext,mockMasterSecret, null)).thenReturn(null);
         when(mockContext.getCacheDir()).thenReturn(file);
-        when(mockAttachment.getDataUri()).thenReturn(Uri.parse(testVideoUri));
+        when(mockAttachment.getDataUri()).thenReturn(null);
         when(mockAttachment.getContentType()).thenReturn("video");
 
         // Test
-        try {
+        try{
+           assert(data.length>0);
+           Log.d(TAG, "output is: " + data.length);
            mockMediaConstraint.getCompressedVideo(mockContext, mockMasterSecret, mockAttachment);
         }catch (IOException e){
            Log.e(TAG, "IOException error.");
@@ -64,42 +72,17 @@ public class MediaConstraintsUnitTest {
     public void testCompressVideo(){
 
         // Mocking classes
-        MasterSecret mockMasterSecret = mock(MasterSecret.class);
-        PowerMockito.mockStatic(PartAuthority.class);
-        Attachment mockAttachment = mock(Attachment.class);
         Context mockContext = mock(Context.class);
-        PowerMockito.mockStatic(Util.class);
-        PowerMockito.mockStatic(Uri.class);
-        PowerMockito.mockStatic(Parcelable.class);
-        SecureRandom mockSecure = PowerMockito.mock(SecureRandom.class);
-
-        // Variables
-        String cacheDir = "/data/user/0/org.thoughtcrime.securesms/cache";
-        File file = new File(cacheDir);
-        String testVideoUri = "content://org.thoughtcrime.securesms/part/1520130802982/13";
-
-        // Stubbing
-        when(mockContext.getCacheDir()).thenReturn(file);
-        when(mockAttachment.getDataUri()).thenReturn(Uri.parse(testVideoUri));
-        when(mockAttachment.getContentType()).thenReturn("video");
-        when(mockSecure.nextLong()).thenReturn(123456789L);
 
         // Test
         try {
-            byte [] data = Util.readFully(PartAuthority.getAttachmentStream(mockContext, mockMasterSecret, mockAttachment.getDataUri()));
-            String fileName= String.valueOf(Math.abs(Util.getSecureRandom().nextLong()));
-            String path = mockContext.getCacheDir().toString()+"/"+fileName+mockAttachment.getContentType().replace('/','.');
-            FileOutputStream fileOut = new FileOutputStream(path);
-            fileOut.write(data);
-
+            //need to find a way to actually load the test file
             // output is actually cacheDir + "/VIDEO_yyyymmdd_hhmmss.mp4"
-            String output = SiliCompressor.with(mockContext).compressVideo(path, mockContext.getCacheDir().toString());
+            String output = SiliCompressor.with(mockContext).compressVideo(this.getClass().getClassLoader().getResource("sampleTestVideo1080p22MB.mp4").getPath(), "./org/thoughtcrime/securesms/mms/");
             Log.d(TAG, "output is: " + output);
 
-            assertThat(output, containsString(cacheDir));
+            assertThat(output, containsString("org/thoughtcrime/securesms/mms/"));
 
-        }catch (IOException e){
-            Log.e(TAG, "IOException error.", e);
         }catch (URISyntaxException e){
             Log.e(TAG, "URISyntaxException error.", e);
         }
