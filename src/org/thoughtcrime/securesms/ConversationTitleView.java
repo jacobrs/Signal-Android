@@ -76,8 +76,8 @@ public class ConversationTitleView extends RelativeLayout {
     }
   }
 
-  public void setCustomeTitle(@NonNull GlideRequests glideRequests, @Nullable Recipient recipient,
-                              @NonNull String customTitle, @NonNull String subtitle) {
+  public void setCustomTitle(@NonNull GlideRequests glideRequests, @Nullable Recipient recipient,
+                             @NonNull String customTitle, @NonNull String subtitle) {
     if      (recipient == null) setComposeTitle();
     else                        setRecipientTitle(recipient);
 

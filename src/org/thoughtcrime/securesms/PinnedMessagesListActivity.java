@@ -110,7 +110,7 @@ public class PinnedMessagesListActivity extends PassphraseRequiredActionBarActiv
 
         setActionBarColor(recipient.getColor());
 
-        titleView.setCustomeTitle(glideRequests, recipient,"Pinned Messages", "With " + recipient.getProfileName());
+        titleView.setCustomTitle(glideRequests, recipient,"Pinned Messages", "With " + recipient.getProfileName());
 
         recipient.addListener(this);
     }

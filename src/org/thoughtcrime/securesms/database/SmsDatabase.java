@@ -292,7 +292,7 @@ public class SmsDatabase extends MessagingDatabase {
     markMessagesAsPinned(THREAD_ID + " = ? AND " + ID + " = ? AND "+ PINNED + " = 0", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
   }
 
-  public void markMessagesAsPinned(String where, String[] args) {
+  private void markMessagesAsPinned(String where, String[] args) {
     SQLiteDatabase database      = databaseHelper.getWritableDatabase();
     database.beginTransaction();
     try{
@@ -312,7 +312,7 @@ public class SmsDatabase extends MessagingDatabase {
     markMessagesAsUnpinned(THREAD_ID + " = ? AND " + ID + " = ? AND "+ PINNED + " = 1", new String[] {String.valueOf(threadId), String.valueOf(messageId)});
   }
 
-  public void markMessagesAsUnpinned(String where, String[] args) {
+  private void markMessagesAsUnpinned(String where, String[] args) {
     SQLiteDatabase database      = databaseHelper.getWritableDatabase();
     database.beginTransaction();
     try{
