@@ -54,6 +54,7 @@ public class MmsSmsDatabase extends Database {
                                               MmsDatabase.STATUS,
                                               MmsSmsColumns.DELIVERY_RECEIPT_COUNT,
                                               MmsSmsColumns.READ_RECEIPT_COUNT,
+                                              MmsSmsColumns.READ_REMINDER,
                                               MmsSmsColumns.MISMATCHED_IDENTITIES,
                                               MmsDatabase.NETWORK_FAILURE,
                                               MmsSmsColumns.SUBSCRIPTION_ID,
@@ -173,6 +174,7 @@ public class MmsSmsDatabase extends Database {
                               MmsDatabase.CONTENT_LOCATION, MmsDatabase.TRANSACTION_ID,
                               MmsDatabase.MESSAGE_SIZE, MmsDatabase.EXPIRY, MmsDatabase.STATUS,
                               MmsSmsColumns.DELIVERY_RECEIPT_COUNT, MmsSmsColumns.READ_RECEIPT_COUNT,
+                              MmsSmsColumns.READ_REMINDER,
                               MmsSmsColumns.MISMATCHED_IDENTITIES,
                               MmsSmsColumns.SUBSCRIPTION_ID, MmsSmsColumns.EXPIRES_IN, MmsSmsColumns.EXPIRE_STARTED,
                               MmsSmsColumns.NOTIFIED, MmsSmsColumns.PINNED,
@@ -205,6 +207,7 @@ public class MmsSmsDatabase extends Database {
                               MmsDatabase.CONTENT_LOCATION, MmsDatabase.TRANSACTION_ID,
                               MmsDatabase.MESSAGE_SIZE, MmsDatabase.EXPIRY, MmsDatabase.STATUS,
                               MmsSmsColumns.DELIVERY_RECEIPT_COUNT, MmsSmsColumns.READ_RECEIPT_COUNT,
+                              MmsSmsColumns.READ_REMINDER,
                               MmsSmsColumns.MISMATCHED_IDENTITIES,
                               MmsSmsColumns.SUBSCRIPTION_ID, MmsSmsColumns.EXPIRES_IN, MmsSmsColumns.EXPIRE_STARTED,
                               MmsSmsColumns.NOTIFIED,
@@ -250,6 +253,7 @@ public class MmsSmsDatabase extends Database {
     mmsColumnsPresent.add(MmsSmsColumns.ADDRESS_DEVICE_ID);
     mmsColumnsPresent.add(MmsSmsColumns.DELIVERY_RECEIPT_COUNT);
     mmsColumnsPresent.add(MmsSmsColumns.READ_RECEIPT_COUNT);
+    mmsColumnsPresent.add(MmsSmsColumns.READ_REMINDER);
     mmsColumnsPresent.add(MmsSmsColumns.PINNED);
     mmsColumnsPresent.add(MmsSmsColumns.MISMATCHED_IDENTITIES);
     mmsColumnsPresent.add(MmsSmsColumns.SUBSCRIPTION_ID);
@@ -293,6 +297,7 @@ public class MmsSmsDatabase extends Database {
     smsColumnsPresent.add(MmsSmsColumns.THREAD_ID);
     smsColumnsPresent.add(MmsSmsColumns.DELIVERY_RECEIPT_COUNT);
     smsColumnsPresent.add(MmsSmsColumns.READ_RECEIPT_COUNT);
+    smsColumnsPresent.add(MmsSmsColumns.READ_REMINDER);
     smsColumnsPresent.add(MmsSmsColumns.MISMATCHED_IDENTITIES);
     smsColumnsPresent.add(MmsSmsColumns.SUBSCRIPTION_ID);
     smsColumnsPresent.add(MmsSmsColumns.EXPIRES_IN);

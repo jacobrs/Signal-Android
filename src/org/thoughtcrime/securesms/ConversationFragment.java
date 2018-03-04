@@ -63,6 +63,7 @@ import org.thoughtcrime.securesms.database.model.MessageRecord;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.mms.OutgoingMediaMessage;
 import org.thoughtcrime.securesms.mms.Slide;
+import org.thoughtcrime.securesms.notifications.MessageNotifier;
 import org.thoughtcrime.securesms.profiles.UnknownSenderView;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.sms.MessageSender;
@@ -220,6 +221,11 @@ public class ConversationFragment extends Fragment
           messageRecord.isIdentityVerified() || messageRecord.isIdentityDefault())
       {
         actionMessage = true;
+        break;
+      }
+
+      if(messageRecord.readReminderSet()){
+        menu.findItem(R.id.menu_context_mark_as_unread).setVisible(false);
         break;
       }
     }
@@ -416,6 +422,7 @@ public class ConversationFragment extends Fragment
     });
   }
 
+
   private void handlePinMessage(final MessageRecord messageRecord) {
 	//For every message returned, toggle pin attribute
       if(messageRecord.isMms()){
@@ -432,6 +439,24 @@ public class ConversationFragment extends Fragment
     }else{
       DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
     }
+    
+  private void handleMarkAsUnread(final Set<MessageRecord> messageRecords){
+      final int numberOfMessages = messageRecords.size();
+      DatabaseFactory.getThreadDatabase(getContext()).incrementUnread(threadId, numberOfMessages);
+
+      for(MessageRecord messageRecord : messageRecords) {
+        if (messageRecord.isMms()) {
+          DatabaseFactory.getMmsDatabase(getContext()).setMessagesUnread(threadId, messageRecord.getId());
+        } else {
+          DatabaseFactory.getSmsDatabase(getContext()).setMessagesUnread(threadId, messageRecord.getId());
+        }
+      }
+      MessageNotifier.notifyMessagesPending(this.getContext());
+
+      Intent intent = new Intent(this.getActivity(),ConversationListActivity.class);
+      intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      startActivity(intent);
+      this.getActivity().finish();
   }
 
   @Override
@@ -618,12 +643,20 @@ public class ConversationFragment extends Fragment
 
     @Override
     public void onItemClick(MessageRecord messageRecord) {
+      if(actionMode == null && messageRecord.readReminderSet()) {
+        if (messageRecord.isMms()) {
+          DatabaseFactory.getMmsDatabase(getContext()).removeReadReminder(messageRecord.getThreadId(), messageRecord.getId());
+        } else {
+          DatabaseFactory.getSmsDatabase(getContext()).removeReadReminder(messageRecord.getThreadId(), messageRecord.getId());
+        }
+      }
       if (actionMode != null) {
         ((ConversationAdapter) list.getAdapter()).toggleSelection(messageRecord);
         list.getAdapter().notifyDataSetChanged();
 
         setCorrectMenuVisibility(actionMode.getMenu());
       }
+
     }
 
     @Override
@@ -714,10 +747,10 @@ public class ConversationFragment extends Fragment
 					handleUnpinMessage(getSelectedMessageRecord());
 					actionMode.finish();
 					return true;
-
-
-
-
+        case R.id.menu_context_mark_as_unread:
+          handleMarkAsUnread(getListAdapter().getSelectedItems());
+          actionMode.finish();
+          return true;
       }
 
       return false;

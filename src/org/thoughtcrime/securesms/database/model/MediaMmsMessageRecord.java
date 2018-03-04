@@ -52,11 +52,11 @@ public class MediaMmsMessageRecord extends MmsMessageRecord {
                                int partCount, long mailbox,
                                List<IdentityKeyMismatch> mismatches,
                                List<NetworkFailure> failures, int subscriptionId,
-                               long expiresIn, long expireStarted, int readReceiptCount, int pinned)
+                               long expiresIn, long expireStarted, int readReceiptCount, int markedUnread, int pinned)
   {
     super(context, id, body, conversationRecipient, individualRecipient, recipientDeviceId, dateSent,
           dateReceived, threadId, Status.STATUS_NONE, deliveryReceiptCount, mailbox, mismatches, failures,
-          subscriptionId, expiresIn, expireStarted, slideDeck, readReceiptCount, pinned);
+          subscriptionId, expiresIn, expireStarted, slideDeck, readReceiptCount, markedUnread, pinned);
 
     this.context   = context.getApplicationContext();
     this.partCount = partCount;

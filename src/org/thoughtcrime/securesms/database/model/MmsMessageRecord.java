@@ -22,11 +22,11 @@ public abstract class MmsMessageRecord extends MessageRecord {
                    long type, List<IdentityKeyMismatch> mismatches,
                    List<NetworkFailure> networkFailures, int subscriptionId, long expiresIn,
                    long expireStarted, @NonNull SlideDeck slideDeck, int readReceiptCount,
-                   int pinned)
+                   int markedUnread, int pinned)
   {
     super(context, id, body, conversationRecipient, individualRecipient, recipientDeviceId, dateSent,
             dateReceived, threadId, deliveryStatus, deliveryReceiptCount, type, mismatches, networkFailures,
-            subscriptionId, expiresIn, expireStarted, readReceiptCount, pinned);
+            subscriptionId, expiresIn, expireStarted, readReceiptCount, markedUnread, pinned);
     this.slideDeck = slideDeck;
   }
 
