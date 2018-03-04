@@ -1,4 +1,4 @@
-package org.thoughtcrime.securesms.espressoTests;
+package org.thoughtcrime.securesms;
 
 
 import android.support.test.espresso.ViewInteraction;
