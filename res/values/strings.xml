@@ -1242,7 +1242,7 @@
     <string name="conversation__menu_leave_group">Leave group</string>
     <string name="conversation__menu_view_all_media">All media</string>
     <string name="conversation__menu_conversation_settings">Conversation settings</string>
-    <string name="conversation__menu_pinned_messages">View all pins</string>
+    <string name="conversation__menu_pinned_messages">View pinned messages</string>
 
     <!-- conversation_popup -->
     <string name="conversation_popup__menu_expand_popup">Expand popup</string>
