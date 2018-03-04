@@ -402,8 +402,9 @@
             <category android:name="android.intent.category.DEFAULT"/>
         </intent-filter>
     </activity>
+        <activity android:name=".PinnedMessagesListActivity" />
 
-    <service android:enabled="true" android:name="org.thoughtcrime.securesms.service.WebRtcCallService"/>
+        <service android:enabled="true" android:name="org.thoughtcrime.securesms.service.WebRtcCallService"/>
     <service android:enabled="true" android:name=".service.ApplicationMigrationService"/>
     <service android:enabled="true" android:name=".service.KeyCachingService"/>
     <service android:enabled="true" android:name=".service.MessageRetrievalService"/>

@@ -76,6 +76,21 @@ public class ConversationTitleView extends RelativeLayout {
     }
   }
 
+  public void setCustomeTitle(@NonNull GlideRequests glideRequests, @Nullable Recipient recipient,
+                              @NonNull String customTitle, @NonNull String subtitle) {
+    if      (recipient == null) setComposeTitle();
+    else                        setRecipientTitle(recipient);
+
+    title.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+    if (recipient != null) {
+      this.avatar.setAvatar(glideRequests, recipient, false);
+    }
+    this.title.setText(customTitle);
+    this.subtitle.setVisibility(View.VISIBLE);
+    this.subtitle.setText(subtitle);
+  }
+
   public void setVerified(boolean verified) {
     this.verified.setVisibility(verified ? View.VISIBLE : View.GONE);
   }

@@ -92,6 +92,17 @@ public class MmsSmsDatabase extends Database {
     return cursor;
   }
 
+  public Cursor getConversationPinned(long threadId, long limit) {
+    String order     = MmsSmsColumns.NORMALIZED_DATE_RECEIVED + " DESC";
+    String pinned    = MmsSmsColumns.PINNED + " = 1";
+    String selection = MmsSmsColumns.THREAD_ID + " = " + threadId + " AND " + pinned;
+
+    Cursor cursor = queryTables(PROJECTION, selection, order, Long.valueOf(limit).toString());
+    setNotifyConverationListeners(cursor, threadId);
+
+    return cursor;
+  }
+
   public Cursor getConversation(long threadId) {
     return getConversation(threadId, 0);
   }

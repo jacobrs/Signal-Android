@@ -61,6 +61,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static android.view.View.GONE;
+
 /**
  * A cursor adapter for a conversation thread.  Ultimately
  * used by ComposeMessageActivity to display a conversation
@@ -91,6 +93,7 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
 
   private final Set<MessageRecord> batchSelected = Collections.synchronizedSet(new HashSet<MessageRecord>());
 
+  private final boolean                     onlyPinned;
   private final @Nullable ItemClickListener clickListener;
   private final @NonNull  MasterSecret      masterSecret;
   private final @NonNull  GlideRequests     glideRequests;
@@ -151,6 +154,7 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
       this.db            = null;
       this.calendar      = null;
       this.digest        = MessageDigest.getInstance("SHA1");
+      this.onlyPinned    = false;
     } catch (NoSuchAlgorithmException nsae) {
       throw new AssertionError("SHA1 isn't supported!");
     }
@@ -162,7 +166,18 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
                              @NonNull Locale locale,
                              @Nullable ItemClickListener clickListener,
                              @Nullable Cursor cursor,
-                             @NonNull Recipient recipient)
+                             @NonNull Recipient recipient){
+    this(context, masterSecret, glideRequests, locale, clickListener, cursor, recipient, false);
+  }
+
+  public ConversationAdapter(@NonNull Context context,
+                             @NonNull MasterSecret masterSecret,
+                             @NonNull GlideRequests glideRequests,
+                             @NonNull Locale locale,
+                             @Nullable ItemClickListener clickListener,
+                             @Nullable Cursor cursor,
+                             @NonNull Recipient recipient,
+                             boolean onlyPinned)
   {
     super(context, cursor);
 
@@ -176,6 +191,7 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
       this.db            = DatabaseFactory.getMmsSmsDatabase(context);
       this.calendar      = Calendar.getInstance();
       this.digest        = MessageDigest.getInstance("SHA1");
+      this.onlyPinned    = onlyPinned;
 
       setHasStableIds(true);
     } catch (NoSuchAlgorithmException nsae) {

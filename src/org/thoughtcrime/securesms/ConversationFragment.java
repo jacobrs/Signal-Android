@@ -53,12 +53,11 @@ import android.widget.Toast;
 import org.thoughtcrime.securesms.ConversationAdapter.HeaderViewHolder;
 import org.thoughtcrime.securesms.ConversationAdapter.ItemClickListener;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
-import org.thoughtcrime.securesms.crypto.MasterSecretUnion;
-import org.thoughtcrime.securesms.database.Database;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.MmsSmsDatabase;
 import org.thoughtcrime.securesms.database.RecipientDatabase;
 import org.thoughtcrime.securesms.database.loaders.ConversationLoader;
+import org.thoughtcrime.securesms.database.loaders.ConversationPinnedLoader;
 import org.thoughtcrime.securesms.database.model.MediaMmsMessageRecord;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
 import org.thoughtcrime.securesms.mms.GlideApp;
@@ -87,7 +86,7 @@ public class ConversationFragment extends Fragment
 {
   private static final String TAG = ConversationFragment.class.getSimpleName();
 
-  private static final long   PARTIAL_CONVERSATION_LIMIT = 500L;
+  private static long   PARTIAL_CONVERSATION_LIMIT = 500L;
 
   private final ActionModeCallback actionModeCallback     = new ActionModeCallback();
   private final ItemClickListener  selectionClickListener = new ConversationFragmentItemClickListener();
@@ -108,6 +107,8 @@ public class ConversationFragment extends Fragment
   private View                        composeDivider;
   private View                        scrollToBottomButton;
   private TextView                    scrollDateHeader;
+
+  public boolean                      onlyPinned = false;
 
   @Override
   public void onCreate(Bundle icicle) {
@@ -194,7 +195,7 @@ public class ConversationFragment extends Fragment
 
   private void initializeListAdapter() {
     if (this.recipient != null && this.threadId != -1) {
-      ConversationAdapter adapter = new ConversationAdapter(getActivity(), masterSecret, GlideApp.with(this), locale, selectionClickListener, null, this.recipient);
+      ConversationAdapter adapter = new ConversationAdapter(getActivity(), masterSecret, GlideApp.with(this), locale, selectionClickListener, null, this.recipient, onlyPinned);
       list.setAdapter(adapter);
       list.addItemDecoration(new StickyHeaderDecoration(adapter, false, false));
 
@@ -417,63 +418,74 @@ public class ConversationFragment extends Fragment
 
   private void handlePinMessage(final MessageRecord messageRecord) {
 	//For every message returned, toggle pin attribute
-			if(messageRecord.isMms()){
-					DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsPinned(threadId, messageRecord.getId());
-			}else{
-					DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsPinned(threadId, messageRecord.getId());
-			}
+      if(messageRecord.isMms()){
+        DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsPinned(threadId, messageRecord.getId());
+      }else{
+        DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsPinned(threadId, messageRecord.getId());
+      }
 	}
 
-	private void handleUnpinMessage(final MessageRecord messageRecord) {
-		//For every message returned, toggle pin attribute
-		if(messageRecord.isMms()){
-				DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
-		}else{
-				DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
-		}
-	}
-		
+  private void handleUnpinMessage(final MessageRecord messageRecord) {
+    //For every message returned, toggle pin attribute
+    if(messageRecord.isMms()){
+      DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
+    }else{
+      DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
+    }
+  }
+
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    return new ConversationLoader(getActivity(), threadId, args.getLong("limit", PARTIAL_CONVERSATION_LIMIT), lastSeen);
+    if(!onlyPinned)
+      return new ConversationLoader(getActivity(), threadId, args.getLong("limit", PARTIAL_CONVERSATION_LIMIT), lastSeen);
+    else
+      return new ConversationPinnedLoader(getActivity(), threadId);
   }
 
 
   @Override
   public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
     Log.w(TAG, "onLoadFinished");
-    ConversationLoader loader = (ConversationLoader)cursorLoader;
+    if(!onlyPinned) {
+      ConversationLoader loader = (ConversationLoader) cursorLoader;
 
-    if (list.getAdapter() != null) {
-      if (cursor.getCount() >= PARTIAL_CONVERSATION_LIMIT && loader.hasLimit()) {
-        getListAdapter().setFooterView(loadMoreView);
-      } else {
-        getListAdapter().setFooterView(null);
+      if (list.getAdapter() != null) {
+        if (cursor.getCount() >= PARTIAL_CONVERSATION_LIMIT && loader.hasLimit()) {
+          getListAdapter().setFooterView(loadMoreView);
+        } else {
+          getListAdapter().setFooterView(null);
+        }
+
+        if (lastSeen == -1) {
+          setLastSeen(loader.getLastSeen());
+        }
+
+        if (!loader.hasSent() && !recipient.isSystemContact() && !recipient.isGroupRecipient() && recipient.getRegistered() == RecipientDatabase.RegisteredState.REGISTERED) {
+          getListAdapter().setHeaderView(unknownSenderView);
+        } else {
+          getListAdapter().setHeaderView(null);
+        }
+
+        getListAdapter().changeCursor(cursor);
+
+        int lastSeenPosition = getListAdapter().findLastSeenPosition(lastSeen);
+
+        if (firstLoad) {
+          scrollToLastSeenPosition(lastSeenPosition);
+          firstLoad = false;
+        }
+
+        if (lastSeenPosition <= 0) {
+          setLastSeen(0);
+        }
       }
-
-      if (lastSeen == -1) {
-        setLastSeen(loader.getLastSeen());
-      }
-
-      if (!loader.hasSent() && !recipient.isSystemContact() && !recipient.isGroupRecipient() && recipient.getRegistered() == RecipientDatabase.RegisteredState.REGISTERED) {
-        getListAdapter().setHeaderView(unknownSenderView);
-      } else {
-        getListAdapter().setHeaderView(null);
-      }
-
+    }else{
+      ConversationPinnedLoader loader = (ConversationPinnedLoader) cursorLoader;
       getListAdapter().changeCursor(cursor);
-
-      int lastSeenPosition = getListAdapter().findLastSeenPosition(lastSeen);
-
-      if (firstLoad) {
-        scrollToLastSeenPosition(lastSeenPosition);
-        firstLoad = false;
-      }
-
-      if (lastSeenPosition <= 0) {
-        setLastSeen(0);
-      }
+      getListAdapter().setFooterView(null);
+      getListAdapter().setHeaderView(null);
+      setLastSeen(0);
     }
   }
 
