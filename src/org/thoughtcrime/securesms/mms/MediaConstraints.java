@@ -96,6 +96,9 @@ public abstract class MediaConstraints {
                                      @NonNull Attachment attachment)
           throws IOException
   {
+    if (!MediaUtil.isVideo(attachment)) {
+      throw new UnsupportedOperationException("Cannot resize this content type");
+    }
     try {
       byte [] data = Util.readFully(PartAuthority.getAttachmentStream(context, masterSecret, attachment.getDataUri()));
       String fileName= String.valueOf(Math.abs(Util.getSecureRandom().nextLong()));

@@ -67,7 +67,12 @@ public abstract class SendJob extends MasterSecretJob {
     for (Attachment attachment : attachments) {
       try {
         if(MediaUtil.isVideo(attachment)) {
-          results.add(attachmentDatabase.updateAttachmentData(masterSecret, attachment, constraints.getCompressedVideo(context, masterSecret, attachment)));
+          try {
+            MediaStream compressed = constraints.getCompressedVideo(context, masterSecret, attachment);
+            results.add(attachmentDatabase.updateAttachmentData(masterSecret, attachment, compressed));
+          }catch (Exception e){
+            results.add(attachment);
+          }
         }else if (constraints.isSatisfied(context, masterSecret, attachment)) {
           results.add(attachment);
         } else if (constraints.canResize(attachment)) {
