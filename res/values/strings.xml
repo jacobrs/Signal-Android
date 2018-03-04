@@ -1267,6 +1267,9 @@
     <string name="text_secure_normal__invite_friends">Invite friends</string>
     <string name="text_secure_normal__help">Help</string>
 
+    <string name="unpin_message_menu">Unpin message</string>
+    <string name="pin_message_menu">Pin message</string>
+
     <!-- verify_display_fragment -->
     <string name="verify_display_fragment_context_menu__copy_to_clipboard">Copy to clipboard</string>
     <string name="verify_display_fragment_context_menu__compare_with_clipboard">Compare with clipboard</string>

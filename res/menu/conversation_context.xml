@@ -11,13 +11,13 @@
           android:icon="?menu_info_icon"
           app:showAsAction="always" />
 
-    <item android:title="Pin message"
+    <item android:title="@string/pin_message_menu"
         android:id="@+id/menu_context_pin_message"
         android:icon="?menu_pin_icon"
         android:visible="false"
         app:showAsAction="always" />
 
-    <item android:title="Unpin message"
+    <item android:title="@string/unpin_message_menu"
         android:id="@+id/menu_context_unpin_message"
         android:icon="?menu_unpin_icon"
         android:visible="false"

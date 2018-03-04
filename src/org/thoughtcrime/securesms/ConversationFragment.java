@@ -196,7 +196,7 @@ public class ConversationFragment extends Fragment
 
   private void initializeListAdapter() {
     if (this.recipient != null && this.threadId != -1) {
-      ConversationAdapter adapter = new ConversationAdapter(getActivity(), masterSecret, GlideApp.with(this), locale, selectionClickListener, null, this.recipient, onlyPinned);
+      ConversationAdapter adapter = new ConversationAdapter(getActivity(), masterSecret, GlideApp.with(this), locale, selectionClickListener, null, this.recipient);
       list.setAdapter(adapter);
       list.addItemDecoration(new StickyHeaderDecoration(adapter, false, false));
 
@@ -434,11 +434,12 @@ public class ConversationFragment extends Fragment
 
   private void handleUnpinMessage(final MessageRecord messageRecord) {
     //For every message returned, toggle pin attribute
-    if(messageRecord.isMms()){
+    if (messageRecord.isMms()) {
       DatabaseFactory.getMmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
-    }else{
+    } else {
       DatabaseFactory.getSmsDatabase(getContext()).markMessagesAsUnpinned(threadId, messageRecord.getId());
     }
+  }
     
   private void handleMarkAsUnread(final Set<MessageRecord> messageRecords){
       final int numberOfMessages = messageRecords.size();
