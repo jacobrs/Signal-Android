@@ -62,6 +62,7 @@ import org.thoughtcrime.securesms.util.Dialogs;
 import org.thoughtcrime.securesms.util.PlayServicesUtil;
 import org.thoughtcrime.securesms.util.PlayServicesUtil.PlayServicesStatus;
 import org.thoughtcrime.securesms.util.ServiceUtil;
+import org.thoughtcrime.securesms.util.TestingUtil;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.concurrent.AssertedSuccessListener;
@@ -361,6 +362,12 @@ public class RegistrationActivity extends BaseActionBarActivity implements Verif
 
         registrationState = new RegistrationState(RegistrationState.State.VERIFYING, e164number, result.first, result.second);
         displayVerificationView(e164number, 64);
+
+        if (TestingUtil.isEspressoTest()) {
+            for (int i = 0; i < 6; i++) {
+                verificationCodeView.append(2);
+            }
+        }
       }
     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
   }
@@ -398,16 +405,20 @@ public class RegistrationActivity extends BaseActionBarActivity implements Verif
 
           String signalingKey = Util.getSecret(52);
 
-          accountManager.verifyAccountWithCode(code, signalingKey, registrationId, !registrationState.gcmToken.isPresent());
+          if (!TestingUtil.isEspressoTest()) {
+              accountManager.verifyAccountWithCode(code, signalingKey, registrationId, !registrationState.gcmToken.isPresent());
+          }
 
           IdentityKeyPair    identityKey  = IdentityKeyUtil.getIdentityKeyPair(RegistrationActivity.this);
           List<PreKeyRecord> records      = PreKeyUtil.generatePreKeys(RegistrationActivity.this);
           SignedPreKeyRecord signedPreKey = PreKeyUtil.generateSignedPreKey(RegistrationActivity.this, identityKey, true);
 
-          accountManager.setPreKeys(identityKey.getPublicKey(), signedPreKey, records);
+          if (!TestingUtil.isEspressoTest()) {
+              accountManager.setPreKeys(identityKey.getPublicKey(), signedPreKey, records);
 
-          if (registrationState.gcmToken.isPresent()) {
-            accountManager.setGcmId(registrationState.gcmToken);
+              if (registrationState.gcmToken.isPresent()) {
+                  accountManager.setGcmId(registrationState.gcmToken);
+              }
           }
 
           TextSecurePreferences.setGcmRegistrationId(RegistrationActivity.this, registrationState.gcmToken.orNull());

@@ -193,10 +193,10 @@ public class SaveAttachmentTaskTest extends TextSecureTestCase
                                                 TEST_TIMESTAMP,
                                                 outputFileName);
 
-    Pair<Integer, File> result = saveAttachmentTask.doInBackground(attachment);
+    Pair<Integer, String> result = saveAttachmentTask.doInBackground(attachment);
 
     assertTrue(result.first() == SaveAttachmentTask.SUCCESS);
-    assertEquals(result.second().getAbsolutePath(), outputDir.getAbsolutePath());
+    assertEquals(result.second(), outputDir.getAbsolutePath());
     assertTrue(expectedOutputFile.exists());
   }
 
@@ -233,7 +233,7 @@ public class SaveAttachmentTaskTest extends TextSecureTestCase
   private class TestSaveAttachmentTask extends SaveAttachmentTask {
     private TestSaveAttachmentTask(Context context, MasterSecret masterSecret, View view)
     {
-        super(context, masterSecret, view);
+        super(context, masterSecret, 1);
     }
 
     @Override
