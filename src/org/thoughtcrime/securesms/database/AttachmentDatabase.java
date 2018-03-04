@@ -354,28 +354,7 @@ public class AttachmentDatabase extends Database {
 
     database.update(TABLE_NAME, contentValues, PART_ID_WHERE, attachmentId.toStrings());
   }
-
-  public Attachment updateAttachmentLocation(@NonNull Attachment attachment,
-                                       @Nullable String location)
-  {
-    DatabaseAttachment databaseAttachment = (DatabaseAttachment) attachment;
-
-    return new DatabaseAttachment(databaseAttachment.getAttachmentId(),
-            databaseAttachment.getMmsId(),
-            databaseAttachment.hasData(),
-            databaseAttachment.hasThumbnail(),
-            databaseAttachment.getContentType(),
-            databaseAttachment.getTransferState(),
-            databaseAttachment.getSize(),
-            databaseAttachment.getFileName(),
-            location,
-            databaseAttachment.getKey(),
-            databaseAttachment.getRelay(),
-            databaseAttachment.getDigest(),
-            databaseAttachment.getFastPreflightId(),
-            databaseAttachment.isVoiceNote());
-  }
-
+  
   public void markAttachmentUploaded(long messageId, Attachment attachment) {
     ContentValues  values   = new ContentValues(1);
     SQLiteDatabase database = databaseHelper.getWritableDatabase();
