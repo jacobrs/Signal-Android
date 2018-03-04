@@ -96,7 +96,6 @@ public class MmsDatabaseTest {
             //Verifying that the database update call was passed the right arguments
             assertEquals(tableName, args[0]);
 
-            assert(args[1].getClass().isInstance(ContentValues.class));
             assertEquals(testContents.get("read"), ((ContentValues) args[1]).get("read"));
             assertEquals(testContents.get("marked_unread"), ((ContentValues) args[1]).get("marked_unread"));
 
@@ -145,7 +144,7 @@ public class MmsDatabaseTest {
             //Verifying that the database update call was passed the right arguments
             assertEquals(tableName, args[0]);
 
-            assert(args[1].getClass().isInstance(ContentValues.class));
+
             assertEquals(testContents.get("read"), ((ContentValues) args[1]).get("read"));
             assertEquals(testContents.get("marked_unread"), ((ContentValues) args[1]).get("marked_unread"));
 
@@ -192,7 +191,7 @@ public class MmsDatabaseTest {
             //Verifying that the database update call was passed the right arguments
             assertEquals(tableName, args[0]);
 
-            assert(args[1].getClass().isInstance(ContentValues.class));
+
             assertEquals(testContents.get("read"), ((ContentValues) args[1]).get("read"));
             assertEquals(testContents.get("marked_unread"), ((ContentValues) args[1]).get("marked_unread"));
 
@@ -239,7 +238,6 @@ public class MmsDatabaseTest {
             //Verifying that the database update call was passed the right arguments
             assertEquals(tableName, args[0]);
 
-            assert(args[1].getClass().isInstance(ContentValues.class));
             assertEquals(testContents.get("read"), ((ContentValues) args[1]).get("read"));
             assertEquals(testContents.get("marked_unread"), ((ContentValues) args[1]).get("marked_unread"));
 
@@ -281,7 +279,6 @@ public class MmsDatabaseTest {
             //Verifying that the database update call was passed the right arguments
             assertEquals(tableName, args[0]);
 
-            assert (args[1].getClass().isInstance(ContentValues.class));
             assertEquals(testContents.get("pinned"), ((ContentValues) args[1]).get("pinned"));
 
             assertEquals(dbPinnedString, args[2]);
@@ -326,7 +323,6 @@ public class MmsDatabaseTest {
             //Verifying that the database update call was passed the right arguments
             assertEquals(tableName, args[0]);
 
-            assert (args[1].getClass().isInstance(ContentValues.class));
             assertEquals(testContents.get("pinned"), ((ContentValues) args[1]).get("pinned"));
 
             assertEquals(dbUnpinnedString, args[2]);
