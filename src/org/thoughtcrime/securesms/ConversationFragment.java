@@ -434,7 +434,6 @@ public class ConversationFragment extends Fragment
     }
   }
 
-
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     if(!onlyPinned)
