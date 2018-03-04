@@ -123,6 +123,7 @@ public class ConversationItem extends LinearLayout
   private AvatarImageView    contactPhoto;
   private DeliveryStatusView deliveryStatusIndicator;
   private AlertView          alertView;
+  private ImageView          pinnedIndicator;
 
   private @NonNull  Set<MessageRecord>  batchSelected = new HashSet<>();
   private @NonNull  Recipient           conversationRecipient;
@@ -174,6 +175,7 @@ public class ConversationItem extends LinearLayout
     this.documentViewStub        = new Stub<>(findViewById(R.id.document_view_stub));
     this.expirationTimer         =            findViewById(R.id.expiration_indicator);
     this.groupSenderHolder       =            findViewById(R.id.group_sender_holder);
+    this.pinnedIndicator         =            findViewById(R.id.pinned_indicator);
 
     setOnClickListener(new ClickListener(null));
 
@@ -435,6 +437,7 @@ public class ConversationItem extends LinearLayout
     indicatorText.setVisibility(View.GONE);
 
     insecureImage.setVisibility(messageRecord.isSecure() ? View.GONE : View.VISIBLE);
+    pinnedIndicator.setVisibility(messageRecord.isPinned() ? View.VISIBLE : View.GONE);
     bodyText.setCompoundDrawablesWithIntrinsicBounds(0, 0, messageRecord.isKeyExchange() ? R.drawable.ic_menu_login : 0, 0);
     dateText.setText(DateUtils.getExtendedRelativeTimeSpanString(getContext(), locale, messageRecord.getTimestamp()));
 

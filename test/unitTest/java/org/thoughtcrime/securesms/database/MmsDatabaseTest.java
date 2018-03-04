@@ -30,11 +30,15 @@ public class MmsDatabaseTest {
     private long messageId;
     private int testMarkAsUnreadStatus;
     private boolean messageUnread;
+    private int pinnedStatus;
+    private boolean isPinned;
 
     private String tableName;
 
     private String dbMarkUnreadString;
     private String dbRemoveReadReminder;
+    private String dbPinnedString;
+    private String dbUnpinnedString;
 
     private String[] dbUpdateArgs = new String[2];
 
@@ -45,7 +49,6 @@ public class MmsDatabaseTest {
     private SQLiteOpenHelper mockSqlHelper = PowerMockito.mock(SQLiteOpenHelper.class);
     private Context mockContext = PowerMockito.mock(Context.class);
     private JobManager mockJobManger = PowerMockito.mock(JobManager.class);
-
     private ApplicationContext mockApplicationContext = PowerMockito.mock(ApplicationContext.class);
 
     @Before
@@ -58,6 +61,8 @@ public class MmsDatabaseTest {
 
         dbMarkUnreadString = "thread_id = ? AND _id = ? AND read <> 0 AND read_reminder = 0";
         dbRemoveReadReminder = "thread_id = ? AND _id = ? AND read_reminder <> 0";
+        dbPinnedString = "thread_id = ? AND _id = ? AND pinned = 0";
+        dbUnpinnedString = "thread_id = ? AND _id = ? AND pinned = 1";
 
         dbUpdateArgs[0] = String.valueOf(threadId);
         dbUpdateArgs[1] = String.valueOf(messageId);
@@ -73,6 +78,9 @@ public class MmsDatabaseTest {
     public void resetValues(){
         messageUnread = false;
         testMarkAsUnreadStatus = 0;
+
+        isPinned = false;
+        pinnedStatus = 0;
     }
 
     @Test
@@ -88,7 +96,6 @@ public class MmsDatabaseTest {
             //Verifying that the database update call was passed the right arguments
             assertEquals(tableName, args[0]);
 
-            assert(args[1].getClass().isInstance(ContentValues.class));
             assertEquals(testContents.get("read"), ((ContentValues) args[1]).get("read"));
             assertEquals(testContents.get("marked_unread"), ((ContentValues) args[1]).get("marked_unread"));
 
@@ -137,7 +144,7 @@ public class MmsDatabaseTest {
             //Verifying that the database update call was passed the right arguments
             assertEquals(tableName, args[0]);
 
-            assert(args[1].getClass().isInstance(ContentValues.class));
+
             assertEquals(testContents.get("read"), ((ContentValues) args[1]).get("read"));
             assertEquals(testContents.get("marked_unread"), ((ContentValues) args[1]).get("marked_unread"));
 
@@ -184,7 +191,7 @@ public class MmsDatabaseTest {
             //Verifying that the database update call was passed the right arguments
             assertEquals(tableName, args[0]);
 
-            assert(args[1].getClass().isInstance(ContentValues.class));
+
             assertEquals(testContents.get("read"), ((ContentValues) args[1]).get("read"));
             assertEquals(testContents.get("marked_unread"), ((ContentValues) args[1]).get("marked_unread"));
 
@@ -231,7 +238,6 @@ public class MmsDatabaseTest {
             //Verifying that the database update call was passed the right arguments
             assertEquals(tableName, args[0]);
 
-            assert(args[1].getClass().isInstance(ContentValues.class));
             assertEquals(testContents.get("read"), ((ContentValues) args[1]).get("read"));
             assertEquals(testContents.get("marked_unread"), ((ContentValues) args[1]).get("marked_unread"));
 
@@ -260,7 +266,90 @@ public class MmsDatabaseTest {
         } catch (Exception e) {
             Log.d(TAG, e.getMessage());
         }
+    }
 
+    @Test
+    public void markMessageAsPinnedTest() {
+        MmsDatabase mmsDatabase = new MmsDatabase(mockContext, mockSqlHelper);
+        testContents.put("pinned", 0);
+
+        PowerMockito.doAnswer((Answer) invocation -> {
+            Object[] args = invocation.getArguments();
+
+            //Verifying that the database update call was passed the right arguments
+            assertEquals(tableName, args[0]);
+
+            assertEquals(testContents.get("pinned"), ((ContentValues) args[1]).get("pinned"));
+
+            assertEquals(dbPinnedString, args[2]);
+
+            assert (args[3].getClass().isArray());
+            assertEquals(dbUpdateArgs[0], ((String[]) args[3])[0]);
+            assertEquals(dbUpdateArgs[1], ((String[]) args[3])[1]);
+
+            markAsPinned();
+            return null;
+        }).when(mockSql).update(Matchers.anyString(), Matchers.any(ContentValues.class), Matchers.anyString(), Matchers.any(String[].class));
+
+
+        try {
+            assertEquals(false, isPinned);
+            assertEquals(0, pinnedStatus);
+
+            mmsDatabase.markMessagesAsPinned(threadId, messageId);
+
+            PowerMockito.verifyPrivate(mmsDatabase).invoke("markMessageAsPinned", dbPinnedString, dbUpdateArgs);
+
+            assertEquals(true, isPinned);
+            assertEquals(1, pinnedStatus);
+
+        } catch (Exception e) {
+            Log.d(TAG, e.getMessage());
+        }
+    }
+
+    @Test
+    public void markMessageAsUnpinnedTest() {
+        MmsDatabase mmsDatabase = new MmsDatabase(mockContext, mockSqlHelper);
+        testContents.put("pinned", 1);
+
+        //Set beginning states
+        isPinned = true;
+        pinnedStatus = 1;
+
+        PowerMockito.doAnswer((Answer) invocation -> {
+            Object[] args = invocation.getArguments();
+
+            //Verifying that the database update call was passed the right arguments
+            assertEquals(tableName, args[0]);
+
+            assertEquals(testContents.get("pinned"), ((ContentValues) args[1]).get("pinned"));
+
+            assertEquals(dbUnpinnedString, args[2]);
+
+            assert (args[3].getClass().isArray());
+            assertEquals(dbUpdateArgs[0], ((String[]) args[3])[0]);
+            assertEquals(dbUpdateArgs[1], ((String[]) args[3])[1]);
+
+            markAsUnpinned();
+            return null;
+        }).when(mockSql).update(Matchers.anyString(), Matchers.any(ContentValues.class), Matchers.anyString(), Matchers.any(String[].class));
+
+
+        try {
+            assertEquals(true, isPinned);
+            assertEquals(1, pinnedStatus);
+
+            mmsDatabase.markMessagesAsUnpinned(threadId, messageId);
+
+            PowerMockito.verifyPrivate(mmsDatabase).invoke("markMessageAsUnpinned", dbPinnedString, dbUpdateArgs);
+
+            assertEquals(false, isPinned);
+            assertEquals(0, pinnedStatus);
+
+        } catch (Exception e) {
+            Log.d(TAG, e.getMessage());
+        }
     }
 
     private void markAsUnread(){
@@ -274,6 +363,20 @@ public class MmsDatabaseTest {
         if(messageUnread){
             messageUnread = false;
             testMarkAsUnreadStatus = 0;
+        }
+    }
+
+    private void markAsPinned() {
+        if (!isPinned) {
+            isPinned = true;
+            pinnedStatus = 1;
+        }
+    }
+
+    private void markAsUnpinned() {
+        if (isPinned) {
+            isPinned = false;
+            pinnedStatus = 0;
         }
     }
 }

@@ -144,6 +144,7 @@
                         android:alpha=".7"
                         app:iconColor="?conversation_item_sent_text_secondary_color"/>
 
+
                 <org.thoughtcrime.securesms.components.ExpirationTimerView
                         android:id="@+id/expiration_indicator"
                         app:empty="@drawable/ic_hourglass_empty_white_18dp"
@@ -173,6 +174,20 @@
                            android:tintMode="multiply"
                            android:contentDescription="@string/conversation_item__secure_message_description"
                            tools:visibility="visible"/>
+
+                <ImageView android:id="@+id/pinned_indicator"
+                        android:layout_width="12dp"
+                        android:layout_height="11dp"
+                        android:src="@drawable/ic_pin_white_24dp"
+                        android:visibility="gone"
+                        android:layout_gravity="center_vertical|end"
+                        android:alpha=".6"
+                        android:tint="?attr/conversation_item_sent_text_secondary_color"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
+                        android:tintMode="multiply"
+                        android:contentDescription="@string/conversation_item_sent__message_pinned_description"
+                        tools:visibility="visible"/>
 
             </LinearLayout>
         </LinearLayout>

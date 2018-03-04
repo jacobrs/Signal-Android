@@ -61,6 +61,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static android.view.View.GONE;
+
 /**
  * A cursor adapter for a conversation thread.  Ultimately
  * used by ComposeMessageActivity to display a conversation

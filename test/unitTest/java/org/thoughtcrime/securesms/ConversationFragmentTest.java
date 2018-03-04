@@ -107,6 +107,50 @@ public class ConversationFragmentTest {
         } catch(Exception e){
             Log.d(TAG, e.getMessage());
         }
-
     }
+
+  @Test
+  public void verifyPinningCallsToDB() {
+    //Class being tested
+    ConversationFragment convoFrag = new ConversationFragment();
+
+    //Method to test
+    String handlePin = "handlePinMessage";
+    String handleUnpin = "handleUnpinMessage";
+
+    Set<MessageRecord> mockMsgs = new HashSet<>();
+    mockMsgs.add(mockMessageRecord);
+
+    try {
+      //Sms Messages
+      PowerMockito.when(mockMessageRecord.isMms()).thenReturn(false);
+
+      //Invoke the pin method
+      Whitebox.invokeMethod(convoFrag, handlePin, mockMsgs);
+      long threadId = 100;
+      verify(mockSmsDb).markMessagesAsPinned(threadId, messageId);
+      verify(mockMmsDb, times(0)).markMessagesAsPinned(anyLong(), anyInt());
+
+      //Invoke the unpin method
+      Whitebox.invokeMethod(convoFrag, handleUnpin, mockMsgs);
+      verify(mockSmsDb).markMessagesAsUnpinned(threadId, messageId);
+      verify(mockMmsDb, times(0)).markMessagesAsUnpinned(anyLong(), anyInt());
+
+      //Mms Messages
+      PowerMockito.when(mockMessageRecord.isMms()).thenReturn(true);
+
+      //Invoke the pin method
+      Whitebox.invokeMethod(convoFrag, handlePin, mockMsgs);
+      verify(mockMmsDb).markMessagesAsPinned(threadId, messageId);
+      verify(mockSmsDb, times(0)).markMessagesAsPinned(anyLong(), anyInt());
+
+      //Invoke the unpin method
+      Whitebox.invokeMethod(convoFrag, handleUnpin, mockMsgs);
+      verify(mockMmsDb).markMessagesAsUnpinned(threadId, messageId);
+      verify(mockSmsDb, times(0)).markMessagesAsUnpinned(anyLong(), anyInt());
+
+    } catch (Exception e) {
+      Log.d(TAG, e.getMessage());
+    }
+  }
 }
