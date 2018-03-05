@@ -354,7 +354,7 @@ public class AttachmentDatabase extends Database {
 
     database.update(TABLE_NAME, contentValues, PART_ID_WHERE, attachmentId.toStrings());
   }
-
+  
   public void markAttachmentUploaded(long messageId, Attachment attachment) {
     ContentValues  values   = new ContentValues(1);
     SQLiteDatabase database = databaseHelper.getWritableDatabase();

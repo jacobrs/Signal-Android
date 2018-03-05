@@ -12,11 +12,18 @@ import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.mms.MediaConstraints;
 import org.thoughtcrime.securesms.mms.MediaStream;
 import org.thoughtcrime.securesms.mms.MmsException;
+import org.thoughtcrime.securesms.mms.PartAuthority;
 import org.thoughtcrime.securesms.transport.UndeliverableMessageException;
+import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.Util;
 import org.whispersystems.jobqueue.JobParameters;
+import com.iceteck.silicompressorr.SiliCompressor;
+import org.whispersystems.libsignal.logging.Log;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -59,7 +66,14 @@ public abstract class SendJob extends MasterSecretJob {
 
     for (Attachment attachment : attachments) {
       try {
-        if (constraints.isSatisfied(context, masterSecret, attachment)) {
+        if(MediaUtil.isVideo(attachment)) {
+          try {
+            MediaStream compressed = constraints.getCompressedVideo(context, masterSecret, attachment);
+            results.add(attachmentDatabase.updateAttachmentData(masterSecret, attachment, compressed));
+          }catch (Exception e){
+            results.add(attachment);
+          }
+        }else if (constraints.isSatisfied(context, masterSecret, attachment)) {
           results.add(attachment);
         } else if (constraints.canResize(attachment)) {
           MediaStream resized = constraints.getResizedMedia(context, masterSecret, attachment);
@@ -67,7 +81,7 @@ public abstract class SendJob extends MasterSecretJob {
         } else {
           throw new UndeliverableMessageException("Size constraints could not be met!");
         }
-      } catch (IOException | MmsException e) {
+      } catch (IOException | MmsException e ) {
         throw new UndeliverableMessageException(e);
       }
     }
