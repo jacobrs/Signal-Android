@@ -1086,6 +1086,8 @@
     <string name="preferences__auto_lock_signal_after_a_specified_time_interval_of_inactivity">Auto-lock Signal after a specified time interval of inactivity</string>
     <string name="preferences__inactivity_timeout_passphrase">Inactivity timeout passphrase</string>
     <string name="preferences__inactivity_timeout_interval">Inactivity timeout interval</string>
+    <string name="preferences__enable_fingerprint_authorization">Enable fingerprint authorization</string>
+    <string name="preferences__add_fingerprint_auth_alternative">Add fingerprint authorization alternative</string>
     <string name="preferences__notifications">Notifications</string>
     <string name="preferences__led_color">LED color</string>
     <string name="preferences__led_color_unknown">Unknown</string>
