@@ -82,7 +82,13 @@
                          android:paddingRight="10dp"
                          android:paddingBottom="5dp"/>
         </RelativeLayout>
-
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_fingerprint_black_48dp"
+            android:id="@+id/icon"
+            android:paddingTop="300dp"
+            android:layout_marginBottom="10dp"
+            android:layout_centerInParent="true"/>
     </RelativeLayout>
-
 </ScrollView>
