@@ -53,6 +53,8 @@ public class AppProtectionPreferenceFragment extends CorrectedPreferenceFragment
         .setOnPreferenceClickListener(new BlockedContactsClickListener());
     disablePassphrase
         .setOnPreferenceChangeListener(new DisablePassphraseClickListener());
+    this.findPreference((TextSecurePreferences.FINGERPRINT_AUTHORIZATION_PREF))
+        .setOnPreferenceChangeListener(new FingerprintAuthorizationToggle());
   }
 
   @Override
@@ -139,6 +141,27 @@ public class AppProtectionPreferenceFragment extends CorrectedPreferenceFragment
     }
   }
 
+  private class FingerprintAuthorizationToggle implements Preference.OnPreferenceChangeListener {
+
+    @Override
+    public boolean onPreferenceChange(final Preference preference, Object newValue) {
+      TextSecurePreferences.setFingerprintAuth(getActivity(), (boolean)newValue);
+      return true;
+    }
+  }
+
+  private class ReadReceiptToggleListener implements Preference.OnPreferenceChangeListener {
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+      ApplicationContext.getInstance(getContext())
+          .getJobManager()
+          .add(new MultiDeviceReadReceiptUpdateJob(getContext(), (boolean)newValue));
+
+      return true;
+    }
+
+  }
+
   private class DisablePassphraseClickListener implements Preference.OnPreferenceChangeListener {
 
     @Override
@@ -171,18 +194,6 @@ public class AppProtectionPreferenceFragment extends CorrectedPreferenceFragment
       }
 
       return false;
-    }
-  }
-
-  private class ReadReceiptToggleListener implements Preference.OnPreferenceChangeListener {
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-      boolean enabled = (boolean)newValue;
-      ApplicationContext.getInstance(getContext())
-                        .getJobManager()
-                        .add(new MultiDeviceReadReceiptUpdateJob(getContext(), enabled));
-
-      return true;
     }
   }
 
