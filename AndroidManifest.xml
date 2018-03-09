@@ -18,6 +18,7 @@
     <uses-feature android:name="android.hardware.wifi" android:required="false"/>
     <uses-feature android:name="android.hardware.portrait" android:required="false"/>
     <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
+    <uses-feature android:name="android.hardware.fingerprint" android:required="false"/>
 
     <uses-permission android:name="org.thoughtcrime.securesms.ACCESS_SECRETS"/>
     <uses-permission android:name="android.permission.READ_PROFILE"/>
@@ -87,10 +88,15 @@
     <uses-permission android:name="android.permission.RAISED_THREAD_PRIORITY" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 
+    <!-- For fingerprint auth -->
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+
+
     <permission android:name="org.thoughtcrime.securesms.permission.C2D_MESSAGE"
                 android:protectionLevel="signature" />
     <uses-permission android:name="org.thoughtcrime.securesms.permission.C2D_MESSAGE" />
-
+    <uses-feature android:name="android.hardware.fingerprint"
+        android:required="false"/>
     <application android:name=".ApplicationContext"
                  android:icon="@drawable/icon"
                  android:roundIcon="@drawable/icon_circle"
