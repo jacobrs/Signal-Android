@@ -7,7 +7,7 @@ import android.hardware.fingerprint.FingerprintManager;
  * Created by bryce on 3/9/2018.
  */
 
-public class FinguerprintAuthenticaionUtil {
+public class FinguerprintAuthenticationUtil {
 
     public static boolean isFinguerprintAuthenticaionSupported(Context context){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

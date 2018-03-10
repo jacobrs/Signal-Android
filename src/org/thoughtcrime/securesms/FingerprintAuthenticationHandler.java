@@ -7,7 +7,7 @@ import android.os.Build;
 import android.os.CancellationSignal;
 import android.widget.Toast;
 
-import org.thoughtcrime.securesms.util.FinguerprintAuthenticaionUtil;
+import org.thoughtcrime.securesms.util.FinguerprintAuthenticationUtil;
 
 /**
  * Created by bryce on 3/9/2018.
@@ -25,7 +25,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
 
     public void beginAuthentication(FingerprintManager manager, FingerprintManager.CryptoObject cryptoObject) {
         cancellationSignal = new CancellationSignal();
-        if (!FinguerprintAuthenticaionUtil.isFinguerprintAuthenticaionSupported(context)) {
+        if (!FinguerprintAuthenticationUtil.isFinguerprintAuthenticaionSupported(context)) {
             manager.authenticate(cryptoObject, cancellationSignal, 0, this, null);
         }
     }
