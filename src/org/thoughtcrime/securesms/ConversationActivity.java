@@ -489,6 +489,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     MenuInflater inflater = this.getMenuInflater();
     menu.clear();
 
+    inflater.inflate(R.menu.conversation_search, menu);
+
     if (isSecureText) {
       if (recipient.getExpireMessages() > 0) {
         inflater.inflate(R.menu.conversation_expiring_on, menu);
