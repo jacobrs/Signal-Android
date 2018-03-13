@@ -17,7 +17,6 @@
 package org.thoughtcrime.securesms;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.Editable;
@@ -46,12 +45,13 @@ import org.thoughtcrime.securesms.util.DynamicLanguage;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 
+
 /**
  * Activity that prompts for a user's passphrase.
  *
  * @author Moxie Marlinspike
  */
-public class PassphrasePromptActivity extends PassphraseActivity {
+public class PassphrasePromptActivity extends PassphraseActivity{
 
   private DynamicIntroTheme dynamicTheme    = new DynamicIntroTheme();
   private DynamicLanguage   dynamicLanguage = new DynamicLanguage();
@@ -70,6 +70,10 @@ public class PassphrasePromptActivity extends PassphraseActivity {
 
     setContentView(R.layout.prompt_passphrase_activity);
     initializeResources();
+    if(TextSecurePreferences.getFingerprintAuth(this)){
+      fingerprintImage.setVisibility(View.VISIBLE);
+    }
+    FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(this);
   }
 
   @Override
@@ -157,13 +161,7 @@ public class PassphrasePromptActivity extends PassphraseActivity {
     showButton.setOnClickListener(new ShowButtonOnClickListener());
     hideButton.setOnClickListener(new HideButtonOnClickListener());
     passphraseText.setOnEditorActionListener(new PassphraseActionListener());
-    passphraseText.setImeActionLabel(getString(R.string.prompt_passphrase_activity__unlock),
-                                     EditorInfo.IME_ACTION_DONE);
-
-    if(TextSecurePreferences.getFingerprintAuth(this.getApplicationContext())){
-      fingerprintImage.setVisibility(View.VISIBLE);
-    }
-
+    passphraseText.setImeActionLabel(getString(R.string.prompt_passphrase_activity__unlock), EditorInfo.IME_ACTION_DONE);
   }
 
   private class PassphraseActionListener implements TextView.OnEditorActionListener {
