@@ -12,7 +12,7 @@ import android.widget.Toast;
 import org.thoughtcrime.securesms.crypto.InvalidPassphraseException;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
 import org.thoughtcrime.securesms.crypto.MasterSecretUtil;
-import org.thoughtcrime.securesms.util.FinguerprintAuthenticationUtil;
+import org.thoughtcrime.securesms.util.FingerprintAuthenticationUtil;
 import org.whispersystems.jobqueue.util.Base64;
 
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
 
     public void beginAuthentication(FingerprintManager manager, FingerprintManager.CryptoObject cryptoObject) {
         cancellationSignal = new CancellationSignal();
-        if (!FinguerprintAuthenticationUtil.isFinguerprintAuthenticaionSupported(context)) {
+        if (!FingerprintAuthenticationUtil.isFingerprintAuthenticaionSupported(context)) {
             manager.authenticate(cryptoObject, cancellationSignal, 0, this, null);
         }
     }

@@ -7,9 +7,9 @@ import android.hardware.fingerprint.FingerprintManager;
  * Created by bryce on 3/9/2018.
  */
 
-public class FinguerprintAuthenticationUtil {
+public class FingerprintAuthenticationUtil {
 
-    public static boolean isFinguerprintAuthenticaionSupported(Context context){
+    public static boolean isFingerprintAuthenticaionSupported(Context context){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             FingerprintManager fingerprintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
             return !fingerprintManager.isHardwareDetected() && !fingerprintManager.hasEnrolledFingerprints();
