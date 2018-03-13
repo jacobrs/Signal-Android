@@ -59,7 +59,6 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
 
     public FingerprintAuthenticationHandler(Context context) {
         this.context = context;
-        initializeFingerprintResources();
     }
 
     public void beginAuthentication(FingerprintManager manager, FingerprintManager.CryptoObject cryptoObject) {
@@ -102,14 +101,12 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
         Toast.makeText(context, "Authentication failed", Toast.LENGTH_LONG).show();
     }
 
-    private void initializeFingerprintResources() {
+    public void initializeFingerprintResources() {
         try{
             keyPairGenerator = getKeyPairGenerator();
             cipher = getCipher();
             keyStore = getKeyStore();
-            createKeyPair();
 
-            encrypt("1");
             fingerprintManager = (FingerprintManager) context.getSystemService(FINGERPRINT_SERVICE);
             if (initCipher(Cipher.DECRYPT_MODE)) {
                 cryptoObject = new FingerprintManager.CryptoObject(cipher);
@@ -120,7 +117,17 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
+    public void handlePassphraseChange(String passphrase){
+        try{
+            keyPairGenerator = getKeyPairGenerator();
+            cipher = getCipher();
+            keyStore = getKeyStore();
+            createKeyPair();
+            encrypt(passphrase);
+        } catch (FingerprintAuthenticationHandler.FingerprintException e) {
+            e.printStackTrace();
+        }
+    }
     private void createKeyPair()  throws FingerprintAuthenticationHandler.FingerprintException {
         try {
             keyPairGenerator.initialize(
