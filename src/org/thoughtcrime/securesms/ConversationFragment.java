@@ -107,6 +107,7 @@ public class ConversationFragment extends Fragment
     private View composeDivider;
     private View scrollToBottomButton;
     private TextView scrollDateHeader;
+    private String searchTerm;
 
     public boolean onlyPinned = false;
 
@@ -163,6 +164,10 @@ public class ConversationFragment extends Fragment
         if (list.getAdapter() != null) {
             list.getAdapter().notifyDataSetChanged();
         }
+    }
+
+    public void setSearchTerm(String term) {
+        this.searchTerm = term;
     }
 
     public void onNewIntent() {
