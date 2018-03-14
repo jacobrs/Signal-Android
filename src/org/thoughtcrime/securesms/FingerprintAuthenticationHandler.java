@@ -50,7 +50,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
     public String key;
     private Context context;
     private CancellationSignal cancellationSignal;
-    private static final String KEY_NAME = "yourKey";
+    private static final String KEY_NAME = "fingerprintKey";
     private Cipher cipher;
     private KeyStore keyStore;
     private KeyPairGenerator keyPairGenerator;
@@ -63,7 +63,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
 
     public void beginAuthentication(FingerprintManager manager, FingerprintManager.CryptoObject cryptoObject) {
         cancellationSignal = new CancellationSignal();
-        if (!FingerprintAuthenticationUtil.isFingerprintAuthenticationSupported(context)) {
+        if (FingerprintAuthenticationUtil.isFingerprintAuthenticationSupported(context)) {
             manager.authenticate(cryptoObject, cancellationSignal, 0, this, null);
         }
     }
@@ -71,13 +71,13 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
     @Override
     public void onAuthenticationError(int errorCode, CharSequence errString) {
 
-        Toast.makeText(context, "Authentication error" + System.lineSeparator() + errString, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, R.string.prompt_passphrase_activity__fingerprint_auth_error + System.lineSeparator() + errString, Toast.LENGTH_LONG).show();
 
     }
 
     @Override
     public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-        Toast.makeText(context, "Authentication help"  + System.lineSeparator() + helpString, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, R.string.prompt_passphrase_activity__fingerprint_auth_help + System.lineSeparator() + helpString, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -93,12 +93,12 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
         }
 
         ((PassphrasePromptActivity )this.context ).setMasterSecret(masterSecret);
-        Toast.makeText(context, "Authentication successful: " + password, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, R.string.prompt_passphrase_activity__fingerprint_auth_success, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onAuthenticationFailed() {
-        Toast.makeText(context, "Authentication failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, R.string.prompt_passphrase_activity__fingerprint_auth_fail, Toast.LENGTH_LONG).show();
     }
 
     public void initializeFingerprintResources() {

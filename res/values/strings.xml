@@ -942,6 +942,10 @@
 
     <!-- prompt_passphrase_activity -->
     <string name="prompt_passphrase_activity__unlock">Unlock</string>
+    <string name="prompt_passphrase_activity__fingerprint_auth_error">Authentication Error</string>
+    <string name="prompt_passphrase_activity__fingerprint_auth_help">Authentication Help</string>
+    <string name="prompt_passphrase_activity__fingerprint_auth_success">Authentication Successful</string>
+    <string name="prompt_passphrase_activity__fingerprint_auth_fail">Authentication Failed</string>
 
     <!-- prompt_mms_activity -->
     <string name="prompt_mms_activity__signal_requires_mms_settings_to_deliver_media_and_group_messages">Signal requires MMS settings to deliver media and group messages through your wireless carrier. Your device does not make this information available, which is occasionally true for locked devices and other restrictive configurations.</string>

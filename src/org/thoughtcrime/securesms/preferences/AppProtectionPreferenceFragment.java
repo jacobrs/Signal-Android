@@ -194,6 +194,9 @@ public class AppProtectionPreferenceFragment extends CorrectedPreferenceFragment
             Intent intent = new Intent(getActivity(), KeyCachingService.class);
             intent.setAction(KeyCachingService.DISABLE_ACTION);
             getActivity().startService(intent);
+
+            fingerprintEnabler.getOnPreferenceChangeListener().onPreferenceChange(fingerprintEnabler,false);
+            fingerprintEnabler.setChecked(false);
           }
         });
         builder.setNegativeButton(android.R.string.cancel, null);
