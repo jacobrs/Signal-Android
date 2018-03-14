@@ -63,7 +63,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
 
     public void beginAuthentication(FingerprintManager manager, FingerprintManager.CryptoObject cryptoObject) {
         cancellationSignal = new CancellationSignal();
-        if (!FingerprintAuthenticationUtil.isFingerprintAuthenticaionSupported(context)) {
+        if (!FingerprintAuthenticationUtil.isFingerprintAuthenticationSupported(context)) {
             manager.authenticate(cryptoObject, cancellationSignal, 0, this, null);
         }
     }
