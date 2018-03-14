@@ -72,9 +72,9 @@ public class PassphrasePromptActivity extends PassphraseActivity{
     initializeResources();
     if(TextSecurePreferences.getFingerprintAuth(this)){
       fingerprintImage.setVisibility(View.VISIBLE);
+      FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(this);
+      helper.initializeFingerprintResources();
     }
-    FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(this);
-    helper.initializeFingerprintResources();
   }
 
   @Override

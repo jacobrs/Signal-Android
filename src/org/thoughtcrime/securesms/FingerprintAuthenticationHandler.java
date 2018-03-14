@@ -187,7 +187,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
             initCipher(Cipher.ENCRYPT_MODE);
             byte[] encryptedBytes = cipher.doFinal(password.getBytes());
             String encrypted = Base64.encodeToString(encryptedBytes, Base64.NO_WRAP);
-            context.getSharedPreferences( "org.thoughtcrime.securesms", Context.MODE_PRIVATE).edit().putString("passwordEncrypted", encrypted).commit();
+            context.getSharedPreferences( MasterSecretUtil.PREFERENCES_NAME, Context.MODE_PRIVATE).edit().putString("encryptedPassphrase", encrypted).commit();
         } catch(IllegalBlockSizeException | BadPaddingException | FingerprintException exception) {
             throw new RuntimeException("Failure to encrypt password", exception);
         }
@@ -195,7 +195,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
 
     private String decrypt(Cipher cipher) {
         try {
-            String encrypted =  context.getSharedPreferences( "org.thoughtcrime.securesms", Context.MODE_PRIVATE).getString("passwordEncrypted" , "");
+            String encrypted =  context.getSharedPreferences( MasterSecretUtil.PREFERENCES_NAME, Context.MODE_PRIVATE).getString("encryptedPassphrase" , "");
             byte[] encryptedBytes = Base64.decode(encrypted, Base64.NO_WRAP);
             byte[] outputBytes = cipher.doFinal(encryptedBytes);
             return new String(outputBytes);
