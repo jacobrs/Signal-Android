@@ -70,9 +70,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
 
     @Override
     public void onAuthenticationError(int errorCode, CharSequence errString) {
-
         Toast.makeText(context, R.string.prompt_passphrase_activity__fingerprint_auth_error + System.lineSeparator() + errString, Toast.LENGTH_LONG).show();
-
     }
 
     @Override
@@ -82,7 +80,6 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
 
     @Override
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-        //encrypt("1");
         Cipher cipher = result.getCryptoObject().getCipher();
         String password = decrypt(cipher);
         MasterSecret masterSecret = null;
@@ -204,7 +201,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
         }
     }
 
-    private class FingerprintException extends Exception {
+    public class FingerprintException extends Exception {
         public FingerprintException(Exception e) {
             super(e);
         }
