@@ -50,7 +50,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
     public String key;
     private Context context;
     private CancellationSignal cancellationSignal;
-    private static final String KEY_NAME = "yourKey";
+    private static final String KEY_NAME = "fingerprintKey";
     private Cipher cipher;
     private KeyStore keyStore;
     private KeyPairGenerator keyPairGenerator;
@@ -70,9 +70,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
 
     @Override
     public void onAuthenticationError(int errorCode, CharSequence errString) {
-
         Toast.makeText(context, "Authentication error" + System.lineSeparator() + errString, Toast.LENGTH_LONG).show();
-
     }
 
     @Override
@@ -204,7 +202,7 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
         }
     }
 
-    private class FingerprintException extends Exception {
+    public class FingerprintException extends Exception {
         public FingerprintException(Exception e) {
             super(e);
         }
