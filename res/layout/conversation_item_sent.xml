@@ -189,6 +189,21 @@
                         android:contentDescription="@string/conversation_item_sent__message_pinned_description"
                         tools:visibility="visible"/>
 
+                <ImageView
+                    android:id="@+id/read_reminder"
+                    android:layout_width="12dp"
+                    android:layout_height="11dp"
+                    android:src="@drawable/icon_notification"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:layout_gravity="center_vertical|end"
+                    android:alpha=".6"
+                    android:tint="?attr/conversation_item_sent_text_secondary_color"
+                    android:tintMode="multiply"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginStart="3dp"
+                    android:contentDescription="@string/conversation_item_read_reminder" />
+
             </LinearLayout>
         </LinearLayout>
 

@@ -124,6 +124,7 @@ public class ConversationItem extends LinearLayout
   private DeliveryStatusView deliveryStatusIndicator;
   private AlertView          alertView;
   private ImageView          pinnedIndicator;
+  private ImageView          readReminder;
 
   private @NonNull  Set<MessageRecord>  batchSelected = new HashSet<>();
   private @NonNull  Recipient           conversationRecipient;
@@ -176,6 +177,7 @@ public class ConversationItem extends LinearLayout
     this.expirationTimer         =            findViewById(R.id.expiration_indicator);
     this.groupSenderHolder       =            findViewById(R.id.group_sender_holder);
     this.pinnedIndicator         =            findViewById(R.id.pinned_indicator);
+    this.readReminder            =            findViewById(R.id.read_reminder);
 
     setOnClickListener(new ClickListener(null));
 
@@ -454,7 +456,7 @@ public class ConversationItem extends LinearLayout
       else if (messageRecord.isDelivered())  deliveryStatusIndicator.setDelivered();
       else                                   deliveryStatusIndicator.setSent();
 
-      if      (messageRecord.readReminderSet())  setUnreadStatusIcons();
+      readReminder.setVisibility(messageRecord.readReminderSet() ? View.VISIBLE : View.GONE);
     }
   }
 
@@ -527,7 +529,7 @@ public class ConversationItem extends LinearLayout
   }
 
   private void setUnreadStatusIcons(){
-    alertView.setUnread();
+    ;
   }
 
   private void setMinimumWidth() {
@@ -679,8 +681,6 @@ public class ConversationItem extends LinearLayout
         handleApproveIdentity();
       } else if (messageRecord.isPendingInsecureSmsFallback()) {
         handleMessageApproval();
-      } else if(messageRecord.readReminderSet()){
-        alertView.setNone();
       }
     }
   }
