@@ -528,10 +528,6 @@ public class ConversationItem extends LinearLayout
     indicatorText.setText(R.string.ConversationItem_click_to_approve_unencrypted);
   }
 
-  private void setUnreadStatusIcons(){
-    ;
-  }
-
   private void setMinimumWidth() {
     if (indicatorText.getVisibility() == View.VISIBLE && indicatorText.getText() != null) {
       final float density = getResources().getDisplayMetrics().density;
