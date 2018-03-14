@@ -445,8 +445,6 @@ public class ConversationItem extends LinearLayout
       setFailedStatusIcons();
     } else if (messageRecord.isPendingInsecureSmsFallback()) {
       setFallbackStatusIcons();
-    } else if(messageRecord.readReminderSet()) {
-      setUnreadStatusIcons();
     }else {
       alertView.setNone();
 
@@ -455,6 +453,8 @@ public class ConversationItem extends LinearLayout
       else if (messageRecord.isRemoteRead()) deliveryStatusIndicator.setRead();
       else if (messageRecord.isDelivered())  deliveryStatusIndicator.setDelivered();
       else                                   deliveryStatusIndicator.setSent();
+
+      if      (messageRecord.readReminderSet())  setUnreadStatusIcons();
     }
   }
 
