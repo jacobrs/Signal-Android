@@ -1,7 +1,11 @@
 package org.thoughtcrime.securesms.util;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.contrib.RecyclerViewActions;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiSelector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -16,9 +20,12 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
+import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
@@ -56,7 +63,18 @@ public class ConversationActions {
 
     public static void enableSignalForSMS() {
         onView(withText("Enable Signal for SMS")).withFailureHandler((error, viewMatcher) -> System.out.println("Already enabled to default SMS.")).perform(click());
-        onView(withText("Yes")).withFailureHandler((error, viewMatcher) -> System.out.println("Already enabled to default SMS.")).perform(click());
+        // Initialize UiDevice instance
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
+        // Search for correct button in the dialog and click it.
+        try {
+            UiObject button = uiDevice.findObject(new UiSelector().text("YES"));
+            if (button.exists() && button.isEnabled()) {
+                button.click();
+            }
+        } catch (Exception e) {
+            System.out.println("Already enabled");
+        }
     }
 
     public static void sendMessage(String message) {
@@ -76,14 +94,43 @@ public class ConversationActions {
                         isDisplayed()));
         composeText3.perform(closeSoftKeyboard());
 
-        onView(withId(R.id.send_button)).perform(click());
+        // Initialize UiDevice instance
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
+        try {
+            UiObject button = uiDevice.findObject(new UiSelector().resourceId("org.thoughtcrime.securesms:id/send_button"));
+            button.waitForExists(3000);
+            if (button.isEnabled()) {
+                button.click();
+            }
+        } catch (Exception e) {
+            System.out.println("Already enabled");
+        }
+    }
+
+    public static void openSettingsDropDown() {
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
     }
 
     public static void openConversationSettings() {
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        openSettingsDropDown();
 
         ViewInteraction appCompatTextView2 = onView(
                 allOf(withId(R.id.title), withText("Conversation settings"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.support.v7.view.menu.ListMenuItemView")),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatTextView2.perform(click());
+    }
+
+    public static void openViewPinnedMessages() {
+        openSettingsDropDown();
+
+        ViewInteraction appCompatTextView2 = onView(
+                allOf(withId(R.id.title), withText("View pinned messages"),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.support.v7.view.menu.ListMenuItemView")),
@@ -120,6 +167,35 @@ public class ConversationActions {
         appCompatButton2.perform(scrollTo(), click());
     }
 
+    public static void pinLastMessage() {
+        longPressMessageAt(0);
+
+        ViewInteraction actionMenuItemView = onView(
+                allOf(withId(R.id.menu_context_pin_message), withContentDescription("Pin message"),
+                        isDisplayed()));
+        actionMenuItemView.perform(click());
+    }
+
+    public static void unpinLastMessage() {
+        longPressMessageAt(0);
+
+        ViewInteraction actionMenuItemView = onView(
+                allOf(withId(R.id.menu_context_unpin_message), withContentDescription("Unpin message"),
+                        isDisplayed()));
+        actionMenuItemView.perform(click());
+    }
+
+    public static void longPressMessageAt(int i) {
+        ViewInteraction recyclerView2 = onView(
+                allOf(withId(android.R.id.list)));
+        recyclerView2.perform(actionOnItemAtPosition(i, longClick()));
+    }
+
+    public static void pressMessageAt(int i) {
+        ViewInteraction recyclerView2 = onView(
+                allOf(withId(android.R.id.list)));
+        recyclerView2.perform(actionOnItemAtPosition(i, click()));
+    }
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {

@@ -1,7 +1,9 @@
 package org.thoughtcrime.securesms.espressoTests;
 
+import android.Manifest;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 import org.junit.Rule;
@@ -20,7 +22,7 @@ import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class ConversationListActivityTest {
+public class ConversationChatNameTest {
 
     @Rule
     public ActivityTestRule<ConversationListActivity> mActivityTestRule = new ActivityTestRule<>(ConversationListActivity.class);
