@@ -185,6 +185,13 @@ public class ConversationActions {
         actionMenuItemView.perform(click());
     }
 
+    public static void markAsUnread() {
+        ViewInteraction actionMenuItemView = onView(
+                allOf(withId(R.id.menu_context_mark_as_unread),
+                        isDisplayed()));
+        actionMenuItemView.perform(click());
+    }
+
     public static void longPressMessageAt(int i) {
         ViewInteraction recyclerView2 = onView(
                 allOf(withId(android.R.id.list)));
