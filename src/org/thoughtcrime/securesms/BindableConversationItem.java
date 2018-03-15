@@ -1,6 +1,7 @@
 package org.thoughtcrime.securesms;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.thoughtcrime.securesms.crypto.MasterSecret;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
@@ -17,6 +18,14 @@ public interface BindableConversationItem extends Unbindable {
             @NonNull Locale locale,
             @NonNull Set<MessageRecord> batchSelected,
             @NonNull Recipient recipients);
+
+  void bind(@NonNull MasterSecret masterSecret,
+            @NonNull MessageRecord messageRecord,
+            @NonNull GlideRequests glideRequests,
+            @NonNull Locale locale,
+            @NonNull Set<MessageRecord> batchSelected,
+            @NonNull Recipient recipients,
+            @Nullable String searchTerm);
 
   MessageRecord getMessageRecord();
 }

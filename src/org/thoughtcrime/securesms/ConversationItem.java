@@ -191,7 +191,8 @@ public class ConversationItem extends LinearLayout
                    @NonNull GlideRequests      glideRequests,
                    @NonNull Locale             locale,
                    @NonNull Set<MessageRecord> batchSelected,
-                   @NonNull Recipient          conversationRecipient)
+                   @NonNull Recipient          conversationRecipient,
+                   @Nullable String            searchTerm)
   {
     this.masterSecret           = masterSecret;
     this.messageRecord          = messageRecord;
@@ -215,6 +216,22 @@ public class ConversationItem extends LinearLayout
     setMinimumWidth();
     setSimInfo(messageRecord);
     setExpiration(messageRecord);
+
+    if(searchTerm != null && !messageRecord.getDisplayBody().toString().contains(searchTerm)){
+      bodyBubble.setVisibility(View.GONE);
+    }else{
+      bodyBubble.setVisibility(View.VISIBLE);
+    }
+  }
+
+  @Override
+  public void bind(@NonNull MasterSecret masterSecret,
+                   @NonNull MessageRecord messageRecord,
+                   @NonNull GlideRequests glideRequests,
+                   @NonNull Locale locale,
+                   @NonNull Set<MessageRecord> batchSelected,
+                   @NonNull Recipient recipients) {
+     bind(masterSecret, messageRecord, glideRequests, locale, batchSelected, recipients, null);
   }
 
   @Override

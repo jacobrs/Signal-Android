@@ -26,8 +26,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -60,8 +58,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import static android.view.View.GONE;
 
 /**
  * A cursor adapter for a conversation thread.  Ultimately
@@ -102,6 +98,8 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
   private final @NonNull  LayoutInflater    inflater;
   private final @NonNull  Calendar          calendar;
   private final @NonNull  MessageDigest     digest;
+
+  private @Nullable String searchTerm;
 
   protected static class ViewHolder extends RecyclerView.ViewHolder {
     public <V extends View & BindableConversationItem> ViewHolder(final @NonNull V itemView) {
@@ -164,7 +162,18 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
                              @NonNull Locale locale,
                              @Nullable ItemClickListener clickListener,
                              @Nullable Cursor cursor,
-                             @NonNull Recipient recipient)
+                             @NonNull Recipient recipient){
+    this(context, masterSecret, glideRequests, locale, clickListener, cursor, recipient, null);
+  }
+
+  public ConversationAdapter(@NonNull Context context,
+                             @NonNull MasterSecret masterSecret,
+                             @NonNull GlideRequests glideRequests,
+                             @NonNull Locale locale,
+                             @Nullable ItemClickListener clickListener,
+                             @Nullable Cursor cursor,
+                             @NonNull Recipient recipient,
+                             @Nullable String searchTerm)
   {
     super(context, cursor);
 
@@ -178,6 +187,7 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
       this.db            = DatabaseFactory.getMmsSmsDatabase(context);
       this.calendar      = Calendar.getInstance();
       this.digest        = MessageDigest.getInstance("SHA1");
+      this.searchTerm    = searchTerm;
 
       setHasStableIds(true);
     } catch (NoSuchAlgorithmException nsae) {
@@ -192,10 +202,14 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
     super.changeCursor(cursor);
   }
 
+  public void changeSearchTerm(String term) {
+    this.searchTerm = term;
+  }
+
   @Override
   protected void onBindItemViewHolder(ViewHolder viewHolder, @NonNull MessageRecord messageRecord) {
     long start = System.currentTimeMillis();
-    viewHolder.getView().bind(masterSecret, messageRecord, glideRequests, locale, batchSelected, recipient);
+    viewHolder.getView().bind(masterSecret, messageRecord, glideRequests, locale, batchSelected, recipient, searchTerm);
     Log.w(TAG, "Bind time: " + (System.currentTimeMillis() - start));
   }
 

@@ -58,6 +58,7 @@ import org.thoughtcrime.securesms.database.MmsSmsDatabase;
 import org.thoughtcrime.securesms.database.RecipientDatabase;
 import org.thoughtcrime.securesms.database.loaders.ConversationLoader;
 import org.thoughtcrime.securesms.database.loaders.ConversationPinnedLoader;
+import org.thoughtcrime.securesms.database.loaders.ConversationSearchResultLoader;
 import org.thoughtcrime.securesms.database.model.MediaMmsMessageRecord;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
 import org.thoughtcrime.securesms.mms.GlideApp;
@@ -68,6 +69,7 @@ import org.thoughtcrime.securesms.profiles.UnknownSenderView;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.sms.MessageSender;
 import org.thoughtcrime.securesms.sms.OutgoingTextMessage;
+import org.thoughtcrime.securesms.util.AbstractCursorLoader;
 import org.thoughtcrime.securesms.util.SaveAttachmentTask;
 import org.thoughtcrime.securesms.util.SaveAttachmentTask.Attachment;
 import org.thoughtcrime.securesms.util.StickyHeaderDecoration;
@@ -168,6 +170,7 @@ public class ConversationFragment extends Fragment
 
     public void setSearchTerm(String term) {
         this.searchTerm = term;
+        getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
     }
 
     public void onNewIntent() {
@@ -463,17 +466,19 @@ public class ConversationFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (!onlyPinned)
-            return new ConversationLoader(getActivity(), threadId, args.getLong("limit", PARTIAL_CONVERSATION_LIMIT), lastSeen);
-        else
+        if (onlyPinned)
             return new ConversationPinnedLoader(getActivity(), threadId);
+        else if (searchTerm != null && !searchTerm.equals(""))
+            return new ConversationSearchResultLoader(getActivity(), threadId, searchTerm);
+        else
+            return new ConversationLoader(getActivity(), threadId, args.getLong("limit", PARTIAL_CONVERSATION_LIMIT), lastSeen);
     }
 
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         Log.w(TAG, "onLoadFinished");
-        if (!onlyPinned) {
+        if (!onlyPinned && (searchTerm == null || searchTerm.equals(""))) {
             ConversationLoader loader = (ConversationLoader) cursorLoader;
 
             if (list.getAdapter() != null) {
@@ -507,8 +512,9 @@ public class ConversationFragment extends Fragment
                 }
             }
         } else {
-            ConversationPinnedLoader loader = (ConversationPinnedLoader) cursorLoader;
             getListAdapter().changeCursor(cursor);
+            if(searchTerm != null)
+                getListAdapter().changeSearchTerm(searchTerm);
             getListAdapter().setFooterView(null);
             getListAdapter().setHeaderView(null);
             setLastSeen(0);
