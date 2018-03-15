@@ -1,5 +1,9 @@
 package org.thoughtcrime.securesms.util;
 
+import android.support.test.InstrumentationRegistry;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiSelector;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -25,5 +29,11 @@ public class GenericUtil {
                 return parentMatcher.matches(view.getParent()) && group.getChildAt(childPosition).equals(view);
             }
         };
+    }
+
+    public static void waitFor(String resourceId, long interval) {
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiObject button = uiDevice.findObject(new UiSelector().resourceId(resourceId));
+        button.waitForExists(interval);
     }
 }
