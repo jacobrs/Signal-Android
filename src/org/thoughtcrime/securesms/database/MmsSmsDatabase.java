@@ -104,16 +104,6 @@ public class MmsSmsDatabase extends Database {
     return cursor;
   }
 
-  public Cursor getConversationSearched(long threadId, String search) {
-    String order      = MmsSmsColumns.NORMALIZED_DATE_RECEIVED + " DESC";
-    String selection  = MmsSmsColumns.THREAD_ID + " = " + threadId;
-
-    Cursor cursor = queryTables(PROJECTION, selection, order, String.valueOf(Long.MAX_VALUE));
-    setNotifyConverationListeners(cursor, threadId);
-
-    return cursor;
-  }
-
   public Cursor getConversation(long threadId) {
     return getConversation(threadId, 0);
   }

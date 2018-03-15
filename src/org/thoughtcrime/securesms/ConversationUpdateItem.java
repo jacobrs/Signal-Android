@@ -80,10 +80,11 @@ public class ConversationUpdateItem extends LinearLayout
     this.batchSelected = batchSelected;
 
     bind(messageRecord, locale);
-    if(searchTerm != null){
-      findViewById(R.id.conversation_update_item).setVisibility(GONE);
-    }else{
-      findViewById(R.id.conversation_update_item).setVisibility(VISIBLE);
+    if(searchTerm != null && !searchTerm.equals("")){
+      // GONE doesn't work in this scenario hence the layout params
+      this.setLayoutParams(new LayoutParams(0,0));
+    } else {
+      this.setVisibility(VISIBLE);
     }
   }
 

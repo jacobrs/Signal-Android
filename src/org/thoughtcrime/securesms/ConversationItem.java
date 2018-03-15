@@ -217,9 +217,10 @@ public class ConversationItem extends LinearLayout
     setSimInfo(messageRecord);
     setExpiration(messageRecord);
 
-    if(searchTerm != null && !messageRecord.getDisplayBody().toString().contains(searchTerm)){
+    if (searchTerm != null && !searchTerm.equals("") &&
+        !messageRecord.getDisplayBody().toString().toLowerCase().contains(searchTerm.toLowerCase())) {
       bodyBubble.setVisibility(View.GONE);
-    }else{
+    } else {
       bodyBubble.setVisibility(View.VISIBLE);
     }
   }

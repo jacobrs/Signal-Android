@@ -202,7 +202,7 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
     super.changeCursor(cursor);
   }
 
-  public void changeSearchTerm(String term) {
+  void changeSearchTerm(String term) {
     this.searchTerm = term;
   }
 
@@ -374,11 +374,12 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
 
   @Override
   public long getHeaderId(int position) {
-    if (!isActiveCursor())          return -1;
-    if (isHeaderPosition(position)) return -1;
-    if (isFooterPosition(position)) return -1;
-    if (position >= getItemCount()) return -1;
-    if (position < 0)               return -1;
+    if (!isActiveCursor())                            return -1;
+    if (isHeaderPosition(position))                   return -1;
+    if (isFooterPosition(position))                   return -1;
+    if (position >= getItemCount())                   return -1;
+    if (position < 0)                                 return -1;
+    if (searchTerm != null && !searchTerm.equals("")) return -1;
 
     MessageRecord record = getRecordForPositionOrThrow(position);
 
@@ -431,6 +432,7 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
 
     @Override
     protected boolean hasHeader(RecyclerView parent, StickyHeaderAdapter stickyAdapter, int position) {
+
       if (!adapter.isActiveCursor()) {
         return false;
       }

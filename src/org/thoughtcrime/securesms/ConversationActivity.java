@@ -545,14 +545,19 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       @Override
       public boolean onQueryTextSubmit(String query) {
         fragment.setSearchTerm(query);
-        return false;
+        return true;
       }
 
       @Override
       public boolean onQueryTextChange(String newText) {
         fragment.setSearchTerm(newText);
-        return false;
+        return true;
       }
+    });
+
+    searchView.setOnCloseListener(() -> {
+      fragment.setSearchTerm(null);
+      return true;
     });
 
     super.onPrepareOptionsMenu(menu);
