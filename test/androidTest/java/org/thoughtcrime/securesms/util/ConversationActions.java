@@ -26,10 +26,13 @@ import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withParent;
+import static android.support.test.espresso.matcher.ViewMatchers.withResourceName;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
@@ -38,11 +41,6 @@ public class ConversationActions {
     public static void createNewConversation(String number) {
         ViewInteraction pulsingFloatingActionButton = onView(
                 allOf(withId(R.id.fab), withContentDescription("New conversation"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.fragment_container),
-                                        0),
-                                3),
                         isDisplayed()));
         pulsingFloatingActionButton.perform(click());
 
@@ -58,6 +56,11 @@ public class ConversationActions {
         appCompatEditText3.perform(replaceText("5144022093"), closeSoftKeyboard());
 
         onView(withId(R.id.recycler_view))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+    }
+
+    public static void goToConversation(String number) {
+        onView(withResourceName("list"))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
     }
 

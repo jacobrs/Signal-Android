@@ -38,6 +38,8 @@ public class ConversationChatNameTest {
                 allOf(withId(R.id.title), isDisplayed()));
         textView2.check(matches(withText("test")));
 
+        ConversationActions.openConversationSettings();
+        ConversationActions.changeChatName("");
     }
 
     @Test

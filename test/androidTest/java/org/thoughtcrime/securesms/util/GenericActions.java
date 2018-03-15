@@ -20,12 +20,6 @@ public class GenericActions {
     public static void pressBack() {
         ViewInteraction appCompatImageButton = onView(
                 allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withId(R.id.collapsing_toolbar),
-                                                3)),
-                                1),
                         isDisplayed()));
         appCompatImageButton.perform(click());
     }
