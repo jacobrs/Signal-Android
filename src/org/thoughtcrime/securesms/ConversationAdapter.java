@@ -432,7 +432,6 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
 
     @Override
     protected boolean hasHeader(RecyclerView parent, StickyHeaderAdapter stickyAdapter, int position) {
-
       if (!adapter.isActiveCursor()) {
         return false;
       }
