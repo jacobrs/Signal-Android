@@ -53,7 +53,7 @@ public class ConversationActions {
                                                 0)),
                                 0),
                         isDisplayed()));
-        appCompatEditText.perform(replaceText("5144022093"), closeSoftKeyboard());
+        appCompatEditText.perform(replaceText(number), closeSoftKeyboard());
 
         onView(withId(R.id.recycler_view))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));

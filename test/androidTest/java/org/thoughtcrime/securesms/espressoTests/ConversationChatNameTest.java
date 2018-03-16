@@ -52,7 +52,7 @@ public class ConversationChatNameTest {
 
         ViewInteraction textView2 = onView(
                 allOf(withId(R.id.title), isDisplayed()));
-        textView2.check(matches(withText("+1123456")));
+        textView2.check(matches(withText("+15555123456")));
 
     }
 }

@@ -39,7 +39,7 @@ public class MarkMessageAsUnreadTest {
         ConversationActions.sendMessage("Sup?");
         ConversationActions.longPressMessageAt(0);
         ConversationActions.markAsUnread();
-        ConversationActions.goToConversation("+1123456");
+        ConversationActions.goToConversation("+15555123456");
         Expectations.checkIsShowingDescendantWithId(EspressoUtil.nthChildOf(withId(android.R.id.list), 0), R.id.read_reminder);
     }
 
@@ -52,7 +52,7 @@ public class MarkMessageAsUnreadTest {
         ConversationActions.longPressMessageAt(0);
         ConversationActions.pressMessageAt(1);
         ConversationActions.markAsUnread();
-        ConversationActions.goToConversation("+1123456");
+        ConversationActions.goToConversation("+15555123456");
         Expectations.checkIsShowingDescendantWithId(EspressoUtil.nthChildOf(withId(android.R.id.list), 0), R.id.read_reminder);
         Expectations.checkIsShowingDescendantWithId(EspressoUtil.nthChildOf(withId(android.R.id.list), 1), R.id.read_reminder);
     }
@@ -64,7 +64,7 @@ public class MarkMessageAsUnreadTest {
         ConversationActions.sendMessage("Sup?");
         ConversationActions.longPressMessageAt(0);
         ConversationActions.markAsUnread();
-        ConversationActions.goToConversation("+1123456");
+        ConversationActions.goToConversation("+15555123456");
         ConversationActions.longPressMessageAt(0);
         Expectations.checkDoesNotExist(R.id.menu_context_mark_as_unread);
     }
@@ -77,7 +77,7 @@ public class MarkMessageAsUnreadTest {
         ConversationActions.sendMessage("Sup?");
         ConversationActions.longPressMessageAt(0);
         ConversationActions.markAsUnread();
-        ConversationActions.goToConversation("+1123456");
+        ConversationActions.goToConversation("+15555123456");
         ConversationActions.longPressMessageAt(0);
         ConversationActions.pressMessageAt(1);
         Expectations.checkDoesNotExist(R.id.menu_context_mark_as_unread);
@@ -102,7 +102,7 @@ public class MarkMessageAsUnreadTest {
         ConversationActions.sendMessage("Sup?");
         ConversationActions.longPressMessageAt(0);
         ConversationActions.markAsUnread();
-        ConversationActions.goToConversation("+1123456");
+        ConversationActions.goToConversation("+15555123456");
         ConversationActions.pressMessageAt(0);
         Expectations.checkIsNotShowingDescendantWithId(EspressoUtil.nthChildOf(withId(android.R.id.list), 0), R.id.read_reminder);
     }
