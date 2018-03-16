@@ -16,7 +16,7 @@ import javax.crypto.Cipher;
 import static junit.framework.Assert.assertFalse;
 
 
-public class FingerprintTestAuthentication extends BaseUnitTest {
+public class FingerprintAuthenticationUnitTest extends BaseUnitTest {
     @Test
     public void cipherTest() {
         Context mockContext = PowerMockito.mock(Context.class);
