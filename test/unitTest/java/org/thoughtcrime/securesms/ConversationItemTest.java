@@ -56,7 +56,7 @@ public class ConversationItemTest extends BaseUnitTest {
 
         mockStatic(SpannableString.class);
         SpannableString testSpannable = new SpannableString("Testing the highlighting method");
-        SpannableString expectedResult = new SpannableString("test");
+        SpannableString expectedResult = new SpannableString("Testing the highlighting method");
 
         String searchTerm = "test";
         expectedResult.setSpan(new BackgroundColorSpan(0x55FFFF00), 0, searchTerm.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -65,6 +65,14 @@ public class ConversationItemTest extends BaseUnitTest {
            SpannableString testResult = Whitebox.invokeMethod(conversationItem, "highlightSearchTerm", testSpannable, searchTerm);
            //Checks the string and the span of the test result
            assert(expectedResult.equals(testResult));
+
+           testSpannable = new SpannableString("TESTING for case sensitivity");
+           testResult = Whitebox.invokeMethod(conversationItem, "highlightSearchTerm", testSpannable, searchTerm);
+
+           //Expected result should still be the same
+           assert(expectedResult.equals(testResult));
+
+
         }catch(Exception e){
             Log.d(ConversationItemTest.class.getSimpleName(), e.getMessage());
         }
