@@ -40,17 +40,13 @@ import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 import static android.content.Context.FINGERPRINT_SERVICE;
 
-/**
- * Created by bryce on 3/9/2018.
- */
-
 @TargetApi(Build.VERSION_CODES.M)
 public class FingerprintAuthenticationHandler extends FingerprintManager.AuthenticationCallback{
 
+    private static final String KEY_NAME = "fingerprintKey";
     public String key;
     private Context context;
     private CancellationSignal cancellationSignal;
-    private static final String KEY_NAME = "fingerprintKey";
     private Cipher cipher;
     private KeyStore keyStore;
     private KeyPairGenerator keyPairGenerator;
@@ -151,7 +147,9 @@ public class FingerprintAuthenticationHandler extends FingerprintManager.Authent
                 cipher.init(opmode, key);
             }
             return true;
-        } catch (NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException | InvalidKeyException | InvalidKeySpecException | InvalidAlgorithmParameterException  | KeyStoreException e) {
+        } catch (NoSuchAlgorithmException | CertificateException | IOException
+                | UnrecoverableKeyException | InvalidKeyException | InvalidKeySpecException
+                | InvalidAlgorithmParameterException  | KeyStoreException e) {
             throw new FingerprintException("Failure to initialize cipher", e);
         }
     }

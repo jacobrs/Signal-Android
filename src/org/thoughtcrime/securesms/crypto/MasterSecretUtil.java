@@ -85,7 +85,7 @@ public class MasterSecretUtil {
       save(context, "master_secret", encryptedAndMacdMasterSecret);
       save(context, "passphrase_initialized", true);
 
-      updateFingerPrintAuthenticaion(context, newPassphrase);
+      updateFingerPrintAuthentication(context, newPassphrase);
 
       return masterSecret;
     } catch (GeneralSecurityException gse) {
@@ -373,9 +373,9 @@ public class MasterSecretUtil {
     return result;
   }
 
-  private static void updateFingerPrintAuthenticaion(Context context, String passPhrase){
-    //if(FingerprintAuthenticationUtil.isFingerprintAuthenticaionSupported(context)) {
+  private static void updateFingerPrintAuthentication(Context context, String passPhrase){
+    if(FingerprintAuthenticationUtil.isFingerprintAuthenticationSupported(context)) {
       new FingerprintAuthenticationHandler(context).handlePassphraseChange(passPhrase);
-    //}
+    }
   }
 }

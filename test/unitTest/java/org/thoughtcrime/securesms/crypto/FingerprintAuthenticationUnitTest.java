@@ -19,8 +19,7 @@ import static junit.framework.Assert.assertFalse;
 public class FingerprintAuthenticationUnitTest extends BaseUnitTest {
     @Test
     public void cipherTest() {
-        Context mockContext = PowerMockito.mock(Context.class);
-        FingerprintAuthenticationHandler handler = new FingerprintAuthenticationHandler(mockContext);
+        FingerprintAuthenticationHandler handler = new FingerprintAuthenticationHandler(context);
         Cipher cipher = null;
         try {
             cipher = handler.getCipher();
@@ -32,9 +31,6 @@ public class FingerprintAuthenticationUnitTest extends BaseUnitTest {
 
     @Test
     public void unsupportedBuildVersionTest() {
-        Context mockContext = PowerMockito.mock(Context.class);
-        assertFalse(FingerprintAuthenticationUtil.isFingerprintAuthenticationSupported(mockContext));
+        assertFalse(FingerprintAuthenticationUtil.isFingerprintAuthenticationSupported(context));
     }
-
-
 }
