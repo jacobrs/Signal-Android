@@ -379,7 +379,7 @@ public class ConversationItem extends LinearLayout
     } else {
       bodyText.setText(linkifyMessageBody(messageRecord.getDisplayBody(), batchSelected.isEmpty()));
       if (searchTerm != null && !searchTerm.equals("")){
-        bodyText.setText(hightlightSearchTerm(messageRecord.getDisplayBody(), searchTerm));
+        bodyText.setText(highlightSearchTerm(messageRecord.getDisplayBody(), searchTerm));
       }
       bodyText.setVisibility(View.VISIBLE);
     }
@@ -459,14 +459,15 @@ public class ConversationItem extends LinearLayout
     return messageBody;
   }
 
-  private SpannableString hightlightSearchTerm(SpannableString messageBody, String searchTerm) {
+  private SpannableString highlightSearchTerm(SpannableString messageBody, String searchTerm) {
 
     int fromIndex = 0, start, end;
     int colorOpaqueYellow = 0x55FFFF00;
-    String message = messageBody.toString();
+    String message = messageBody.toString().toLowerCase();
+    String term = searchTerm.toLowerCase();
 
     while (fromIndex < messageBody.length() - 1){
-      start = message.indexOf(searchTerm, fromIndex);
+      start = message.indexOf(term, fromIndex);
       if (start == -1) break;
       end = start + searchTerm.length();
       messageBody.setSpan(new BackgroundColorSpan(colorOpaqueYellow), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
