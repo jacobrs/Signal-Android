@@ -116,6 +116,32 @@ public class ConversationItemTest extends BaseUnitTest {
     }
 
     @Test
+    public void testSearchBindSuccessDifferentLetterCase(){
+        mockBatch.add(mockMessageRecord);
+
+        View mockBubble = mock(View.class);
+        String testSearchTerm = "search";
+        String testBody = "Testing Search Term Binding";
+
+        ConversationItem spyItem = spy(conversationItem);
+        when(mockBubble.getVisibility()).thenReturn(View.VISIBLE);
+
+        PowerMockito.doAnswer((Answer) invocation -> {
+            if (testSearchTerm != null && !testSearchTerm.equals("") &&
+                    testBody.toLowerCase().contains(testSearchTerm.toLowerCase()))
+                mockBubble.setVisibility(View.VISIBLE);
+            return null;
+        }).when(spyItem).bind(masterSecret, mockMessageRecord, mockGlideRequests, mockLocale, mockBatch,
+                mockRecipient, testSearchTerm);
+
+        spyItem.bind(masterSecret, mockMessageRecord, mockGlideRequests, mockLocale, mockBatch,
+                mockRecipient, testSearchTerm);
+
+        verify(mockBubble).setVisibility(View.VISIBLE);
+        assertEquals(mockBubble.getVisibility(), View.VISIBLE);
+    }
+
+    @Test
     public void testSearchBindFail(){
         mockBatch.add(mockMessageRecord);
 
