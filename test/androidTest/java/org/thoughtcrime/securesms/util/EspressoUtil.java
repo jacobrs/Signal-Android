@@ -11,7 +11,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-public class GenericUtil {
+public class EspressoUtil {
     public static Matcher<View> nthChildOf(final Matcher<View> parentMatcher, final int childPosition) {
         return new TypeSafeMatcher<View>() {
             @Override
@@ -33,7 +33,7 @@ public class GenericUtil {
 
     public static void waitFor(String resourceId, long interval) {
         UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        UiObject button = uiDevice.findObject(new UiSelector().resourceId(resourceId));
-        button.waitForExists(interval);
+        UiObject resourceObject = uiDevice.findObject(new UiSelector().resourceId(resourceId));
+        resourceObject.waitForExists(interval);
     }
 }

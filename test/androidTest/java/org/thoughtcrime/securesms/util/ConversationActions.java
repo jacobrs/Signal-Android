@@ -44,7 +44,7 @@ public class ConversationActions {
                         isDisplayed()));
         pulsingFloatingActionButton.perform(click());
 
-        ViewInteraction appCompatEditText3 = onView(
+        ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.search_view),
                         childAtPosition(
                                 allOf(withId(R.id.toggle_container),
@@ -53,7 +53,7 @@ public class ConversationActions {
                                                 0)),
                                 0),
                         isDisplayed()));
-        appCompatEditText3.perform(replaceText("5144022093"), closeSoftKeyboard());
+        appCompatEditText.perform(replaceText("5144022093"), closeSoftKeyboard());
 
         onView(withId(R.id.recycler_view))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -81,12 +81,12 @@ public class ConversationActions {
     }
 
     public static void sendMessage(String message) {
-        ViewInteraction composeText2 = onView(
+        ViewInteraction composeText = onView(
                 allOf(withId(R.id.embedded_text_editor), withContentDescription("Message composition"),
                         isDisplayed()));
-        composeText2.perform(replaceText(message));
+        composeText.perform(replaceText(message));
 
-        ViewInteraction composeText3 = onView(
+        ViewInteraction composeTextMessage = onView(
                 allOf(withId(R.id.embedded_text_editor), withText(message), withContentDescription("Message composition"),
                         childAtPosition(
                                 allOf(withId(R.id.compose_bubble),
@@ -95,7 +95,7 @@ public class ConversationActions {
                                                 0)),
                                 1),
                         isDisplayed()));
-        composeText3.perform(closeSoftKeyboard());
+        composeTextMessage.perform(closeSoftKeyboard());
 
         // Initialize UiDevice instance
         UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -118,7 +118,7 @@ public class ConversationActions {
     public static void openConversationSettings() {
         openSettingsDropDown();
 
-        ViewInteraction appCompatTextView2 = onView(
+        ViewInteraction appCompatTextView = onView(
                 allOf(withId(R.id.title), withText("Conversation settings"),
                         childAtPosition(
                                 childAtPosition(
@@ -126,13 +126,13 @@ public class ConversationActions {
                                         0),
                                 0),
                         isDisplayed()));
-        appCompatTextView2.perform(click());
+        appCompatTextView.perform(click());
     }
 
     public static void openViewPinnedMessages() {
         openSettingsDropDown();
 
-        ViewInteraction appCompatTextView2 = onView(
+        ViewInteraction appCompatTextView = onView(
                 allOf(withId(R.id.title), withText("View pinned messages"),
                         childAtPosition(
                                 childAtPosition(
@@ -140,34 +140,34 @@ public class ConversationActions {
                                         0),
                                 0),
                         isDisplayed()));
-        appCompatTextView2.perform(click());
+        appCompatTextView.perform(click());
     }
 
     public static void changeChatName(String name) {
-        ViewInteraction recyclerView2 = onView(
+        ViewInteraction recyclerView = onView(
                 allOf(withId(R.id.list),
                         childAtPosition(
                                 withId(android.R.id.list_container),
                                 0)));
-        recyclerView2.perform(actionOnItemAtPosition(1, click()));
+        recyclerView.perform(actionOnItemAtPosition(1, click()));
 
-        ViewInteraction appCompatEditText4 = onView(
+        ViewInteraction appCompatEditText = onView(
                 allOf(withId(android.R.id.edit),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.widget.ScrollView")),
                                         0),
                                 1)));
-        appCompatEditText4.perform(scrollTo(), replaceText(name), closeSoftKeyboard());
+        appCompatEditText.perform(scrollTo(), replaceText(name), closeSoftKeyboard());
 
-        ViewInteraction appCompatButton2 = onView(
+        ViewInteraction appCompatButton = onView(
                 allOf(withId(android.R.id.button1), withText("OK"),
                         childAtPosition(
                                 childAtPosition(
                                         withId(R.id.buttonPanel),
                                         0),
                                 3)));
-        appCompatButton2.perform(scrollTo(), click());
+        appCompatButton.perform(scrollTo(), click());
     }
 
     public static void pinLastMessage() {
@@ -196,15 +196,15 @@ public class ConversationActions {
     }
 
     public static void longPressMessageAt(int i) {
-        ViewInteraction recyclerView2 = onView(
+        ViewInteraction recyclerView = onView(
                 allOf(withId(android.R.id.list)));
-        recyclerView2.perform(actionOnItemAtPosition(i, longClick()));
+        recyclerView.perform(actionOnItemAtPosition(i, longClick()));
     }
 
     public static void pressMessageAt(int i) {
-        ViewInteraction recyclerView2 = onView(
+        ViewInteraction recyclerView = onView(
                 allOf(withId(android.R.id.list)));
-        recyclerView2.perform(actionOnItemAtPosition(i, click()));
+        recyclerView.perform(actionOnItemAtPosition(i, click()));
     }
 
     private static Matcher<View> childAtPosition(

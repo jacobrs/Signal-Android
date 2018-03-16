@@ -28,8 +28,8 @@ public class ConversationChatNameTest {
     public ActivityTestRule<ConversationListActivity> mActivityTestRule = new ActivityTestRule<>(ConversationListActivity.class);
 
     @Test
-    public void conversationListActivityTestSettingChatName() {
-        ConversationActions.createNewConversation("5144022093");
+    public void testSettingChatName() {
+        ConversationActions.createNewConversation("123456");
         ConversationActions.openConversationSettings();
         ConversationActions.changeChatName("test");
         GenericActions.pressBack();
@@ -43,8 +43,8 @@ public class ConversationChatNameTest {
     }
 
     @Test
-    public void conversationListActivityTestUnsettingChatName() {
-        ConversationActions.createNewConversation("5144022093");
+    public void testRevertingChatName() {
+        ConversationActions.createNewConversation("123456");
         ConversationActions.openConversationSettings();
         ConversationActions.changeChatName("test");
         ConversationActions.changeChatName("");
@@ -52,7 +52,7 @@ public class ConversationChatNameTest {
 
         ViewInteraction textView2 = onView(
                 allOf(withId(R.id.title), isDisplayed()));
-        textView2.check(matches(withText("+15144022093")));
+        textView2.check(matches(withText("+1123456")));
 
     }
 }
