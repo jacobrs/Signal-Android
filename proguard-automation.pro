@@ -13,5 +13,6 @@
 -dontwarn junit.**
 -dontwarn sun.misc.**
 -dontwarn android.support.test.**
+-dontwarn org.xmlpull.v1.**
 
 -dontobfuscate
