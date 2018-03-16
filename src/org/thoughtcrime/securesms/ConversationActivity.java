@@ -304,8 +304,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     };
 
     container.setOnTouchListener(swipeListener);
-
   }
+
   @Override
   protected void onNewIntent(Intent intent) {
     Log.w(TAG, "onNewIntent()");
