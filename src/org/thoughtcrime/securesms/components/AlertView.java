@@ -18,7 +18,6 @@ public class AlertView extends LinearLayout {
 
   private ImageView approvalIndicator;
   private ImageView failedIndicator;
-  private ImageView unreadIndicator;
 
   public AlertView(Context context) {
     this(context, null);
@@ -40,7 +39,6 @@ public class AlertView extends LinearLayout {
 
     approvalIndicator = (ImageView) findViewById(R.id.pending_approval_indicator);
     failedIndicator   = (ImageView) findViewById(R.id.sms_failed_indicator);
-    unreadIndicator   = (ImageView) findViewById(R.id.read_reminder);
 
     if (attrs != null) {
       TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.AlertView, 0, 0);
@@ -61,20 +59,11 @@ public class AlertView extends LinearLayout {
     this.setVisibility(View.VISIBLE);
     approvalIndicator.setVisibility(View.VISIBLE);
     failedIndicator.setVisibility(View.GONE);
-    unreadIndicator.setVisibility(View.GONE);
   }
 
   public void setFailed() {
     this.setVisibility(View.VISIBLE);
     approvalIndicator.setVisibility(View.GONE);
     failedIndicator.setVisibility(View.VISIBLE);
-    unreadIndicator.setVisibility(View.GONE);
-  }
-
-  public void setUnread(){
-    this.setVisibility(View.VISIBLE);
-    approvalIndicator.setVisibility(View.GONE);
-    failedIndicator.setVisibility(View.GONE);
-    unreadIndicator.setVisibility(View.VISIBLE);
   }
 }
