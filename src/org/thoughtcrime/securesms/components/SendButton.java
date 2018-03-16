@@ -12,6 +12,8 @@ import org.thoughtcrime.securesms.TransportOptionsPopup;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.whispersystems.libsignal.util.guava.Optional;
 
+import java.util.List;
+
 public class SendButton extends ImageButton
     implements TransportOptions.OnTransportChangedListener,
                TransportOptionsPopup.SelectedListener,
@@ -75,12 +77,20 @@ public class SendButton extends ImageButton
     transportOptions.reset(isMediaMessage);
   }
 
+  public List<TransportOption> getEnabledTransports() {
+      return transportOptions.getEnabledTransports();
+  }
+
   public void disableTransport(TransportOption.Type type) {
     transportOptions.disableTransport(type);
   }
 
   public void setDefaultTransport(TransportOption.Type type) {
     transportOptions.setDefaultTransport(type);
+  }
+
+  public void setSelectedTransport(TransportOption transport) {
+    transportOptions.setSelectedTransport(transport);
   }
 
   public void setDefaultSubscriptionId(Optional<Integer> subscriptionId) {
