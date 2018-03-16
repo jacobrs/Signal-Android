@@ -195,16 +195,16 @@ public class ConversationActions {
         actionMenuItemView.perform(click());
     }
 
-    public static void longPressMessageAt(int i) {
+    public static void longPressMessageAt(int messageIndex) {
         ViewInteraction recyclerView = onView(
                 allOf(withId(android.R.id.list)));
-        recyclerView.perform(actionOnItemAtPosition(i, longClick()));
+        recyclerView.perform(actionOnItemAtPosition(messageIndex, longClick()));
     }
 
-    public static void pressMessageAt(int i) {
+    public static void pressMessageAt(int messageIndex) {
         ViewInteraction recyclerView = onView(
                 allOf(withId(android.R.id.list)));
-        recyclerView.perform(actionOnItemAtPosition(i, click()));
+        recyclerView.perform(actionOnItemAtPosition(messageIndex, click()));
     }
 
     private static Matcher<View> childAtPosition(
