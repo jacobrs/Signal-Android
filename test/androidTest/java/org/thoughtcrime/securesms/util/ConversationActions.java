@@ -60,8 +60,8 @@ public class ConversationActions {
     }
 
     public static void goToConversation(String number) {
-        onView(withResourceName("list"))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(allOf(allOf(withText(number), isDescendantOfA(withResourceName("list")))))
+                .perform(click());
     }
 
     public static void enableSignalForSMS() {

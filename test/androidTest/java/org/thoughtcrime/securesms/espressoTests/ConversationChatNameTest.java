@@ -1,9 +1,7 @@
 package org.thoughtcrime.securesms.espressoTests;
 
-import android.Manifest;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
-import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 import org.junit.Rule;
@@ -34,9 +32,9 @@ public class ConversationChatNameTest {
         ConversationActions.changeChatName("test");
         GenericActions.pressBack();
 
-        ViewInteraction textView2 = onView(
+        ViewInteraction titleView = onView(
                 allOf(withId(R.id.title), isDisplayed()));
-        textView2.check(matches(withText("test")));
+        titleView.check(matches(withText("test")));
 
         ConversationActions.openConversationSettings();
         ConversationActions.changeChatName("");
@@ -50,9 +48,8 @@ public class ConversationChatNameTest {
         ConversationActions.changeChatName("");
         GenericActions.pressBack();
 
-        ViewInteraction textView2 = onView(
+        ViewInteraction titleView = onView(
                 allOf(withId(R.id.title), isDisplayed()));
-        textView2.check(matches(withText("+15555123456")));
-
+        titleView.check(matches(withText("+15555123456")));
     }
 }

@@ -45,12 +45,6 @@ public class GetFakeVerifiedTest {
 
     @Test
     public void getFakeVerifiedTest() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         ViewInteraction appCompatButton = onView(
                 allOf(withId(android.R.id.button1), withText("Continue")));
         appCompatButton.perform(scrollTo(), click());
@@ -66,12 +60,6 @@ public class GetFakeVerifiedTest {
         circularProgressButton.perform(scrollTo(), click());
 
         onView(withText("Set later")).check(matches(isDisplayed()));
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private static Matcher<View> childAtPosition(

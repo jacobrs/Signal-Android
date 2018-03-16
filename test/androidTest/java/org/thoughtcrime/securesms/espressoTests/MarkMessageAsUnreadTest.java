@@ -83,7 +83,6 @@ public class MarkMessageAsUnreadTest {
         Expectations.checkDoesNotExist(R.id.menu_context_mark_as_unread);
     }
 
-    // TODO: Check why unread_indicator is not working in the emulator
     //@Test
     public void checkConversationListItemHasMarkTest() {
         ConversationActions.createNewConversation("123456");
