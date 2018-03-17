@@ -59,8 +59,8 @@ public class ConversationActions {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
     }
 
-    public static void goToConversation(String number) {
-        onView(allOf(allOf(withText(number), isDescendantOfA(withResourceName("list")))))
+    public static void goToConversation(String nameOrNumber) {
+        onView(allOf(allOf(withText(namOrNumber), isDescendantOfA(withResourceName("list")))))
                 .perform(click());
     }
 
@@ -227,12 +227,12 @@ public class ConversationActions {
     }
 
     public static void switchToMessagingSMS() {
-        onView(withId(R.id.send_button)).perform(longClick());
+        onView(withId(R.id.button_toggle)).perform(longClick());
         onView(withText("Insecure SMS")).perform(click());
     }
 
     public static void switchToMessagingSignal() {
-        onView(withId(R.id.send_button)).perform(longClick());
+        onView(withId(R.id.button_toggle)).perform(longClick());
         onView(withText("Signal")).perform(click());
     }
 }
