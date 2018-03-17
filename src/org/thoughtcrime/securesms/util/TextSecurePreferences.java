@@ -29,6 +29,7 @@ public class TextSecurePreferences {
   public  static final String IDENTITY_PREF                    = "pref_choose_identity";
   public  static final String CHANGE_PASSPHRASE_PREF           = "pref_change_passphrase";
   public  static final String DISABLE_PASSPHRASE_PREF          = "pref_disable_passphrase";
+  public  static final String FINGERPRINT_PREF                 = "pref_fingerprint";
   public  static final String THEME_PREF                       = "pref_theme";
   public  static final String LANGUAGE_PREF                    = "pref_language";
   private static final String MMSC_CUSTOM_HOST_PREF            = "pref_apn_mmsc_custom_host";
@@ -58,6 +59,7 @@ public class TextSecurePreferences {
   public  static final String ALL_SMS_PREF                     = "pref_all_sms";
   public  static final String PASSPHRASE_TIMEOUT_INTERVAL_PREF = "pref_timeout_interval";
   private static final String PASSPHRASE_TIMEOUT_PREF          = "pref_timeout_passphrase";
+  public  static final String FINGERPRINT_AUTHORIZATION_PREF   = "pref_fingerprint_authorization";
   public  static final String SCREEN_SECURITY_PREF             = "pref_screen_security";
   private static final String ENTER_SENDS_PREF                 = "pref_enter_sends";
   private static final String ENTER_PRESENT_PREF               = "pref_enter_key";
@@ -401,6 +403,14 @@ public class TextSecurePreferences {
 
   public static void setPasswordDisabled(Context context, boolean disabled) {
     setBooleanPreference(context, DISABLE_PASSPHRASE_PREF, disabled);
+  }
+
+  public static void setFingerprintAuth(Context context, boolean value) {
+    setBooleanPreference(context, FINGERPRINT_PREF, value);
+  }
+
+  public static boolean getFingerprintAuth(Context context) {
+    return getBooleanPreference(context, FINGERPRINT_PREF, false);
   }
 
   public static boolean getUseCustomMmsc(Context context) {

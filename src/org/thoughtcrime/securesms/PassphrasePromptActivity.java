@@ -34,6 +34,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.thoughtcrime.securesms.components.AnimatingToggle;
@@ -42,13 +43,15 @@ import org.thoughtcrime.securesms.crypto.MasterSecretUtil;
 import org.thoughtcrime.securesms.util.DynamicIntroTheme;
 import org.thoughtcrime.securesms.util.DynamicLanguage;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
+import org.thoughtcrime.securesms.util.TextSecurePreferences;
+
 
 /**
  * Activity that prompts for a user's passphrase.
  *
  * @author Moxie Marlinspike
  */
-public class PassphrasePromptActivity extends PassphraseActivity {
+public class PassphrasePromptActivity extends PassphraseActivity{
 
   private DynamicIntroTheme dynamicTheme    = new DynamicIntroTheme();
   private DynamicLanguage   dynamicLanguage = new DynamicLanguage();
@@ -57,6 +60,7 @@ public class PassphrasePromptActivity extends PassphraseActivity {
   private ImageButton     showButton;
   private ImageButton     hideButton;
   private AnimatingToggle visibilityToggle;
+  private ImageView       fingerprintImage;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,11 @@ public class PassphrasePromptActivity extends PassphraseActivity {
 
     setContentView(R.layout.prompt_passphrase_activity);
     initializeResources();
+    if(TextSecurePreferences.getFingerprintAuth(this)){
+      fingerprintImage.setVisibility(View.VISIBLE);
+      FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(this);
+      helper.initializeFingerprintResources();
+    }
   }
 
   @Override
@@ -142,6 +151,8 @@ public class PassphrasePromptActivity extends PassphraseActivity {
     hideButton       = (ImageButton)     findViewById(R.id.passphrase_visibility_off);
     visibilityToggle = (AnimatingToggle) findViewById(R.id.button_toggle);
     passphraseText   = (EditText)        findViewById(R.id.passphrase_edit);
+    fingerprintImage = (ImageView)       findViewById(R.id.fingerprint_icon);
+
     SpannableString hint = new SpannableString("  " + getString(R.string.PassphrasePromptActivity_enter_passphrase));
     hint.setSpan(new RelativeSizeSpan(0.9f), 0, hint.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
     hint.setSpan(new TypefaceSpan("sans-serif"), 0, hint.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
@@ -151,8 +162,7 @@ public class PassphrasePromptActivity extends PassphraseActivity {
     showButton.setOnClickListener(new ShowButtonOnClickListener());
     hideButton.setOnClickListener(new HideButtonOnClickListener());
     passphraseText.setOnEditorActionListener(new PassphraseActionListener());
-    passphraseText.setImeActionLabel(getString(R.string.prompt_passphrase_activity__unlock),
-                                     EditorInfo.IME_ACTION_DONE);
+    passphraseText.setImeActionLabel(getString(R.string.prompt_passphrase_activity__unlock), EditorInfo.IME_ACTION_DONE);
   }
 
   private class PassphraseActionListener implements TextView.OnEditorActionListener {

@@ -24,13 +24,16 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.thoughtcrime.securesms.FingerprintAuthenticationHandler;
 import org.thoughtcrime.securesms.util.Base64;
 import org.thoughtcrime.securesms.util.Util;
+import org.thoughtcrime.securesms.util.FingerprintAuthenticationUtil;
 import org.whispersystems.libsignal.InvalidKeyException;
 import org.whispersystems.libsignal.ecc.Curve;
 import org.whispersystems.libsignal.ecc.ECKeyPair;
 import org.whispersystems.libsignal.ecc.ECPrivateKey;
 import org.whispersystems.libsignal.ecc.ECPublicKey;
+
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -81,6 +84,8 @@ public class MasterSecretUtil {
       save(context, "passphrase_iterations", iterations);
       save(context, "master_secret", encryptedAndMacdMasterSecret);
       save(context, "passphrase_initialized", true);
+
+      updateFingerPrintAuthentication(context, newPassphrase);
 
       return masterSecret;
     } catch (GeneralSecurityException gse) {
@@ -366,5 +371,11 @@ public class MasterSecretUtil {
     System.arraycopy(mac,  0, result, data.length, mac.length);
 
     return result;
+  }
+
+  private static void updateFingerPrintAuthentication(Context context, String passPhrase){
+    if(FingerprintAuthenticationUtil.isFingerprintAuthenticationSupported(context)) {
+      new FingerprintAuthenticationHandler(context).handlePassphraseChange(passPhrase);
+    }
   }
 }

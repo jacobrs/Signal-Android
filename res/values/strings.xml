@@ -942,6 +942,10 @@
 
     <!-- prompt_passphrase_activity -->
     <string name="prompt_passphrase_activity__unlock">Unlock</string>
+    <string name="prompt_passphrase_activity__fingerprint_auth_error">Authentication Error</string>
+    <string name="prompt_passphrase_activity__fingerprint_auth_help">Authentication Help</string>
+    <string name="prompt_passphrase_activity__fingerprint_auth_success">Authentication Successful</string>
+    <string name="prompt_passphrase_activity__fingerprint_auth_fail">Authentication Failed</string>
 
     <!-- prompt_mms_activity -->
     <string name="prompt_mms_activity__signal_requires_mms_settings_to_deliver_media_and_group_messages">Signal requires MMS settings to deliver media and group messages through your wireless carrier. Your device does not make this information available, which is occasionally true for locked devices and other restrictive configurations.</string>
@@ -1086,6 +1090,8 @@
     <string name="preferences__auto_lock_signal_after_a_specified_time_interval_of_inactivity">Auto-lock Signal after a specified time interval of inactivity</string>
     <string name="preferences__inactivity_timeout_passphrase">Inactivity timeout passphrase</string>
     <string name="preferences__inactivity_timeout_interval">Inactivity timeout interval</string>
+    <string name="preferences__enable_fingerprint_authorization">Enable fingerprint authorization</string>
+    <string name="preferences__add_fingerprint_auth_alternative">Add fingerprint authorization alternative</string>
     <string name="preferences__notifications">Notifications</string>
     <string name="preferences__led_color">LED color</string>
     <string name="preferences__led_color_unknown">Unknown</string>

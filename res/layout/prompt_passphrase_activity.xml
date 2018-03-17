@@ -83,6 +83,16 @@
                          android:paddingBottom="5dp"/>
         </RelativeLayout>
 
+        <ImageView
+            android:id="@+id/fingerprint_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="46dp"
+            android:paddingBottom="0dp"
+            android:paddingTop="0dp"
+            android:src="@drawable/ic_fingerprint_black_48dp"
+            android:visibility="invisible"/>
     </RelativeLayout>
-
 </ScrollView>

@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.doomonafireball.betterpickers.hmspicker.HmsPickerBuilder;
@@ -25,6 +26,7 @@ import org.thoughtcrime.securesms.crypto.MasterSecret;
 import org.thoughtcrime.securesms.crypto.MasterSecretUtil;
 import org.thoughtcrime.securesms.jobs.MultiDeviceReadReceiptUpdateJob;
 import org.thoughtcrime.securesms.service.KeyCachingService;
+import org.thoughtcrime.securesms.util.FingerprintAuthenticationUtil;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 
 import java.util.concurrent.TimeUnit;
@@ -35,6 +37,7 @@ public class AppProtectionPreferenceFragment extends CorrectedPreferenceFragment
 
   private MasterSecret       masterSecret;
   private CheckBoxPreference disablePassphrase;
+  private CheckBoxPreference fingerprintEnabler;
 
   @Override
   public void onCreate(Bundle paramBundle) {
@@ -42,6 +45,13 @@ public class AppProtectionPreferenceFragment extends CorrectedPreferenceFragment
 
     masterSecret      = getArguments().getParcelable("master_secret");
     disablePassphrase = (CheckBoxPreference) this.findPreference("pref_enable_passphrase_temporary");
+    fingerprintEnabler = (CheckBoxPreference) this.findPreference("pref_fingerprint_authorization");
+
+    if(FingerprintAuthenticationUtil.isFingerprintAuthenticationSupported(getContext())){
+      fingerprintEnabler.setVisible(true);
+    }else{
+      fingerprintEnabler.setVisible(false);
+    }
 
     this.findPreference(TextSecurePreferences.CHANGE_PASSPHRASE_PREF)
         .setOnPreferenceClickListener(new ChangePassphraseClickListener());
@@ -53,6 +63,8 @@ public class AppProtectionPreferenceFragment extends CorrectedPreferenceFragment
         .setOnPreferenceClickListener(new BlockedContactsClickListener());
     disablePassphrase
         .setOnPreferenceChangeListener(new DisablePassphraseClickListener());
+    this.findPreference((TextSecurePreferences.FINGERPRINT_AUTHORIZATION_PREF))
+        .setOnPreferenceChangeListener(new FingerprintAuthorizationToggle());
   }
 
   @Override
@@ -139,6 +151,27 @@ public class AppProtectionPreferenceFragment extends CorrectedPreferenceFragment
     }
   }
 
+  private class FingerprintAuthorizationToggle implements Preference.OnPreferenceChangeListener {
+
+    @Override
+    public boolean onPreferenceChange(final Preference preference, Object newValue) {
+      TextSecurePreferences.setFingerprintAuth(getActivity(), (boolean)newValue);
+      return true;
+    }
+  }
+
+  private class ReadReceiptToggleListener implements Preference.OnPreferenceChangeListener {
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+      ApplicationContext.getInstance(getContext())
+          .getJobManager()
+          .add(new MultiDeviceReadReceiptUpdateJob(getContext(), (boolean)newValue));
+
+      return true;
+    }
+
+  }
+
   private class DisablePassphraseClickListener implements Preference.OnPreferenceChangeListener {
 
     @Override
@@ -161,6 +194,9 @@ public class AppProtectionPreferenceFragment extends CorrectedPreferenceFragment
             Intent intent = new Intent(getActivity(), KeyCachingService.class);
             intent.setAction(KeyCachingService.DISABLE_ACTION);
             getActivity().startService(intent);
+
+            fingerprintEnabler.getOnPreferenceChangeListener().onPreferenceChange(fingerprintEnabler,false);
+            fingerprintEnabler.setChecked(false);
           }
         });
         builder.setNegativeButton(android.R.string.cancel, null);
@@ -171,18 +207,6 @@ public class AppProtectionPreferenceFragment extends CorrectedPreferenceFragment
       }
 
       return false;
-    }
-  }
-
-  private class ReadReceiptToggleListener implements Preference.OnPreferenceChangeListener {
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-      boolean enabled = (boolean)newValue;
-      ApplicationContext.getInstance(getContext())
-                        .getJobManager()
-                        .add(new MultiDeviceReadReceiptUpdateJob(getContext(), enabled));
-
-      return true;
     }
   }
 
