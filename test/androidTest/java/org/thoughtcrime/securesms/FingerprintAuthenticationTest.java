@@ -58,8 +58,7 @@ public class FingerprintAuthenticationTest {
     assertThat(keyStore.getProvider().toString(), is("AndroidKeyStore version 1.0"));
   }
 
-  /* Commented for the PR, test will be improved
-  @Test
+  //needs read/right permission to run
   public void handlePassphraseChangeTest(){
     Context context = InstrumentationRegistry.getContext();
     FingerprintAuthenticationHandler handler = new FingerprintAuthenticationHandler(context);
@@ -72,7 +71,7 @@ public class FingerprintAuthenticationTest {
 
     try {
       keyStore = handler.getKeyStore();
-      aliases = handler.getKeyStore().aliases();
+      aliases = keyStore.aliases();
       while(aliases.hasMoreElements()){
         String alias = (String)aliases.nextElement();
         keyStore.getKey(alias,null);
@@ -108,6 +107,5 @@ public class FingerprintAuthenticationTest {
 
     assertNotEquals(keyBefore, keyAfter);
   }
-  */
 
 }
