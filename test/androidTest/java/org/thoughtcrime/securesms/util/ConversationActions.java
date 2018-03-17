@@ -225,4 +225,14 @@ public class ConversationActions {
             }
         };
     }
+
+    public static void switchToMessagingSMS() {
+        onView(withId(R.id.send_button)).perform(longClick());
+        onView(withText("Insecure SMS")).perform(click());
+    }
+
+    public static void switchToMessagingSignal() {
+        onView(withId(R.id.send_button)).perform(longClick());
+        onView(withText("Signal")).perform(click());
+    }
 }
