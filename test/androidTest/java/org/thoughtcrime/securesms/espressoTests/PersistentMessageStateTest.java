@@ -23,8 +23,8 @@ public class PersistentMessageStateTest {
 
     // These should be replaced with your own number
     // or to another user who is a valid signal user
-    private String number = "5144022093";
-    private String numberPlusOne = "+15144022093";
+    private String number = "0123456789";
+    private String numberPlusOne = "+10123456789";
 
     @Rule
     public ActivityTestRule<ConversationListActivity> mActivityTestRule = new ActivityTestRule<>(ConversationListActivity.class);
