@@ -60,7 +60,7 @@ public class ConversationActions {
     }
 
     public static void goToConversation(String nameOrNumber) {
-        onView(allOf(allOf(withText(namOrNumber), isDescendantOfA(withResourceName("list")))))
+        onView(allOf(allOf(withText(nameOrNumber), isDescendantOfA(withResourceName("list")))))
                 .perform(click());
     }
 
