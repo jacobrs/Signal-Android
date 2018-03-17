@@ -226,7 +226,7 @@ public class ConversationListItem extends RelativeLayout
   }
 
   private void setUnreadIndicator(ThreadRecord thread) {
-    if (thread.isOutgoing() || thread.getUnreadCount() == 0) {
+    if (thread.getUnreadCount() == 0 ) {
       unreadIndicator.setVisibility(View.GONE);
       return;
     }
