@@ -24,6 +24,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -1034,7 +1035,19 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     if (!isSecureText && !isPushGroupConversation()) sendButton.disableTransport(Type.TEXTSECURE);
     if (recipient.isPushGroupRecipient())            sendButton.disableTransport(Type.SMS);
 
-    if (isSecureText || isPushGroupConversation()) sendButton.setDefaultTransport(Type.TEXTSECURE);
+    SharedPreferences sharedPref = ConversationActivity.this.getPreferences(Context.MODE_PRIVATE);
+    String userPreferenceType = sharedPref.getString(recipient.toShortString(), "TEXTSECURE");
+
+    if (userPreferenceType.equals("SMS") && !isPushGroupConversation()) {
+        for(TransportOption selected: sendButton.getEnabledTransports()) {
+            if (selected.getType() == Type.SMS) {
+                sendButton.setSelectedTransport(selected);
+                sendButton.setDefaultTransport(Type.SMS);
+                break;
+            }
+        }
+    }
+    else if (isSecureText || isPushGroupConversation()) sendButton.setDefaultTransport(Type.TEXTSECURE);
     else                                           sendButton.setDefaultTransport(Type.SMS);
 
     calculateCharactersRemaining();
@@ -1323,6 +1336,14 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     sendButton.addOnTransportChangedListener((newTransport, manuallySelected) -> {
       calculateCharactersRemaining();
       composeText.setTransport(newTransport);
+
+      if (manuallySelected) {
+          SharedPreferences sharedPref = ConversationActivity.this.getPreferences(Context.MODE_PRIVATE);
+          SharedPreferences.Editor editor = sharedPref.edit();
+          editor.putString(recipient.toShortString(), newTransport.getType().name());
+          editor.commit();
+      }
+
       buttonToggle.getBackground().setColorFilter(newTransport.getBackgroundColor(), Mode.MULTIPLY);
       buttonToggle.getBackground().invalidateSelf();
       if (manuallySelected) recordSubscriptionIdPreference(newTransport.getSimSubscriptionId());

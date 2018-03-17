@@ -30,7 +30,7 @@ public class ConversationChatNameTest {
         ConversationActions.createNewConversation("123456");
         ConversationActions.openConversationSettings();
         ConversationActions.changeChatName("test");
-        GenericActions.pressBack();
+        GenericActions.navigateBack();
 
         ViewInteraction titleView = onView(
                 allOf(withId(R.id.title), isDisplayed()));
@@ -46,7 +46,7 @@ public class ConversationChatNameTest {
         ConversationActions.openConversationSettings();
         ConversationActions.changeChatName("test");
         ConversationActions.changeChatName("");
-        GenericActions.pressBack();
+        GenericActions.navigateBack();
 
         ViewInteraction titleView = onView(
                 allOf(withId(R.id.title), isDisplayed()));

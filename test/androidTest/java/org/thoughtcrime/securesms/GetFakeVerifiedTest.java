@@ -19,8 +19,11 @@ import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.thoughtcrime.securesms.util.EspressoUtil;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -45,9 +48,13 @@ public class GetFakeVerifiedTest {
 
     @Test
     public void getFakeVerifiedTest() {
+        EspressoUtil.waitFor("android:id/button1", 3000);
+
         ViewInteraction appCompatButton = onView(
                 allOf(withId(android.R.id.button1), withText("Continue")));
         appCompatButton.perform(scrollTo(), click());
+
+        onView(withId(R.id.number)).perform(replaceText("5555123456"));
 
         ViewInteraction circularProgressButton = onView(
                 Matchers.allOf(ViewMatchers.withId(R.id.registerButton), withText("Register"),
