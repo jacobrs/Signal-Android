@@ -27,7 +27,7 @@ public class PinningMessagesTest {
 
     @Test
     public void checkPinningAvailableTest() {
-        ConversationActions.createNewConversation("123456");
+        ConversationActions.createNewConversation("123457");
         ConversationActions.enableSignalForSMS();
         ConversationActions.sendMessage("Sup?");
         ConversationActions.longPressMessageAt(0);
@@ -36,7 +36,7 @@ public class PinningMessagesTest {
 
     @Test
     public void pinningTest() {
-        ConversationActions.createNewConversation("123456");
+        ConversationActions.createNewConversation("123457");
         ConversationActions.enableSignalForSMS();
         ConversationActions.sendMessage("Sup?");
         ConversationActions.pinLastMessage();
@@ -45,7 +45,7 @@ public class PinningMessagesTest {
 
     @Test
     public void checkPinningUnavailableIfPinnedTest() {
-        ConversationActions.createNewConversation("123456");
+        ConversationActions.createNewConversation("123457");
         ConversationActions.enableSignalForSMS();
         ConversationActions.sendMessage("Sup?");
         ConversationActions.pinLastMessage();
@@ -55,7 +55,7 @@ public class PinningMessagesTest {
 
     @Test
     public void checkUnpinningAvailableTest() {
-        ConversationActions.createNewConversation("123456");
+        ConversationActions.createNewConversation("123457");
         ConversationActions.enableSignalForSMS();
         ConversationActions.sendMessage("Sup?");
         ConversationActions.pinLastMessage();
@@ -65,7 +65,7 @@ public class PinningMessagesTest {
 
     @Test
     public void checkUnpinningTakesAwayTest() {
-        ConversationActions.createNewConversation("123456");
+        ConversationActions.createNewConversation("123457");
         ConversationActions.enableSignalForSMS();
         ConversationActions.sendMessage("Sup?");
         ConversationActions.pinLastMessage();
@@ -75,7 +75,7 @@ public class PinningMessagesTest {
 
     @Test
     public void checkMenuItemsDontShowOnMultiSelectTest() {
-        ConversationActions.createNewConversation("123456");
+        ConversationActions.createNewConversation("123457");
         ConversationActions.enableSignalForSMS();
         ConversationActions.sendMessage("Sup?");
         ConversationActions.sendMessage("Sup?");
@@ -88,14 +88,14 @@ public class PinningMessagesTest {
 
     @Test
     public void hasOptionToCheckPinnedMessagesTest() {
-        ConversationActions.createNewConversation("123456");
+        ConversationActions.createNewConversation("123457");
         ConversationActions.openSettingsDropDown();
         Expectations.checkIsDisplayed(allOf(withId(R.id.title), withText("View pinned messages")));
     }
 
     @Test
     public void canOpenPinnedMessagesViewTest() {
-        ConversationActions.createNewConversation("123456");
+        ConversationActions.createNewConversation("123457");
         ConversationActions.openViewPinnedMessages();
     }
 }
