@@ -73,12 +73,29 @@ public class ConversationUpdateItem extends LinearLayout
                    @NonNull GlideRequests glideRequests,
                    @NonNull Locale locale,
                    @NonNull Set<MessageRecord> batchSelected,
-                   @NonNull Recipient conversationRecipient)
+                   @NonNull Recipient conversationRecipient,
+                   @Nullable String searchTerm)
   {
     this.masterSecret  = masterSecret;
     this.batchSelected = batchSelected;
 
     bind(messageRecord, locale);
+    if(searchTerm != null && !searchTerm.equals("")){
+      // GONE doesn't work in this scenario hence the layout params
+      this.setLayoutParams(new LayoutParams(0,0));
+    } else {
+      this.setVisibility(VISIBLE);
+    }
+  }
+
+  @Override
+  public void bind(@NonNull MasterSecret masterSecret,
+                   @NonNull MessageRecord messageRecord,
+                   @NonNull GlideRequests glideRequests,
+                   @NonNull Locale locale,
+                   @NonNull Set<MessageRecord> batchSelected,
+                   @NonNull Recipient recipients) {
+    bind(masterSecret, messageRecord, glideRequests, locale, batchSelected, recipients, null);
   }
 
   @Override

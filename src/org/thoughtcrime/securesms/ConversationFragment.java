@@ -58,6 +58,7 @@ import org.thoughtcrime.securesms.database.MmsSmsDatabase;
 import org.thoughtcrime.securesms.database.RecipientDatabase;
 import org.thoughtcrime.securesms.database.loaders.ConversationLoader;
 import org.thoughtcrime.securesms.database.loaders.ConversationPinnedLoader;
+import org.thoughtcrime.securesms.database.loaders.ConversationSearchableLoader;
 import org.thoughtcrime.securesms.database.model.MediaMmsMessageRecord;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
 import org.thoughtcrime.securesms.mms.GlideApp;
@@ -107,6 +108,7 @@ public class ConversationFragment extends Fragment
     private View composeDivider;
     private View scrollToBottomButton;
     private TextView scrollDateHeader;
+    private String searchTerm;
 
     public boolean onlyPinned = false;
 
@@ -163,6 +165,11 @@ public class ConversationFragment extends Fragment
         if (list.getAdapter() != null) {
             list.getAdapter().notifyDataSetChanged();
         }
+    }
+
+    public void setSearchTerm(String term) {
+        this.searchTerm = term;
+        initializeListAdapter();
     }
 
     public void onNewIntent() {
@@ -458,17 +465,19 @@ public class ConversationFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (!onlyPinned)
-            return new ConversationLoader(getActivity(), threadId, args.getLong("limit", PARTIAL_CONVERSATION_LIMIT), lastSeen);
-        else
+        if (onlyPinned)
             return new ConversationPinnedLoader(getActivity(), threadId);
+        else if (searchTerm != null && !searchTerm.equals(""))
+            return new ConversationSearchableLoader(getActivity(), threadId);
+        else
+            return new ConversationLoader(getActivity(), threadId, args.getLong("limit", PARTIAL_CONVERSATION_LIMIT), lastSeen);
     }
 
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         Log.w(TAG, "onLoadFinished");
-        if (!onlyPinned) {
+        if (!onlyPinned && (searchTerm == null || searchTerm.equals(""))) {
             ConversationLoader loader = (ConversationLoader) cursorLoader;
 
             if (list.getAdapter() != null) {
@@ -502,8 +511,9 @@ public class ConversationFragment extends Fragment
                 }
             }
         } else {
-            ConversationPinnedLoader loader = (ConversationPinnedLoader) cursorLoader;
             getListAdapter().changeCursor(cursor);
+            if(searchTerm != null)
+                getListAdapter().changeSearchTerm(searchTerm);
             getListAdapter().setFooterView(null);
             getListAdapter().setHeaderView(null);
             setLastSeen(0);

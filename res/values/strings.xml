@@ -1184,6 +1184,9 @@
     <!-- conversation_callable_secure -->
     <string name="conversation_callable_secure__menu_call">Signal call</string>
 
+    <!--conversation_search-->
+    <string name="conversation_search">Search Conversation</string>
+
     <!-- conversation_context -->
     <string name="conversation_context__menu_message_details">Message details</string>
     <string name="conversation_context__menu_copy_text">Copy text</string>

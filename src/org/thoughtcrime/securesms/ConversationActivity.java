@@ -44,6 +44,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.WindowCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -244,7 +245,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private   QuickAttachmentDrawer  quickAttachmentDrawer;
   private   InputPanel             inputPanel;
   private   GestureDetector        swipeDetector;
-  private   View.OnTouchListener   swipeListener;
+  private   SearchView             searchView;
 
   private Recipient  recipient;
   private long       threadId;
@@ -295,7 +296,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     });
 
     swipeDetector = new GestureDetector(new SwipeGestureDetector(ConversationActivity.this));
-    swipeListener = new View.OnTouchListener() {
+    View.OnTouchListener swipeListener = new View.OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
         return swipeDetector.onTouchEvent(event);
@@ -303,7 +304,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     };
 
     container.setOnTouchListener(swipeListener);
-
   }
 
   @Override
@@ -489,6 +489,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     MenuInflater inflater = this.getMenuInflater();
     menu.clear();
 
+    inflater.inflate(R.menu.conversation_search, menu);
+
     if (isSecureText) {
       if (recipient.getExpireMessages() > 0) {
         inflater.inflate(R.menu.conversation_expiring_on, menu);
@@ -536,6 +538,27 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     if (isSingleConversation() && getRecipient().getContactUri() == null) {
       inflater.inflate(R.menu.conversation_add_to_contacts, menu);
     }
+
+    searchView = (SearchView) menu.findItem(R.id.menu_conversation_search).getActionView();
+
+    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+      @Override
+      public boolean onQueryTextSubmit(String query) {
+        fragment.setSearchTerm(query);
+        return true;
+      }
+
+      @Override
+      public boolean onQueryTextChange(String newText) {
+        fragment.setSearchTerm(newText);
+        return true;
+      }
+    });
+
+    searchView.setOnCloseListener(() -> {
+      fragment.setSearchTerm(null);
+      return true;
+    });
 
     super.onPrepareOptionsMenu(menu);
     return true;

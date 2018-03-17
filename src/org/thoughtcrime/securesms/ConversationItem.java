@@ -30,9 +30,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.BackgroundColorSpan;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
@@ -133,6 +135,8 @@ public class ConversationItem extends LinearLayout
   private @NonNull  Stub<DocumentView>  documentViewStub;
   private @NonNull  ExpirationTimerView expirationTimer;
 
+  private @Nullable String searchTerm;
+
   private int defaultBubbleColor;
 
   private final PassthroughClickListener        passthroughClickListener    = new PassthroughClickListener();
@@ -193,7 +197,8 @@ public class ConversationItem extends LinearLayout
                    @NonNull GlideRequests      glideRequests,
                    @NonNull Locale             locale,
                    @NonNull Set<MessageRecord> batchSelected,
-                   @NonNull Recipient          conversationRecipient)
+                   @NonNull Recipient          conversationRecipient,
+                   @Nullable String            searchTerm)
   {
     this.masterSecret           = masterSecret;
     this.messageRecord          = messageRecord;
@@ -203,6 +208,7 @@ public class ConversationItem extends LinearLayout
     this.conversationRecipient  = conversationRecipient;
     this.groupThread            = conversationRecipient.isGroupRecipient();
     this.recipient              = messageRecord.getIndividualRecipient();
+    this.searchTerm             = searchTerm;
 
     this.recipient.addListener(this);
     this.conversationRecipient.addListener(this);
@@ -217,6 +223,23 @@ public class ConversationItem extends LinearLayout
     setMinimumWidth();
     setSimInfo(messageRecord);
     setExpiration(messageRecord);
+
+    if (searchTerm != null && !searchTerm.equals("") &&
+        !messageRecord.getDisplayBody().toString().toLowerCase().contains(searchTerm.toLowerCase())) {
+      bodyBubble.setVisibility(View.GONE);
+    } else {
+      bodyBubble.setVisibility(View.VISIBLE);
+    }
+  }
+
+  @Override
+  public void bind(@NonNull MasterSecret masterSecret,
+                   @NonNull MessageRecord messageRecord,
+                   @NonNull GlideRequests glideRequests,
+                   @NonNull Locale locale,
+                   @NonNull Set<MessageRecord> batchSelected,
+                   @NonNull Recipient recipients) {
+     bind(masterSecret, messageRecord, glideRequests, locale, batchSelected, recipients, null);
   }
 
   @Override
@@ -357,6 +380,9 @@ public class ConversationItem extends LinearLayout
       bodyText.setVisibility(View.GONE);
     } else {
       bodyText.setText(linkifyMessageBody(messageRecord.getDisplayBody(), batchSelected.isEmpty()));
+      if (searchTerm != null && !searchTerm.equals("")){
+        bodyText.setText(highlightSearchTerm(messageRecord.getDisplayBody(), searchTerm));
+      }
       bodyText.setVisibility(View.VISIBLE);
     }
   }
@@ -431,6 +457,23 @@ public class ConversationItem extends LinearLayout
         int end = messageBody.getSpanEnd(urlSpan);
         messageBody.setSpan(new LongClickCopySpan(urlSpan.getURL()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
       }
+    }
+    return messageBody;
+  }
+
+  private SpannableString highlightSearchTerm(SpannableString messageBody, String searchTerm) {
+
+    int fromIndex = 0, start, end;
+    int colorOpaqueYellow = 0x55FFFF00;
+    String message = messageBody.toString().toLowerCase();
+    String term = searchTerm.toLowerCase();
+
+    while (fromIndex < messageBody.length() - 1){
+      start = message.indexOf(term, fromIndex);
+      if (start == -1) break;
+      end = start + searchTerm.length();
+      messageBody.setSpan(new BackgroundColorSpan(colorOpaqueYellow), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+      fromIndex = end;
     }
     return messageBody;
   }

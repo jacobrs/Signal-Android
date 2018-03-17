@@ -207,6 +207,35 @@ public class ConversationActions {
         recyclerView.perform(actionOnItemAtPosition(messageIndex, click()));
     }
 
+    public static void searchInConversation(String searchTerm){
+        ViewInteraction actionMenuItemView = onView(
+                allOf(withId(R.id.menu_conversation_search), withContentDescription("Search Conversation"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.action_bar),
+                                        1),
+                                0),
+                        isDisplayed()));
+        actionMenuItemView.perform(click());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction searchAutoComplete = onView(
+                allOf(withId(R.id.search_src_text),
+                        childAtPosition(
+                                allOf(withId(R.id.search_plate),
+                                        childAtPosition(
+                                                withId(R.id.search_edit_frame),
+                                                1)),
+                                0),
+                        isDisplayed()));
+        searchAutoComplete.perform(replaceText(searchTerm), closeSoftKeyboard());
+    }
+
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 
