@@ -11,6 +11,7 @@ import org.thoughtcrime.securesms.ConversationListActivity;
 import org.thoughtcrime.securesms.R;
 
 import org.thoughtcrime.securesms.util.ConversationActions;
+import org.thoughtcrime.securesms.util.EspressoUtil;
 import org.thoughtcrime.securesms.util.Expectations;
 
 @LargeTest
@@ -41,11 +42,8 @@ public class SearchThroughConversationTest {
         Expectations.checkIsDisplayed(R.id.conversation_item_body, "banana");
         Expectations.checkIsDisplayed(R.id.conversation_item_body, "phone");
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        EspressoUtil.waitFor("org.thoughtcrime.securesms:id/menu_conversation_search", 3000);
+
         // Search for the word "hello"
         ConversationActions.searchInConversation("hello");
 
@@ -57,10 +55,7 @@ public class SearchThroughConversationTest {
         Expectations.checkIsNotDisplayed(R.id.conversation_item_body, "banana");
         Expectations.checkIsNotDisplayed(R.id.conversation_item_body, "phone");
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        EspressoUtil.waitFor("org.thoughtcrime.securesms:id/search_src_text", 3000);
+
     }
 }
