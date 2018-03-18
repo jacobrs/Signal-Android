@@ -27,7 +27,7 @@ public class ConversationChatNameTest {
 
     @Test
     public void testSettingChatName() {
-        ConversationActions.createNewConversation("123456");
+        ConversationActions.createNewConversation("123457");
         ConversationActions.openConversationSettings();
         ConversationActions.changeChatName("test");
         GenericActions.navigateBack();
@@ -42,7 +42,7 @@ public class ConversationChatNameTest {
 
     @Test
     public void testRevertingChatName() {
-        ConversationActions.createNewConversation("123456");
+        ConversationActions.createNewConversation("123457");
         ConversationActions.openConversationSettings();
         ConversationActions.changeChatName("test");
         ConversationActions.changeChatName("");
@@ -50,6 +50,6 @@ public class ConversationChatNameTest {
 
         ViewInteraction titleView = onView(
                 allOf(withId(R.id.title), isDisplayed()));
-        titleView.check(matches(withText("+15555123456")));
+        titleView.check(matches(withText("+15555123457")));
     }
 }
