@@ -339,6 +339,7 @@
         <item name="menu_save_icon">@drawable/ic_save_white_24dp</item>
         <item name="menu_pin_icon">@drawable/ic_pin_white_24dp</item>
 
+        <item name="conversation_list_trash_icon">@drawable/ic_delete_white_36dp</item>
         <item name="fingerprint_icon">@drawable/ic_fingerprint_black_48dp</item>
 
         <item name="conversation_icon_attach_audio">@drawable/ic_audio_dark</item>

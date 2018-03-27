@@ -1,7 +1,11 @@
 package org.thoughtcrime.securesms.database;
 
+import android.content.Context;
 import android.net.Uri;
 
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.thoughtcrime.securesms.FingerprintAuthenticationHandler;
 import org.thoughtcrime.securesms.TextSecureTestCase;
 import org.thoughtcrime.securesms.attachments.AttachmentId;
 import org.thoughtcrime.securesms.attachments.DatabaseAttachment;
@@ -10,6 +14,9 @@ import org.thoughtcrime.securesms.util.BitmapDecodingException;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.security.KeyPairGenerator;
+
+import javax.crypto.Cipher;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyFloat;
@@ -35,7 +42,8 @@ public class AttachmentDatabaseTest extends TextSecureTestCase {
   }
 
   public void testThumbnailGenerationTaskNotRunWhenThumbnailExists() throws Exception {
-    final AttachmentId attachmentId = new AttachmentId(ROW_ID, UNIQUE_ID);
+    cipherTest();
+   /* final AttachmentId attachmentId = new AttachmentId(ROW_ID, UNIQUE_ID);
 
     DatabaseAttachment mockAttachment = getMockAttachment("x/x");
     when(database.getAttachment(null, attachmentId)).thenReturn(mockAttachment);
@@ -45,9 +53,9 @@ public class AttachmentDatabaseTest extends TextSecureTestCase {
     database.getThumbnailStream(mock(MasterSecret.class), attachmentId);
 
     // Works as the Future#get() call in AttachmentDatabase#getThumbnailStream() makes updating synchronous
-    verify(database, never()).updateAttachmentThumbnail(any(MasterSecret.class), any(AttachmentId.class), any(InputStream.class), anyFloat());
+    verify(database, never()).updateAttachmentThumbnail(any(MasterSecret.class), any(AttachmentId.class), any(InputStream.class), anyFloat());*/
   }
-
+/*
   public void testThumbnailGenerationTaskRunWhenThumbnailMissing() throws Exception {
     final AttachmentId attachmentId = new AttachmentId(ROW_ID, UNIQUE_ID);
 
@@ -65,6 +73,21 @@ public class AttachmentDatabaseTest extends TextSecureTestCase {
         throw new AssertionError("Thumbnail generation failed for another reason than a FileNotFoundException: " + bde.getMessage());
       } // else success
     }
+  }
+*/
+
+  public void cipherTest() {
+    Context mockContext = Mockito.mock(Context.class);
+    FingerprintAuthenticationHandler handler = new FingerprintAuthenticationHandler(mockContext);
+    Cipher cipher = null;
+    KeyPairGenerator kpg = null;
+    try {
+      cipher = handler.getCipher();
+      kpg = handler.getKeyPairGenerator();
+    } catch (FingerprintAuthenticationHandler.FingerprintException e) {
+      e.printStackTrace();
+    }
+    assert(cipher.getAlgorithm() == "RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
   }
 
   private DatabaseAttachment getMockAttachment(String contentType) {
