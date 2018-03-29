@@ -45,6 +45,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.WindowCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -61,6 +62,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -483,6 +485,22 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       Log.w(TAG, e);
       Toast.makeText(this, R.string.ConversationActivity_there_is_no_app_available_to_handle_this_link_on_your_device, Toast.LENGTH_LONG).show();
     }
+  }
+
+  @SuppressLint("RestrictedApi")
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu){
+
+    MenuInflater inflater = this.getMenuInflater();
+    inflater.inflate(R.menu.conversation, menu);
+
+
+    if(menu instanceof MenuBuilder){
+      MenuBuilder m = (MenuBuilder) menu;
+      m.setOptionalIconsVisible(true);
+    }
+
+    return true;
   }
 
   @Override
