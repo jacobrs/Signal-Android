@@ -208,7 +208,7 @@
         <item quantity="one">This will permanently delete the selected conversation.</item>
         <item quantity="other">This will permanently delete all %1$d selected conversations.</item>
     </plurals>
-    <string name="ConversationListFragment_deleting">Deleting</string>
+    <string name="ConversationListFragment_deleting">Deleted conversation</string>
     <string name="ConversationListFragment_deleting_selected_conversations">Deleting selected conversations...</string>
     <plurals name="ConversationListFragment_conversations_archived">
         <item quantity="one">Conversation archived</item>
