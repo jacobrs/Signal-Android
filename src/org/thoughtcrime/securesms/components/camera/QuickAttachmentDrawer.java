@@ -14,6 +14,7 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -51,6 +52,8 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
   private AttachmentDrawerListener  listener;
   private int                       halfExpandedHeight;
   private ObjectAnimator            animator;
+  private GestureDetector           doubleTapGestureDetector;
+
 
   private DrawerState drawerState      = DrawerState.COLLAPSED;
   private Rect        drawChildrenRect = new Rect();
@@ -81,6 +84,18 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
     controls.setVisibility(GONE);
     cameraView.setVisibility(GONE);
     cameraView.addListener(this);
+
+    doubleTapGestureDetector = new GestureDetector(new DoubleTapGestureDetector(cameraView));
+
+    View.OnTouchListener doubleTapListener = new View.OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        doubleTapGestureDetector.onTouchEvent(event);
+        return true;
+      }
+    };
+
+    cameraView.setOnTouchListener(doubleTapListener);
   }
 
   public static boolean isDeviceSupported(Context context) {
@@ -571,6 +586,29 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
       } else {
         setDrawerStateAndUpdate(DrawerState.HALF_EXPANDED);
       }
+    }
+  }
+
+  private class DoubleTapGestureDetector extends GestureDetector.SimpleOnGestureListener{
+
+    CameraView cameraView;
+
+    public DoubleTapGestureDetector(CameraView cv){
+      this.cameraView = cv;
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent e){
+      cameraView.flipCamera();
+      swapCameraButton.setImageResource(cameraView.isRearCamera() ? R.drawable.quick_camera_front
+              : R.drawable.quick_camera_rear);
+
+      return true;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e){
+      return true;
     }
   }
 }

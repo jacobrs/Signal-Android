@@ -59,7 +59,6 @@ public class CameraView extends ViewGroup {
 
   private final CameraSurfaceView   surface;
   private final OnOrientationChange onOrientationChange;
-  private final GestureDetector     doubleTapGestureDetector;
 
 
   private volatile Optional<Camera> camera             = Optional.absent();
@@ -95,18 +94,6 @@ public class CameraView extends ViewGroup {
 
     surface             = new CameraSurfaceView(getContext());
     onOrientationChange = new OnOrientationChange(context.getApplicationContext());
-
-    doubleTapGestureDetector = new GestureDetector(new DoubleTapGestureDetector(this));
-
-    View.OnTouchListener doubleTapListener = new View.OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        doubleTapGestureDetector.onTouchEvent(event);
-        return true;
-      }
-    };
-
-    surface.setOnTouchListener(doubleTapListener);
 
     addView(surface);
   }
@@ -647,25 +634,5 @@ public class CameraView extends ViewGroup {
 
   private enum State {
     PAUSED, RESUMED, ACTIVE
-  }
-
-  private class DoubleTapGestureDetector extends GestureDetector.SimpleOnGestureListener{
-
-    CameraView cameraView;
-
-    public DoubleTapGestureDetector(CameraView cv){
-      this.cameraView = cv;
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent e){
-      cameraView.flipCamera();
-      return true;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent e){
-      return true;
-    }
   }
 }
