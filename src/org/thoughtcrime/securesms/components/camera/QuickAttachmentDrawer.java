@@ -28,6 +28,7 @@ import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.components.InputAwareLayout.InputView;
 import org.thoughtcrime.securesms.components.KeyboardAwareLinearLayout;
 import org.thoughtcrime.securesms.components.camera.CameraView.CameraViewListener;
+import org.thoughtcrime.securesms.util.DoubleTapGestureDetector;
 import org.thoughtcrime.securesms.util.ServiceUtil;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
@@ -85,7 +86,7 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
     cameraView.setVisibility(GONE);
     cameraView.addListener(this);
 
-    doubleTapGestureDetector = new GestureDetector(new DoubleTapGestureDetector(cameraView));
+    doubleTapGestureDetector = new GestureDetector(new DoubleTapGestureDetector(this, cameraView));
 
     View.OnTouchListener doubleTapListener = new View.OnTouchListener() {
       @Override
@@ -102,6 +103,8 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
     return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA) &&
            Camera.getNumberOfCameras() > 0;
   }
+
+  public ImageButton getSwapCameraButton() { return this.swapCameraButton; }
 
   @Override
   public boolean isShowing() {
@@ -586,29 +589,6 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
       } else {
         setDrawerStateAndUpdate(DrawerState.HALF_EXPANDED);
       }
-    }
-  }
-
-  private class DoubleTapGestureDetector extends GestureDetector.SimpleOnGestureListener{
-
-    CameraView cameraView;
-
-    public DoubleTapGestureDetector(CameraView cv){
-      this.cameraView = cv;
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent e){
-      cameraView.flipCamera();
-      swapCameraButton.setImageResource(cameraView.isRearCamera() ? R.drawable.quick_camera_front
-              : R.drawable.quick_camera_rear);
-
-      return true;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent e){
-      return true;
     }
   }
 }
