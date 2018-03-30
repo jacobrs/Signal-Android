@@ -494,7 +494,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     MenuInflater inflater = this.getMenuInflater();
     inflater.inflate(R.menu.conversation, menu);
 
-
     if(menu instanceof MenuBuilder){
       MenuBuilder m = (MenuBuilder) menu;
       m.setOptionalIconsVisible(true);

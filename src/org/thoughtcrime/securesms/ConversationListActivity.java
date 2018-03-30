@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -98,6 +99,22 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
   @Override
   public void onDestroy() {
     super.onDestroy();
+  }
+
+  @SuppressLint("RestrictedApi")
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu){
+
+    MenuInflater inflater = this.getMenuInflater();
+    inflater.inflate(R.menu.text_secure_normal, menu);
+
+
+    if(menu instanceof MenuBuilder){
+      MenuBuilder m = (MenuBuilder) menu;
+      m.setOptionalIconsVisible(true);
+    }
+
+    return true;
   }
 
   @Override
