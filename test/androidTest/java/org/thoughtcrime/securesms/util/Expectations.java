@@ -21,10 +21,6 @@ public class Expectations {
         onView(withId(id)).check(matches(isDisplayed()));
     }
 
-    public static void checkIsDisplayedWithRearCameraDrawable(int id){
-        onView(allOf(withId(id), withResourceName("R.drawable.quick_camera_rear"))).check(matches(isDisplayed()));
-    }
-
     public static void checkIsDisplayed(int id, String message) {
         onView(allOf(withId(id), withText(message))).check(matches(isDisplayed()));
     }
