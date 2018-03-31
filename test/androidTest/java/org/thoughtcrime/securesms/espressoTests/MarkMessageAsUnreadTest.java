@@ -3,7 +3,6 @@ package org.thoughtcrime.securesms.espressoTests;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.widget.RelativeLayout;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,12 +10,10 @@ import org.junit.runner.RunWith;
 import org.thoughtcrime.securesms.ConversationListActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.util.ConversationActions;
-import org.thoughtcrime.securesms.util.Expectations;
 import org.thoughtcrime.securesms.util.EspressoUtil;
+import org.thoughtcrime.securesms.util.Expectations;
 
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
