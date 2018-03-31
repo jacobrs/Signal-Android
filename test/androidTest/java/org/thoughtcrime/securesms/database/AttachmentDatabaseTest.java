@@ -47,7 +47,6 @@ public class AttachmentDatabaseTest extends TextSecureTestCase {
     // Works as the Future#get() call in AttachmentDatabase#getThumbnailStream() makes updating synchronous
     verify(database, never()).updateAttachmentThumbnail(any(MasterSecret.class), any(AttachmentId.class), any(InputStream.class), anyFloat());
   }
-
   public void testThumbnailGenerationTaskRunWhenThumbnailMissing() throws Exception {
     final AttachmentId attachmentId = new AttachmentId(ROW_ID, UNIQUE_ID);
 

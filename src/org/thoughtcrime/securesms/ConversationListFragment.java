@@ -670,7 +670,7 @@ public class ConversationListFragment extends Fragment
         if (dX < 0) {
           Bitmap icon;
 
-          icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_delete_white_24dp);
+          icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_delete_white_36dp);
 
           if (alpha > 0) p.setColor(getResources().getColor(R.color.red_500));
           else           p.setColor(Color.WHITE);
@@ -679,7 +679,7 @@ public class ConversationListFragment extends Fragment
                   (float) itemView.getBottom(), p);
 
           c.drawBitmap(icon,
-                  (float) itemView.getRight() - getResources().getDimension(R.dimen.conversation_list_fragment_archive_padding) - icon.getWidth()/2,
+                  (float) itemView.getRight() - getResources().getDimension(R.dimen.conversation_list_fragment_archive_padding) - icon.getWidth(),
                   (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight())/2,
                   p);
         }

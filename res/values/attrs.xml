@@ -111,6 +111,7 @@
     <attr name="menu_mark_as_unread_icon" format="reference" />
 
     <attr name="fingerprint_icon" format="reference" />
+    <attr name="conversation_list_trash_icon" format="reference" />
 
     <attr name="pref_icon_tint" format="color"/>
 
