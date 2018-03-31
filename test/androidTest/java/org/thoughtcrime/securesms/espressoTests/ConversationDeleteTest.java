@@ -42,7 +42,8 @@ public class ConversationDeleteTest {
         Expectations.checkIsDisplayed(R.id.from, convoRecipient);
 
         ConversationActions.deleteConversation(convoRecipient);
-        Thread.sleep(1000);
+        Expectations.checkDoesNotExist(R.id.from, convoRecipient);
+        Thread.sleep(500);
         ConversationActions.undoDeletion();
         Expectations.checkIsDisplayed(R.id.from, convoRecipient);
 
