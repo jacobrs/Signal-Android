@@ -110,6 +110,7 @@ public class ConversationListFragment extends Fragment
   private boolean                     archive;
   private Handler                     deletionHandler;
   private Runnable                    deletionRunnable;
+  private Set<Long>                   temporarilyDeleted = new HashSet<>();
 
   @Override
   public void onCreate(Bundle icicle) {
@@ -584,8 +585,12 @@ public class ConversationListFragment extends Fragment
   }
 
   public void delayedConversationThreadDeletion(long threadId){
+    temporarilyDeleted.add(threadId);
     deletionRunnable = () -> deleteConversationThread(threadId);
     deletionHandler.postDelayed(deletionRunnable, 3000);
+    if(getActivity() != null) {
+      getActivity().runOnUiThread(() -> ((ConversationListAdapter) list.getAdapter()).setTemporarilyDeleted(temporarilyDeleted));
+    }
   }
 
   public void refreshConversationList(){
@@ -633,7 +638,7 @@ public class ConversationListFragment extends Fragment
       if (archive) {
         new SnackbarAsyncTask<Long>(getView(),
                 getResources().getString(R.string.ConversationListFragment_deleting),
-                "Undo",
+                getResources().getString(R.string.ConversationListFragment_undo),
                 getResources().getColor(R.color.pink),
                 Snackbar.LENGTH_LONG, false)
 
@@ -648,6 +653,7 @@ public class ConversationListFragment extends Fragment
             if(deletionRunnable != null){
               deletionHandler.removeCallbacks(deletionRunnable);
               deletionRunnable = null;
+              temporarilyDeleted.remove(threadId);
               refreshConversationList();
             }
           }
@@ -655,7 +661,7 @@ public class ConversationListFragment extends Fragment
       } else {
         new SnackbarAsyncTask<Long>(getView(),
                 getResources().getString(R.string.ConversationListFragment_deleting),
-                "Undo",
+                getResources().getString(R.string.ConversationListFragment_undo),
                 getResources().getColor(R.color.pink),
                 Snackbar.LENGTH_LONG, false)
         {
@@ -675,6 +681,7 @@ public class ConversationListFragment extends Fragment
             if(deletionRunnable != null){
               deletionHandler.removeCallbacks(deletionRunnable);
               deletionRunnable = null;
+              temporarilyDeleted.remove(threadId);
               refreshConversationList();
             }
           }

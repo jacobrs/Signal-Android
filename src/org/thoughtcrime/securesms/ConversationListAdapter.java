@@ -61,8 +61,9 @@ class ConversationListAdapter extends CursorRecyclerViewAdapter<ConversationList
   private final @Nullable ItemClickListener clickListener;
   private final @NonNull  MessageDigest     digest;
 
-  private final Set<Long> batchSet  = Collections.synchronizedSet(new HashSet<Long>());
-  private       boolean   batchMode = false;
+  private final Set<Long> batchSet            = Collections.synchronizedSet(new HashSet<Long>());
+  private       boolean   batchMode           = false;
+  private       Set<Long> temporarilyDeleted  = new HashSet<>();
 
   protected static class ViewHolder extends RecyclerView.ViewHolder {
     public <V extends View & BindableConversationListItem> ViewHolder(final @NonNull V itemView)
@@ -156,6 +157,10 @@ class ConversationListAdapter extends CursorRecyclerViewAdapter<ConversationList
     } else {
       return MESSAGE_TYPE_THREAD;
     }
+  }
+
+  public void setTemporarilyDeleted(Set<Long> newSet){
+    temporarilyDeleted = newSet;
   }
 
   private ThreadRecord getThreadRecord(@NonNull Cursor cursor) {
