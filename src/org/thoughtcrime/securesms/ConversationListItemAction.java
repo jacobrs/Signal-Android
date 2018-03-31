@@ -40,7 +40,10 @@ public class ConversationListItemAction extends LinearLayout implements Bindable
   }
 
   @Override
-  public void bind(@NonNull MasterSecret masterSecret, @NonNull ThreadRecord thread, @NonNull GlideRequests glideRequests, @NonNull Locale locale, @NonNull Set<Long> selectedThreads, boolean batchMode) {
+  public void bind(@NonNull MasterSecret masterSecret, @NonNull ThreadRecord thread,
+                   @NonNull GlideRequests glideRequests, @NonNull Locale locale,
+                   @NonNull Set<Long> selectedThreads, boolean batchMode,
+                   Set<Long> temporarilyDeleted) {
     this.description.setText(getContext().getString(R.string.ConversationListItemAction_archived_conversations_d, thread.getCount()));
   }
 

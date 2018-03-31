@@ -143,7 +143,7 @@ class ConversationListAdapter extends CursorRecyclerViewAdapter<ConversationList
 
   @Override
   public void onBindItemViewHolder(ViewHolder viewHolder, @NonNull Cursor cursor) {
-    viewHolder.getItem().bind(masterSecret, getThreadRecord(cursor), glideRequests, locale, batchSet, batchMode);
+    viewHolder.getItem().bind(masterSecret, getThreadRecord(cursor), glideRequests, locale, batchSet, batchMode, temporarilyDeleted);
   }
 
   @Override
@@ -161,6 +161,7 @@ class ConversationListAdapter extends CursorRecyclerViewAdapter<ConversationList
 
   public void setTemporarilyDeleted(Set<Long> newSet){
     temporarilyDeleted = newSet;
+    notifyDataSetChanged();
   }
 
   private ThreadRecord getThreadRecord(@NonNull Cursor cursor) {

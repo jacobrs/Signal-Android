@@ -587,7 +587,7 @@ public class ConversationListFragment extends Fragment
   public void delayedConversationThreadDeletion(long threadId){
     temporarilyDeleted.add(threadId);
     deletionRunnable = () -> deleteConversationThread(threadId);
-    deletionHandler.postDelayed(deletionRunnable, 3000);
+    deletionHandler.postDelayed(deletionRunnable, 5000);
     if(getActivity() != null) {
       getActivity().runOnUiThread(() -> ((ConversationListAdapter) list.getAdapter()).setTemporarilyDeleted(temporarilyDeleted));
     }
