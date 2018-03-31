@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.hardware.Camera;
+import android.media.Image;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.support.annotation.NonNull;
@@ -14,12 +15,14 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.nineoldandroids.animation.ObjectAnimator;
 
@@ -27,6 +30,7 @@ import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.components.InputAwareLayout.InputView;
 import org.thoughtcrime.securesms.components.KeyboardAwareLinearLayout;
 import org.thoughtcrime.securesms.components.camera.CameraView.CameraViewListener;
+import org.thoughtcrime.securesms.util.DoubleTapGestureDetector;
 import org.thoughtcrime.securesms.util.ServiceUtil;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
@@ -44,6 +48,8 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
   private ImageButton               fullScreenButton;
   private ImageButton               swapCameraButton;
   private ImageButton               shutterButton;
+  private ImageView                 frontCameraIcon;
+  private ImageView                 backCameraIcon;
   private int                       slideOffset;
   private float                     initialMotionX;
   private float                     initialMotionY;
@@ -51,6 +57,8 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
   private AttachmentDrawerListener  listener;
   private int                       halfExpandedHeight;
   private ObjectAnimator            animator;
+  private GestureDetector           doubleTapGestureDetector;
+
 
   private DrawerState drawerState      = DrawerState.COLLAPSED;
   private Rect        drawChildrenRect = new Rect();
@@ -81,12 +89,29 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
     controls.setVisibility(GONE);
     cameraView.setVisibility(GONE);
     cameraView.addListener(this);
+
+    doubleTapGestureDetector = new GestureDetector(new DoubleTapGestureDetector(this, cameraView));
+
+    View.OnTouchListener doubleTapListener = new View.OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        doubleTapGestureDetector.onTouchEvent(event);
+        return true;
+      }
+    };
+
+    cameraView.setOnTouchListener(doubleTapListener);
   }
 
   public static boolean isDeviceSupported(Context context) {
     return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA) &&
            Camera.getNumberOfCameras() > 0;
   }
+
+  public ImageButton getSwapCameraButton() { return this.swapCameraButton; }
+
+  public ImageView getFrontCameraIcon() { return this.frontCameraIcon; }
+  public ImageView getBackCameraIcon() { return this.backCameraIcon; }
 
   @Override
   public boolean isShowing() {
@@ -124,10 +149,17 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
     shutterButton    = (ImageButton) controls.findViewById(R.id.shutter_button);
     swapCameraButton = (ImageButton) controls.findViewById(R.id.swap_camera_button);
     fullScreenButton = (ImageButton) controls.findViewById(R.id.fullscreen_button);
+    frontCameraIcon  =               controls.findViewById(R.id.front_facing_camera_icon);
+    backCameraIcon  =               controls.findViewById(R.id.back_facing_camera_icon);
+
     if (cameraView.isMultiCamera()) {
       swapCameraButton.setVisibility(View.VISIBLE);
       swapCameraButton.setImageResource(cameraView.isRearCamera() ? R.drawable.quick_camera_front
                                                                   : R.drawable.quick_camera_rear);
+
+      backCameraIcon.setVisibility(cameraView.isRearCamera() ? View.VISIBLE : View.GONE);
+      frontCameraIcon.setVisibility(cameraView.isRearCamera() ? View.GONE : View.VISIBLE);
+
       swapCameraButton.setOnClickListener(new CameraFlipClickListener());
     }
     shutterButton.setOnClickListener(new ShutterClickListener());
@@ -558,6 +590,8 @@ public class QuickAttachmentDrawer extends ViewGroup implements InputView, Camer
       cameraView.flipCamera();
       swapCameraButton.setImageResource(cameraView.isRearCamera() ? R.drawable.quick_camera_front
                                                                   : R.drawable.quick_camera_rear);
+      backCameraIcon.setVisibility(cameraView.isRearCamera() ? View.VISIBLE : View.GONE);
+      frontCameraIcon.setVisibility(cameraView.isRearCamera() ? View.GONE : View.VISIBLE);
     }
   }
 

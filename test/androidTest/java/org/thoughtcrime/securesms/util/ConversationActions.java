@@ -20,6 +20,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.doubleClick;
 import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
@@ -102,6 +103,22 @@ public class ConversationActions {
 
         try {
             UiObject button = uiDevice.findObject(new UiSelector().resourceId("org.thoughtcrime.securesms:id/send_button"));
+            button.waitForExists(3000);
+            if (button.isEnabled()) {
+                button.click();
+            }
+        } catch (Exception e) {
+            System.out.println("Already enabled");
+        }
+    }
+
+
+    public static void openQuickAttachmentDrawer(){
+        // Initialize UiDevice instance
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
+        try {
+            UiObject button = uiDevice.findObject(new UiSelector().resourceId("org.thoughtcrime.securesms:id/quick_camera_toggle"));
             button.waitForExists(3000);
             if (button.isEnabled()) {
                 button.click();
@@ -199,6 +216,17 @@ public class ConversationActions {
         ViewInteraction recyclerView = onView(
                 allOf(withId(android.R.id.list)));
         recyclerView.perform(actionOnItemAtPosition(messageIndex, longClick()));
+    }
+
+    public static void doubleClickViewWithId(int id){
+        ViewInteraction view = onView(withId(id));
+        view.perform(doubleClick());
+    }
+
+    public static void clickOnViewWithId(int id){
+        ViewInteraction view = onView(withId(id));
+        view.perform(click());
+
     }
 
     public static void pressMessageAt(int messageIndex) {
