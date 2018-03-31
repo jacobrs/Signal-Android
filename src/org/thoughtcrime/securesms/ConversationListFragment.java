@@ -108,9 +108,10 @@ public class ConversationListFragment extends Fragment
   private Locale                      locale;
   private String                      queryFilter  = "";
   private boolean                     archive;
-  private Handler                     deletionHandler;
   private Runnable                    deletionRunnable;
   private Set<Long>                   temporarilyDeleted = new HashSet<>();
+
+  public  Handler                     deletionHandler = new Handler();
 
   @Override
   public void onCreate(Bundle icicle) {
@@ -118,7 +119,6 @@ public class ConversationListFragment extends Fragment
     masterSecret    = getArguments().getParcelable("master_secret");
     locale          = (Locale) getArguments().getSerializable(PassphraseRequiredActionBarActivity.LOCALE_EXTRA);
     archive         = getArguments().getBoolean(ARCHIVE, false);
-    deletionHandler = new Handler();
   }
 
   @Override
@@ -584,12 +584,25 @@ public class ConversationListFragment extends Fragment
     DatabaseFactory.getThreadDatabase(getActivity()).deleteConversation(threadId);
   }
 
-  public void delayedConversationThreadDeletion(long threadId){
+  public void delayedConversationThreadDeletion(long threadId) {
+    delayedConversationThreadDeletion(threadId, 5000);
+  }
+
+  public void delayedConversationThreadDeletion(long threadId, long delay) {
     temporarilyDeleted.add(threadId);
     deletionRunnable = () -> deleteConversationThread(threadId);
-    deletionHandler.postDelayed(deletionRunnable, 5000);
+    deletionHandler.postDelayed(deletionRunnable, delay);
     if(getActivity() != null) {
       getActivity().runOnUiThread(() -> ((ConversationListAdapter) list.getAdapter()).setTemporarilyDeleted(temporarilyDeleted));
+    }
+  }
+
+  public void cancelDelayedDeletion(long threadId){
+    if(deletionRunnable != null){
+      deletionHandler.removeCallbacks(deletionRunnable);
+      deletionRunnable = null;
+      temporarilyDeleted.remove(threadId);
+      refreshConversationList();
     }
   }
 
@@ -650,12 +663,7 @@ public class ConversationListFragment extends Fragment
 
           @Override
           protected void reverseAction(@Nullable Long parameter) {
-            if(deletionRunnable != null){
-              deletionHandler.removeCallbacks(deletionRunnable);
-              deletionRunnable = null;
-              temporarilyDeleted.remove(threadId);
-              refreshConversationList();
-            }
+            cancelDelayedDeletion(threadId);
           }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
       } else {
@@ -678,12 +686,7 @@ public class ConversationListFragment extends Fragment
 
           @Override
           protected void reverseAction(@Nullable Long parameter) {
-            if(deletionRunnable != null){
-              deletionHandler.removeCallbacks(deletionRunnable);
-              deletionRunnable = null;
-              temporarilyDeleted.remove(threadId);
-              refreshConversationList();
-            }
+            cancelDelayedDeletion(threadId);
           }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
       }
