@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="@string/conversation_unmuted__mute_notifications"
-          android:id="@+id/menu_mute_notifications" />
-
+          android:id="@+id/menu_mute_notifications"
+          android:icon="@drawable/ic_volume_off_black_18dp"/>
 </menu>

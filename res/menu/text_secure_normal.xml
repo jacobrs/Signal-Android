@@ -2,24 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="@string/text_secure_normal__menu_new_group"
-          android:id="@+id/menu_new_group" />
+          android:id="@+id/menu_new_group"
+          android:icon="@drawable/ic_group_add_black_18dp"/>
 
     <item android:title="@string/text_secure_normal__menu_clear_passphrase"
-          android:id="@+id/menu_clear_passphrase" />
+          android:id="@+id/menu_clear_passphrase"
+          android:icon="@drawable/ic_lock_outline_black_18dp"/>
 
     <item android:title="@string/text_secure_normal__mark_all_as_read"
-          android:id="@+id/menu_mark_all_read" />
+          android:id="@+id/menu_mark_all_read"
+          android:icon="@drawable/ic_done_all_black_18dp"/>
 
     <item android:title="@string/text_secure_normal__invite_friends"
-          android:id="@+id/menu_invite" />
+          android:id="@+id/menu_invite"
+          android:icon="@drawable/ic_contact_mail_black_18dp"/>
 
     <item android:title="@string/arrays__import_export"
-          android:id="@+id/menu_import_export" />
+          android:id="@+id/menu_import_export"
+          android:icon="@drawable/ic_import_export_black_18dp"/>
 
     <item android:title="@string/text_secure_normal__menu_settings"
-          android:id="@+id/menu_settings" />
+          android:id="@+id/menu_settings"
+          android:icon="@drawable/ic_settings_black_18dp"/>
 
     <item android:title="@string/text_secure_normal__help"
-          android:id="@+id/menu_help"/>
+          android:id="@+id/menu_help"
+          android:icon="@drawable/ic_live_help_black_18dp"/>
 
 </menu>
