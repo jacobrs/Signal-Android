@@ -51,7 +51,7 @@ public class ConversationListActivityIconsTest {
 
         //checks that all the actions have an icon
         for(int i=0; i<6 ; i++) {
-            allOf(withId(R.id.icon), childAtPosition(childAtPosition(IsInstanceOf.<View>instanceOf(android.widget.ListView.class), i), 0), isDisplayed()).matches(isDisplayed());
+            allOf(withId(R.id.icon), childAtPosition(childAtPosition(IsInstanceOf.<View>instanceOf(android.widget.ListView.class), i), 0)).matches(isDisplayed());
         }
 
     }
