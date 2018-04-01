@@ -17,6 +17,8 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.thoughtcrime.securesms.util.EspressoUtil;
+import org.thoughtcrime.securesms.util.Expectations;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
@@ -44,77 +46,13 @@ public class ConversationListActivityIconsTest {
 
     @Test
     public void conversationListActivityIconsTest() {
-
+        //opens overflow action bar
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
 
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        //checks that all the actions have an icon
+        for(int i=0; i<6 ; i++) {
+            allOf(withId(R.id.icon), childAtPosition(childAtPosition(IsInstanceOf.<View>instanceOf(android.widget.ListView.class), i), 0), isDisplayed()).matches(isDisplayed());
         }
-
-        ViewInteraction imageView = onView(
-                allOf(withId(R.id.icon),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.ListView.class),
-                                        0),
-                                0),
-                        isDisplayed()));
-        imageView.check(matches(isDisplayed()));
-
-        ViewInteraction imageView2 = onView(
-                allOf(withId(R.id.icon),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.ListView.class),
-                                        1),
-                                0),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        ViewInteraction imageView3 = onView(
-                allOf(withId(R.id.icon),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.ListView.class),
-                                        2),
-                                0),
-                        isDisplayed()));
-        imageView3.check(matches(isDisplayed()));
-
-        ViewInteraction imageView4 = onView(
-                allOf(withId(R.id.icon),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.ListView.class),
-                                        3),
-                                0),
-                        isDisplayed()));
-        imageView4.check(matches(isDisplayed()));
-
-        ViewInteraction imageView5 = onView(
-                allOf(withId(R.id.icon),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.ListView.class),
-                                        4),
-                                0),
-                        isDisplayed()));
-        imageView5.check(matches(isDisplayed()));
-
-        ViewInteraction imageView6 = onView(
-                allOf(withId(R.id.icon),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.ListView.class),
-                                        5),
-                                0),
-                        isDisplayed()));
-        imageView6.check(matches(isDisplayed()));
 
     }
 
