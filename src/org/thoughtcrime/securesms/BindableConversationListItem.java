@@ -13,5 +13,6 @@ public interface BindableConversationListItem extends Unbindable {
 
   public void bind(@NonNull MasterSecret masterSecret, @NonNull ThreadRecord thread,
                    @NonNull GlideRequests glideRequests, @NonNull Locale locale,
-                   @NonNull Set<Long> selectedThreads, boolean batchMode);
+                   @NonNull Set<Long> selectedThreads, boolean batchMode,
+                   Set<Long> temporarilyDeleted);
 }

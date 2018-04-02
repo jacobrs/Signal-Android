@@ -32,6 +32,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -107,13 +108,17 @@ public class ConversationListFragment extends Fragment
   private Locale                      locale;
   private String                      queryFilter  = "";
   private boolean                     archive;
+  private Runnable                    deletionRunnable;
+  private Set<Long>                   temporarilyDeleted = new HashSet<>();
+
+  public  Handler                     deletionHandler = new Handler();
 
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
-    masterSecret = getArguments().getParcelable("master_secret");
-    locale       = (Locale) getArguments().getSerializable(PassphraseRequiredActionBarActivity.LOCALE_EXTRA);
-    archive      = getArguments().getBoolean(ARCHIVE, false);
+    masterSecret    = getArguments().getParcelable("master_secret");
+    locale          = (Locale) getArguments().getSerializable(PassphraseRequiredActionBarActivity.LOCALE_EXTRA);
+    archive         = getArguments().getBoolean(ARCHIVE, false);
   }
 
   @Override
@@ -575,8 +580,39 @@ public class ConversationListFragment extends Fragment
     }
   }
 
-  public void deleteConversationThread( long threadId){
+  public void deleteConversationThread(long threadId){
     DatabaseFactory.getThreadDatabase(getActivity()).deleteConversation(threadId);
+  }
+
+  public void delayedConversationThreadDeletion(long threadId) {
+    delayedConversationThreadDeletion(threadId, 5000);
+  }
+
+  public void delayedConversationThreadDeletion(long threadId, long delay) {
+    temporarilyDeleted.add(threadId);
+    deletionRunnable = () -> deleteConversationThread(threadId);
+    deletionHandler.postDelayed(deletionRunnable, delay);
+    if(getActivity() != null) {
+      getActivity().runOnUiThread(() -> ((ConversationListAdapter) list.getAdapter()).setTemporarilyDeleted(temporarilyDeleted));
+    }
+  }
+
+  public void cancelDelayedDeletion(long threadId){
+    if(deletionRunnable != null){
+      deletionHandler.removeCallbacks(deletionRunnable);
+      deletionRunnable = null;
+      temporarilyDeleted.remove(threadId);
+      refreshConversationList();
+    }
+  }
+
+  public void refreshConversationList(){
+    if(getActivity() != null) {
+      getActivity().runOnUiThread(() -> {
+        list.setAdapter(new ConversationListAdapter(getActivity(), masterSecret, GlideApp.with(this), locale, null, this));
+        getLoaderManager().restartLoader(0, null, this);
+      });
+    }
   }
 
   private class DeleteListenerCallback extends ItemTouchHelper.SimpleCallback {
@@ -615,31 +651,31 @@ public class ConversationListFragment extends Fragment
       if (archive) {
         new SnackbarAsyncTask<Long>(getView(),
                 getResources().getString(R.string.ConversationListFragment_deleting),
-                "",
-                getResources().getColor(R.color.amber_500),
+                getResources().getString(R.string.ConversationListFragment_undo),
+                getResources().getColor(R.color.pink),
                 Snackbar.LENGTH_LONG, false)
 
         {
           @Override
           protected void executeAction(@Nullable Long parameter) {
-            deleteConversationThread(threadId);
+            delayedConversationThreadDeletion(threadId);
           }
 
           @Override
           protected void reverseAction(@Nullable Long parameter) {
-            //unused
+            cancelDelayedDeletion(threadId);
           }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
       } else {
         new SnackbarAsyncTask<Long>(getView(),
                 getResources().getString(R.string.ConversationListFragment_deleting),
-                "",
-                getResources().getColor(R.color.amber_500),
+                getResources().getString(R.string.ConversationListFragment_undo),
+                getResources().getColor(R.color.pink),
                 Snackbar.LENGTH_LONG, false)
         {
           @Override
           protected void executeAction(@Nullable Long parameter) {
-            deleteConversationThread(threadId);
+            delayedConversationThreadDeletion(threadId);
 
             if (unreadCount > 0) {
               List<MarkedMessageInfo> messageIds = DatabaseFactory.getThreadDatabase(getActivity()).setRead(threadId, false);
@@ -650,7 +686,7 @@ public class ConversationListFragment extends Fragment
 
           @Override
           protected void reverseAction(@Nullable Long parameter) {
-              //Unused
+            cancelDelayedDeletion(threadId);
           }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
       }

@@ -4,13 +4,12 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
+import org.junit.Ignore;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.thoughtcrime.securesms.ConversationListActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.util.ConversationActions;
-import org.thoughtcrime.securesms.util.Expectations;
 import org.thoughtcrime.securesms.util.GenericActions;
 
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
@@ -31,6 +30,7 @@ public class PersistentMessageStateTest {
 
     // These tests should only run manually as you need to actually be verified
     //@Test
+    @Ignore
     public void shouldRememberSMSStateTest() {
         ConversationActions.createNewConversation(number);
         ConversationActions.enableSignalForSMS();
@@ -41,6 +41,7 @@ public class PersistentMessageStateTest {
     }
 
     //@Test
+    @Ignore
     public void shouldRememberSignalStateTest() {
         ConversationActions.createNewConversation(number);
         ConversationActions.enableSignalForSMS();

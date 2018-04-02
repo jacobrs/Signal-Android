@@ -110,7 +110,7 @@ public class ConversationListItem extends RelativeLayout
   @Override
   public void bind(@NonNull MasterSecret masterSecret, @NonNull ThreadRecord thread,
                    @NonNull GlideRequests glideRequests, @NonNull Locale locale,
-                   @NonNull Set<Long> selectedThreads, boolean batchMode)
+                   @NonNull Set<Long> selectedThreads, boolean batchMode, Set<Long> temporarilyDeleted)
   {
     this.selectedThreads  = selectedThreads;
     this.recipient        = thread.getRecipient();
@@ -135,6 +135,12 @@ public class ConversationListItem extends RelativeLayout
       this.archivedView.setVisibility(View.VISIBLE);
     } else {
       this.archivedView.setVisibility(View.GONE);
+    }
+
+    if (temporarilyDeleted.contains(thread.getThreadId())){
+      this.setLayoutParams(new LayoutParams(0,0));
+    } else {
+      this.setVisibility(View.VISIBLE);
     }
 
     setStatusIcons(thread);

@@ -22,7 +22,7 @@ public class Expectations {
     }
 
     public static void checkIsDisplayed(int id, String message) {
-        onView(allOf(withId(id), withText(message))).check(matches(isDisplayed()));
+        onView(EspressoUtil.withIndex(allOf(withId(id), withText(message)), 0)).check(matches(isDisplayed()));
     }
 
     public static void checkIsDisplayed(Matcher<View> customMatcher) {
@@ -30,7 +30,7 @@ public class Expectations {
     }
 
     public static void checkIsNotDisplayed(int id, String message) {
-        onView(allOf(withId(id), withText(message))).check(matches(not(isDisplayed())));
+        onView(EspressoUtil.withIndex(allOf(withId(id), withText(message)), 0)).check(matches(not(isDisplayed())));
     }
 
     public static void checkIsNotDisplayed(int id) {
@@ -39,6 +39,10 @@ public class Expectations {
 
     public static void checkDoesNotExist(int id) {
         onView(withId(id)).check(doesNotExist());
+    }
+
+    public static void checkDoesNotExist(int id, String text) {
+        onView(allOf(withId(id), withText(text))).check(doesNotExist());
     }
 
     public static void checkIsShowingDescendantWithId(Matcher<View> customMatcher, int descendantId) {

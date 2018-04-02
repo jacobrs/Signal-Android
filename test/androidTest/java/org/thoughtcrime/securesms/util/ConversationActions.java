@@ -2,6 +2,7 @@ package org.thoughtcrime.securesms.util;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.action.Swipe;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
@@ -18,12 +19,14 @@ import org.thoughtcrime.securesms.R;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.doubleClick;
 import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
@@ -39,6 +42,12 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 
 public class ConversationActions {
+    public static void createNewConversationWithImmediateExit(String number, String placeholder) {
+        createNewConversation(number);
+        sendMessage(placeholder);
+        pressBack();
+    }
+
     public static void createNewConversation(String number) {
         ViewInteraction pulsingFloatingActionButton = onView(
                 allOf(withId(R.id.fab), withContentDescription("New conversation"),
@@ -55,7 +64,6 @@ public class ConversationActions {
                                 0),
                         isDisplayed()));
         appCompatEditText.perform(replaceText(number), closeSoftKeyboard());
-
         onView(withId(R.id.recycler_view))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
     }
@@ -63,6 +71,14 @@ public class ConversationActions {
     public static void goToConversation(String nameOrNumber) {
         onView(allOf(allOf(withText(nameOrNumber), isDescendantOfA(withResourceName("list")))))
                 .perform(click());
+    }
+
+    public static void deleteConversation(String nameOrNumber) {
+        onView(allOf(withId(R.id.from), withText(nameOrNumber))).perform(swipeLeft());
+    }
+
+    public static void undoDeletion(){
+        onView(withText("UNDO")).perform(click());
     }
 
     public static void enableSignalForSMS() {
