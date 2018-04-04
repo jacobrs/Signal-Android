@@ -426,6 +426,8 @@ public class MmsDatabase extends MessagingDatabase {
 
       database.update(TABLE_NAME,contentValues,where,args);
       database.setTransactionSuccessful();
+    }catch(Exception e){
+      Log.d(TAG, e.getMessage());
     }finally{
       database.endTransaction();
     }
@@ -446,6 +448,8 @@ public class MmsDatabase extends MessagingDatabase {
 
       database.update(TABLE_NAME,contentValues,where,args);
       database.setTransactionSuccessful();
+    }catch(Exception e){
+      Log.d(TAG, e.getMessage());
     }finally{
       database.endTransaction();
     }

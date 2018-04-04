@@ -295,12 +295,14 @@ public class SmsDatabase extends MessagingDatabase {
   private void markMessagesAsPinned(String where, String[] args) {
     SQLiteDatabase database      = databaseHelper.getWritableDatabase();
     database.beginTransaction();
-    try{
+    try {
       ContentValues contentValues = new ContentValues();
-      contentValues.put(PINNED,1);
+      contentValues.put(PINNED, 1);
 
-      database.update(TABLE_NAME,contentValues,where,args);
+      database.update(TABLE_NAME, contentValues, where, args);
       database.setTransactionSuccessful();
+    }catch(Exception e){
+      Log.d(TAG, e.getMessage());
     }finally{
       database.endTransaction();
     }
@@ -321,6 +323,8 @@ public class SmsDatabase extends MessagingDatabase {
 
       database.update(TABLE_NAME,contentValues,where,args);
       database.setTransactionSuccessful();
+    }catch(Exception e){
+      Log.d(TAG, e.getMessage());
     }finally{
       database.endTransaction();
     }
@@ -464,6 +468,8 @@ public class SmsDatabase extends MessagingDatabase {
 
       database.update(TABLE_NAME, contentValues, where, arguments);
       database.setTransactionSuccessful();
+    }catch(Exception e){
+      Log.d(TAG, e.getMessage());
     } finally {
       database.endTransaction();
     }
