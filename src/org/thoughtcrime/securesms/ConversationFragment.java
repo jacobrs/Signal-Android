@@ -679,6 +679,12 @@ public class ConversationFragment extends Fragment
             } else {
                 actionMode.getMenu().findItem(R.id.menu_context_pin_message).setVisible(true);
             }
+            if(messageRecord.isOutgoing()){
+                actionMode.getMenu().findItem(R.id.emoji_reaction).setVisible(true);
+            }
+            else{
+                actionMode.getMenu().findItem(R.id.emoji_reaction).setVisible(false);
+            }
         }
     }
 

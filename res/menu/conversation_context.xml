@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/emoji_reaction"
+        android:icon="?menu_emoji_reaction_icon"
+        android:iconTint="@color/white"
+        android:title="@string/conversation_context__menu_emoji_reaction"
+        app:showAsAction="always" />
+
     <item android:title="@string/conversation_context__menu_mark_message_as_unread"
         android:id="@+id/menu_context_mark_as_unread"
         android:icon="?menu_mark_as_unread_icon"
