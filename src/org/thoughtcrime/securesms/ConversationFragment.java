@@ -759,6 +759,11 @@ public class ConversationFragment extends Fragment
                     handleMarkAsUnread(getListAdapter().getSelectedItems());
                     actionMode.finish();
                     return true;
+                case R.id.emoji_reaction:
+                    ConversationActivity conversationActivity = (ConversationActivity) getActivity();
+                    conversationActivity.handleEmojiReaction(conversationActivity, getSelectedMessageRecord());
+                    actionMode.finish();
+                    return true;
             }
 
             return false;
