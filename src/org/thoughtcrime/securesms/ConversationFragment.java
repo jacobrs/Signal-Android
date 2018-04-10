@@ -243,6 +243,7 @@ public class ConversationFragment extends Fragment
             menu.findItem(R.id.menu_context_save_attachment).setVisible(false);
             menu.findItem(R.id.menu_context_resend).setVisible(false);
             menu.findItem(R.id.menu_context_copy).setVisible(!actionMessage);
+            menu.findItem(R.id.emoji_reaction).setVisible(false);
         } else {
             MessageRecord messageRecord = messageRecords.iterator().next();
 
@@ -255,6 +256,7 @@ public class ConversationFragment extends Fragment
             menu.findItem(R.id.menu_context_forward).setVisible(!actionMessage);
             menu.findItem(R.id.menu_context_details).setVisible(!actionMessage);
             menu.findItem(R.id.menu_context_copy).setVisible(!actionMessage);
+            menu.findItem(R.id.emoji_reaction).setVisible(true);
             if (messageRecord.isPinned()) {
                 menu.findItem(R.id.menu_context_unpin_message).setVisible(!actionMessage);
             } else {
@@ -678,12 +680,6 @@ public class ConversationFragment extends Fragment
                 actionMode.getMenu().findItem(R.id.menu_context_unpin_message).setVisible(true);
             } else {
                 actionMode.getMenu().findItem(R.id.menu_context_pin_message).setVisible(true);
-            }
-            if(messageRecord.isOutgoing()){
-                actionMode.getMenu().findItem(R.id.emoji_reaction).setVisible(true);
-            }
-            else{
-                actionMode.getMenu().findItem(R.id.emoji_reaction).setVisible(false);
             }
         }
     }
