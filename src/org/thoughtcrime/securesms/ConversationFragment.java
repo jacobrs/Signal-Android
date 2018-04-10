@@ -256,7 +256,7 @@ public class ConversationFragment extends Fragment
             menu.findItem(R.id.menu_context_forward).setVisible(!actionMessage);
             menu.findItem(R.id.menu_context_details).setVisible(!actionMessage);
             menu.findItem(R.id.menu_context_copy).setVisible(!actionMessage);
-            menu.findItem(R.id.emoji_reaction).setVisible(true);
+            menu.findItem(R.id.emoji_reaction).setVisible((messageRecord.isOutgoing() ? false : true));
             if (messageRecord.isPinned()) {
                 menu.findItem(R.id.menu_context_unpin_message).setVisible(!actionMessage);
             } else {
