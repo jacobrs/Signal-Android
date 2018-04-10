@@ -48,12 +48,12 @@ public class SmsMessageRecord extends MessageRecord {
                           long type, long threadId,
                           int status, List<IdentityKeyMismatch> mismatches,
                           int subscriptionId, long expiresIn, long expireStarted,
-                          int readReceiptCount, int markedUnread, int pinned)
+                          int readReceiptCount, int markedUnread, int pinned, String hashedId)
   {
     super(context, id, body, recipient, individualRecipient, recipientDeviceId,
           dateSent, dateReceived, threadId, status, deliveryReceiptCount, type,
           mismatches, new LinkedList<NetworkFailure>(), subscriptionId,
-          expiresIn, expireStarted, readReceiptCount, markedUnread, pinned);
+          expiresIn, expireStarted, readReceiptCount, markedUnread, pinned, hashedId);
   }
 
   public long getType() {

@@ -108,7 +108,7 @@ public class MmsDatabase extends MessagingDatabase {
     NETWORK_FAILURE + " TEXT DEFAULT NULL," + "d_rpt" + " INTEGER, " +
     SUBSCRIPTION_ID + " INTEGER DEFAULT -1, " + EXPIRES_IN + " INTEGER DEFAULT 0, " +
     EXPIRE_STARTED + " INTEGER DEFAULT 0, " + NOTIFIED + " INTEGER DEFAULT 0, " +
-    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0, "+ READ_REMINDER +" INTEGER DEFAULT 0, "+ PINNED + " INTEGER DEFAULT 0);";
+    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0, "+ READ_REMINDER +" INTEGER DEFAULT 0, "+ PINNED + " INTEGER DEFAULT 0, " + HASHED_ID + " TEXT DEFAULT NULL );";
 
   public static final String[] CREATE_INDEXS = {
     "CREATE INDEX IF NOT EXISTS mms_thread_id_index ON " + TABLE_NAME + " (" + THREAD_ID + ");",
@@ -128,7 +128,7 @@ public class MmsDatabase extends MessagingDatabase {
       MESSAGE_SIZE, STATUS, TRANSACTION_ID,
       BODY, PART_COUNT, ADDRESS, ADDRESS_DEVICE_ID,
       DELIVERY_RECEIPT_COUNT, READ_RECEIPT_COUNT, MISMATCHED_IDENTITIES, NETWORK_FAILURE, SUBSCRIPTION_ID,
-      EXPIRES_IN, EXPIRE_STARTED, NOTIFIED,
+      EXPIRES_IN, EXPIRE_STARTED, NOTIFIED, HASHED_ID,
       AttachmentDatabase.TABLE_NAME + "." + AttachmentDatabase.ROW_ID + " AS " + AttachmentDatabase.ATTACHMENT_ID_ALIAS,
       AttachmentDatabase.UNIQUE_ID,
       AttachmentDatabase.MMS_ID,
@@ -1192,7 +1192,7 @@ public class MmsDatabase extends MessagingDatabase {
                                        new LinkedList<NetworkFailure>(),
                                        message.getSubscriptionId(),
                                        message.getExpiresIn(),
-                                       System.currentTimeMillis(), 0, 0, 0);
+                                       System.currentTimeMillis(), 0, 0, 0, null);
     }
   }
 
@@ -1247,6 +1247,7 @@ public class MmsDatabase extends MessagingDatabase {
       int       subscriptionId       = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.SUBSCRIPTION_ID));
       int       readReminder         = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.READ_REMINDER));
       int       pinned               = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.PINNED));
+      String    hashedId             = cursor.getString(cursor.getColumnIndexOrThrow(MmsDatabase.HASHED_ID));
 
       if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
         readReceiptCount = 0;
@@ -1268,7 +1269,7 @@ public class MmsDatabase extends MessagingDatabase {
                                               addressDeviceId, dateSent, dateReceived, deliveryReceiptCount, threadId,
                                               contentLocationBytes, messageSize, expiry, status,
                                               transactionIdBytes, mailbox, subscriptionId, slideDeck,
-                                              readReceiptCount, readReminder, pinned);
+                                              readReceiptCount, readReminder, pinned, hashedId);
     }
 
     private MediaMmsMessageRecord getMediaMmsMessageRecord(Cursor cursor) {
@@ -1290,6 +1291,7 @@ public class MmsDatabase extends MessagingDatabase {
       long               expireStarted        = cursor.getLong(cursor.getColumnIndexOrThrow(MmsDatabase.EXPIRE_STARTED));
       int                markedUnread         = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.READ_REMINDER));    
       int                pinned               = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.PINNED));
+      String             hashedId             = cursor.getString(cursor.getColumnIndexOrThrow(MmsDatabase.HASHED_ID));
       
       if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
         readReceiptCount = 0;
@@ -1304,7 +1306,7 @@ public class MmsDatabase extends MessagingDatabase {
                                        addressDeviceId, dateSent, dateReceived, deliveryReceiptCount,
                                        threadId, body, slideDeck, partCount, box, mismatches,
                                        networkFailures, subscriptionId, expiresIn, expireStarted,
-                                       readReceiptCount, markedUnread, pinned);
+                                       readReceiptCount, markedUnread, pinned, hashedId);
     }
 
     private Recipient getRecipientFor(String serialized) {
