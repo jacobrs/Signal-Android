@@ -19,6 +19,7 @@ package org.thoughtcrime.securesms;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -41,6 +42,7 @@ import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.WindowCompat;
 import android.support.v7.app.ActionBar;
@@ -65,6 +67,7 @@ import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -119,6 +122,7 @@ import org.thoughtcrime.securesms.database.MmsSmsColumns.Types;
 import org.thoughtcrime.securesms.database.RecipientDatabase.RegisteredState;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.database.identity.IdentityRecordList;
+import org.thoughtcrime.securesms.database.model.MessageRecord;
 import org.thoughtcrime.securesms.events.ReminderUpdateEvent;
 import org.thoughtcrime.securesms.jobs.MultiDeviceBlockedUpdateJob;
 import org.thoughtcrime.securesms.jobs.RetrieveProfileJob;
@@ -258,6 +262,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private boolean    isDefaultSms          = true;
   private boolean    isMmsEnabled          = true;
   private boolean    isSecurityInitialized = false;
+  private boolean    isEmojiReaction       = false;
 
   private final IdentityRecordList identityRecords = new IdentityRecordList();
   private final DynamicTheme       dynamicTheme    = new DynamicTheme();
@@ -619,6 +624,55 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
     startActivity(intent);
     overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
+  }
+
+  public boolean isEmojiReaction() {
+    return isEmojiReaction;
+  }
+
+  public void setEmojiReaction(boolean emojiReaction) {
+    isEmojiReaction = emojiReaction;
+  }
+
+
+  public void handleEmojiReaction(Activity activity, MessageRecord messageRecord){
+
+    setEmojiReaction(true);
+
+    EmojiDrawer eds = this.emojiDrawerStub.get();
+    container.show(composeText, eds);
+    inputPanel.setVisibility(View.GONE);
+
+    emojiDrawerListener(eds, messageRecord);
+
+    //setEmojiReaction(false);
+  }
+
+  private void emojiDrawerListener(EmojiDrawer eds, MessageRecord messageRecord){
+    if(isEmojiReaction()) {
+      //CreateProfileActivity.java line 346 for reference
+      eds.setEmojiEventListener(new EmojiDrawer.EmojiEventListener(){
+
+        @Override
+        public void onKeyEvent(KeyEvent keyEvent) {
+          //Not sure if we need this one but it needs to be overridden
+        }
+
+        @Override
+        public void onEmojiSelected(String emoji) {
+          String text = "Here is my selected emoji: " + emoji;
+          Snackbar mySnackbar = Snackbar.make(getCurrentFocus(), text, Snackbar.LENGTH_SHORT);
+          mySnackbar.show();
+
+          container.hideCurrentInput(composeText);
+          inputPanel.setVisibility(View.VISIBLE);
+
+          //set the listener back to the input panel
+          eds.setEmojiEventListener(inputPanel);
+
+        }
+      });
+    }
   }
 
   @Override

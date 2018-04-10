@@ -3,7 +3,6 @@
     <item
         android:id="@+id/emoji_reaction"
         android:icon="?menu_emoji_reaction_icon"
-        android:iconTint="@color/white"
         android:title="@string/conversation_context__menu_emoji_reaction"
         app:showAsAction="always" />
 
