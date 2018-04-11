@@ -54,6 +54,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.thoughtcrime.securesms.util.MessageHashedId.generateHashedId;
+
 /**
  * Database for storage of SMS messages.
  *
@@ -644,6 +646,7 @@ public class SmsDatabase extends MessagingDatabase {
     values.put(BODY, message.getMessageBody());
     values.put(TYPE, type);
     values.put(THREAD_ID, threadId);
+    values.put(HASHED_ID, generateHashedId(message.getMessageBody(), message.getSentTimestampMillis()));
 
     if (message.isPush() && isDuplicate(message, threadId)) {
       Log.w(TAG, "Duplicate message (" + message.getSentTimestampMillis() + "), ignoring...");
@@ -706,6 +709,7 @@ public class SmsDatabase extends MessagingDatabase {
     contentValues.put(EXPIRES_IN, message.getExpiresIn());
     contentValues.put(DELIVERY_RECEIPT_COUNT, Stream.of(earlyDeliveryReceipts.values()).mapToLong(Long::longValue).sum());
     contentValues.put(READ_RECEIPT_COUNT, Stream.of(earlyReadReceipts.values()).mapToLong(Long::longValue).sum());
+    contentValues.put(HASHED_ID, generateHashedId(message.getMessageBody(), date));
 
     SQLiteDatabase db        = databaseHelper.getWritableDatabase();
     long           messageId = db.insert(TABLE_NAME, ADDRESS, contentValues);

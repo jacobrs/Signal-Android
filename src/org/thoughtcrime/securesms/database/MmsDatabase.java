@@ -75,6 +75,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.thoughtcrime.securesms.util.MessageHashedId.generateHashedId;
+
 public class MmsDatabase extends MessagingDatabase {
 
   private static final String TAG = MmsDatabase.class.getSimpleName();
@@ -765,6 +767,7 @@ public class MmsDatabase extends MessagingDatabase {
     contentValues.put(SUBSCRIPTION_ID, retrieved.getSubscriptionId());
     contentValues.put(EXPIRES_IN, retrieved.getExpiresIn());
     contentValues.put(READ, retrieved.isExpirationUpdate() ? 1 : 0);
+    contentValues.put(HASHED_ID, generateHashedId(retrieved.getBody(), retrieved.getSentTimeMillis()));
 
     if (!contentValues.containsKey(DATE_SENT)) {
       contentValues.put(DATE_SENT, contentValues.getAsLong(DATE_RECEIVED));
@@ -921,6 +924,7 @@ public class MmsDatabase extends MessagingDatabase {
     contentValues.put(ADDRESS, message.getRecipient().getAddress().serialize());
     contentValues.put(DELIVERY_RECEIPT_COUNT, Stream.of(earlyDeliveryReceipts.values()).mapToLong(Long::longValue).sum());
     contentValues.put(READ_RECEIPT_COUNT, Stream.of(earlyReadReceipts.values()).mapToLong(Long::longValue).sum());
+    contentValues.put(HASHED_ID, generateHashedId(message.getBody(), message.getSentTimeMillis()));
 
     long messageId = insertMediaMessage(masterSecret, message.getBody(), message.getAttachments(), contentValues, insertListener);
 

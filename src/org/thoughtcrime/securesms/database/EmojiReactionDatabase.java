@@ -19,7 +19,6 @@ public class EmojiReactionDatabase extends Database {
     public static final String REACTION             = "reaction";
     public static final String SMS_MESSAGE_ID       = "sms_message_id";
     public static final String MMS_MESSAGE_ID       = "mms_message_id";
-    public static final String HASHED_ID            = "hashed_id";
 
     public EmojiReactionDatabase(Context context, SQLiteOpenHelper databaseHelper){
         super(context, databaseHelper);
