@@ -151,6 +151,7 @@ import org.thoughtcrime.securesms.scribbles.ScribbleActivity;
 import org.thoughtcrime.securesms.service.KeyCachingService;
 import org.thoughtcrime.securesms.service.WebRtcCallService;
 import org.thoughtcrime.securesms.sms.MessageSender;
+import org.thoughtcrime.securesms.sms.OutgoingEmojiReactionMessage;
 import org.thoughtcrime.securesms.sms.OutgoingEncryptedMessage;
 import org.thoughtcrime.securesms.sms.OutgoingEndSessionMessage;
 import org.thoughtcrime.securesms.sms.OutgoingTextMessage;
@@ -645,7 +646,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
     emojiDrawerListener(eds, messageRecord);
 
-    //setEmojiReaction(false);
+
   }
 
   private void emojiDrawerListener(EmojiDrawer eds, MessageRecord messageRecord){
@@ -663,6 +664,10 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
           String text = "Here is my selected emoji: " + emoji;
           Snackbar mySnackbar = Snackbar.make(getCurrentFocus(), text, Snackbar.LENGTH_SHORT);
           mySnackbar.show();
+
+          DatabaseFactory.getEmojiReactionDatabase(ConversationActivity.this).setMessageReaction(messageRecord, emoji);
+          OutgoingEmojiReactionMessage outgoingMessage = new OutgoingEmojiReactionMessage(getRecipient(), messageRecord.getDisplayBody().toString(), messageRecord.getSubscriptionId(),  messageRecord.getHashedId(), emoji);
+          MessageSender.send(ConversationActivity.this, masterSecret, outgoingMessage, threadId, false, null);
 
           container.hideCurrentInput(composeText);
           inputPanel.setVisibility(View.VISIBLE);

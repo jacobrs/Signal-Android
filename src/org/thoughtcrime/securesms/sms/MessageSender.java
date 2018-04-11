@@ -76,6 +76,9 @@ public class MessageSender {
     long messageId = database.insertMessageOutbox(new MasterSecretUnion(masterSecret), allocatedThreadId,
                                                   message, forceSms, System.currentTimeMillis(), insertListener);
 
+    if(message instanceof OutgoingEmojiReactionMessage){
+      sendEmojiReaction();
+    }
     sendTextMessage(context, recipient, forceSms, keyExchange, messageId, message.getExpiresIn());
 
     return allocatedThreadId;
@@ -134,6 +137,9 @@ public class MessageSender {
       Log.w(TAG, e);
     }
   }
+
+  private static void sendEmojiReaction(Context context, MasterSecret masterSecret,
+                                        Recipient recipient, boolean forceSms,)
 
   private static void sendMediaMessage(Context context, MasterSecret masterSecret,
                                        Recipient recipient, boolean forceSms,
