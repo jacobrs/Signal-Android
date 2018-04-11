@@ -24,7 +24,7 @@ public class EmojiReactionDatabase extends Database {
         super(context, databaseHelper);
     }
 
-    public static final String CREATE_TABLE = "CREATE TABLE" + TABLE_NAME + "(" +
+    public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
             ID + " INTEGER PRIMARY KEY, " +
             REACTION + " TEXT NOT NULL, " +
             SMS_MESSAGE_ID + " TEXT DEFAULT NULL, " +
