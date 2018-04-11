@@ -1,5 +1,7 @@
 # Signal Android 
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/42216d9251884609b6476ee5ab5a0f93)](https://www.codacy.com/app/benrs/Signal-Android?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jacobrs/Signal-Android&amp;utm_campaign=Badge_Grade)
+
 Signal is a messaging app for simple private communication with friends.
 
 Signal uses your phone's data connection (WiFi/3G/4G) to communicate securely, optionally supports plain SMS/MMS to function as a unified messenger, and can also encrypt the stored messages on your phone.
