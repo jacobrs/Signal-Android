@@ -19,6 +19,7 @@ import org.thoughtcrime.securesms.crypto.storage.SignalProtocolStoreImpl;
 import org.thoughtcrime.securesms.crypto.storage.TextSecureSessionStore;
 import org.thoughtcrime.securesms.database.Address;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
+import org.thoughtcrime.securesms.database.EmojiReactionDatabase;
 import org.thoughtcrime.securesms.database.EncryptingSmsDatabase;
 import org.thoughtcrime.securesms.database.GroupDatabase;
 import org.thoughtcrime.securesms.database.MessagingDatabase;
@@ -631,12 +632,33 @@ public class PushDecryptJob extends ContextJob {
     String                body       = message.getBody().isPresent() ? message.getBody().get() : "";
     Recipient             recipient = getMessageDestination(envelope, message);
 
+    boolean isEmojiReaction = false;
+    //Check if reaction
+    if(body.contains("EmojiReaction-")){
+      isEmojiReaction = true;
+    }
+
     if (message.getExpiresInSeconds() != recipient.getExpireMessages()) {
       handleExpirationUpdate(masterSecret, envelope, message, Optional.<Long>absent());
     }
 
     Long threadId;
 
+    /*
+    if(isEmojiReaction){
+      //Set up stuff in db instead of handling it as a normal message
+      String[] parsedBody = body.split("-");
+      //0:EmojiReaction
+      //1:emoji
+      //2:HashedId
+      //3:id
+      EmojiReactionDatabase emojiReactionDB = DatabaseFactory.getEmojiReactionDatabase(context);
+      //Find the reacted messageRecord via hashedId
+
+      emojiReactionDB.setMessageReaction(parsedBody[1]);
+
+    }
+    */
     if (smsMessageId.isPresent() && !message.getGroupInfo().isPresent()) {
       threadId = database.updateBundleMessageBody(masterSecret, smsMessageId.get(), body).second;
     } else {

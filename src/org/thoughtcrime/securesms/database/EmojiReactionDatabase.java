@@ -19,6 +19,7 @@ public class EmojiReactionDatabase extends Database {
     public static final String REACTION             = "reaction";
     public static final String SMS_MESSAGE_ID       = "sms_message_id";
     public static final String MMS_MESSAGE_ID       = "mms_message_id";
+    public static final String HASHED_ID            = "hashed_id";
 
     public EmojiReactionDatabase(Context context, SQLiteOpenHelper databaseHelper){
         super(context, databaseHelper);
@@ -29,15 +30,12 @@ public class EmojiReactionDatabase extends Database {
             REACTION + " TEXT NOT NULL, " +
             SMS_MESSAGE_ID + " TEXT DEFAULT NULL, " +
             MMS_MESSAGE_ID + " TEXT DEFAULT NULL, " +
-            "FOREIGN KEY(" + SMS_MESSAGE_ID + ") REFERENCES " + SmsDatabase.TABLE_NAME + "(" + SmsDatabase.HASHED_ID + ")," +
-            "FOREIGN KEY(" + MMS_MESSAGE_ID + ") REFERENCES " + MmsDatabase.TABLE_NAME + "(" + MmsDatabase.HASHED_ID + "));";
+            HASHED_ID + " TEXT DEFAULT NULL )"; // +
+            //"FOREIGN KEY(" + SMS_MESSAGE_ID + ") REFERENCES " + SmsDatabase.TABLE_NAME + "(" + SmsDatabase.HASHED_ID + ")," +
+            //"FOREIGN KEY(" + MMS_MESSAGE_ID + ") REFERENCES " + MmsDatabase.TABLE_NAME + "(" + MmsDatabase.HASHED_ID + "));";
 
-    private static final String[] SMS_PROJECTION = new String[] {
-            ID, REACTION, SMS_MESSAGE_ID
-    };
-
-    private static final String[] MMS_PROJECTION = new String[] {
-            ID, REACTION, MMS_MESSAGE_ID
+    private static final String[] PROJECTION = new String[] {
+            ID, REACTION, HASHED_ID
     };
 
     public Cursor getMessageReaction(MessageRecord messageRecord){
@@ -47,36 +45,32 @@ public class EmojiReactionDatabase extends Database {
         return cursor;
     }
 
-    public String getReactionEmoji(MessageRecord messageRecord, String hashedId){
-        String where;
-        String messageType = getMessageType(messageRecord);
+    public String getReactionEmoji(MessageRecord messageRecord){
+        String emoji = null;
+        String hashedId = messageRecord.getHashedId();
+        String where = HASHED_ID + "= '" + hashedId + "'";
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        Cursor cursor;
-        if(messageType.equals(SMS_MESSAGE_ID)) {
-            where = SMS_MESSAGE_ID + "=" + hashedId;
-            cursor = db.query(TABLE_NAME, SMS_PROJECTION, where, null, null, null, null);
-        }else {
-            where = MMS_MESSAGE_ID + "=" + hashedId;
-            cursor = db.query(TABLE_NAME, MMS_PROJECTION, where, null, null, null, null);
+        Cursor cursor = db.query(TABLE_NAME, PROJECTION, where, null, null, null, null);
+
+        if(cursor.getCount() > 0) {
+            emoji = cursor.getString(cursor.getColumnIndexOrThrow(REACTION));
         }
-        return cursor.getString(cursor.getColumnIndexOrThrow(REACTION));
+        return emoji;
     }
 
     public void setMessageReaction(MessageRecord messageRecord, String reaction){
-        String messageType = getMessageType(messageRecord);
-
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try{
             ContentValues contentValues = new ContentValues();
             contentValues.put(REACTION, reaction);
-            contentValues.put(messageType, messageRecord.getHashedId());
+            contentValues.put(HASHED_ID, messageRecord.getHashedId());
 
             db.update(TABLE_NAME,
                     contentValues,
-                    messageType + " = ? AND " + REACTION + " = ?",
+                    HASHED_ID + " = ? AND " + REACTION + " = ?",
                     new String[]{
-                        contentValues.getAsString(messageType) + "",
+                        contentValues.getAsString(HASHED_ID) + "",
                         contentValues.getAsString(REACTION)});
 
             db.setTransactionSuccessful();

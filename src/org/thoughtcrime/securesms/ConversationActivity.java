@@ -650,7 +650,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   }
 
   private void emojiDrawerListener(EmojiDrawer eds, MessageRecord messageRecord){
-    if(isEmojiReaction()) {
+    //if(isEmojiReaction()) {
       //CreateProfileActivity.java line 346 for reference
       eds.setEmojiEventListener(new EmojiDrawer.EmojiEventListener(){
 
@@ -661,23 +661,33 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
         @Override
         public void onEmojiSelected(String emoji) {
+          //For testing
           String text = "Here is my selected emoji: " + emoji;
           Snackbar mySnackbar = Snackbar.make(getCurrentFocus(), text, Snackbar.LENGTH_SHORT);
           mySnackbar.show();
+          //
 
+          //Add this new reaction to the emoji reaction db
           DatabaseFactory.getEmojiReactionDatabase(ConversationActivity.this).setMessageReaction(messageRecord, emoji);
-          OutgoingEmojiReactionMessage outgoingMessage = new OutgoingEmojiReactionMessage(getRecipient(), messageRecord.getDisplayBody().toString(), messageRecord.getSubscriptionId(),  messageRecord.getHashedId(), emoji);
+
+          //Compose new message here?
+          String reactionMessage = "EmojiReaction-"+emoji+"-HashedId-"+messageRecord.getHashedId();
+
+          OutgoingEmojiReactionMessage outgoingMessage = new OutgoingEmojiReactionMessage(getRecipient(), reactionMessage, messageRecord.getSubscriptionId(),  messageRecord.getHashedId(), emoji);
           MessageSender.send(ConversationActivity.this, masterSecret, outgoingMessage, threadId, false, null);
 
           container.hideCurrentInput(composeText);
           inputPanel.setVisibility(View.VISIBLE);
+
+          //Refresh the page to show the reaction
+          //Maybe happens in in EmojiReactionDatabase
 
           //set the listener back to the input panel
           eds.setEmojiEventListener(inputPanel);
 
         }
       });
-    }
+    inputPanel.setVisibility(View.VISIBLE);
   }
 
   @Override
