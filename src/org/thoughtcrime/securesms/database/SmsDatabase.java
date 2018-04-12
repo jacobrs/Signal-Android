@@ -734,6 +734,12 @@ public class SmsDatabase extends MessagingDatabase {
     return messageId;
   }
 
+  public Cursor getMessageByHashedID(String hashedId){
+    String where = HASHED_ID + "=" + hashedId;
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    return db.query(TABLE_NAME, MESSAGE_PROJECTION, where, null, null, null, null );
+  }
+
   Cursor getMessages(int skip, int limit) {
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     return db.query(TABLE_NAME, MESSAGE_PROJECTION, null, null, null, null, ID, skip + "," + limit);
