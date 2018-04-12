@@ -93,7 +93,7 @@ public class EmojiReactionDatabase extends Database {
         notifyConversationListeners(threadId);
     }
 
-    public void setMessageReaction(String hashedId, String reaction, long threadId){
+    public void setMessageReaction(String hashedId, String reaction){
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
 
@@ -110,7 +110,7 @@ public class EmojiReactionDatabase extends Database {
         }finally{
             db.endTransaction();
         }
-        notifyConversationListeners(threadId);
+        //notifyConversationListeners(threadId);
     }
 
 

@@ -242,12 +242,9 @@ public class PushDecryptJob extends ContextJob {
     String[] parsedBody = body.split("-");
     //0:EmojiReaction, 1:emoji, 2:HashedId, 3:id
     EmojiReactionDatabase emojiReactionDB = DatabaseFactory.getEmojiReactionDatabase(context);
-    //Find the reacted messageRecord via hashedId
-    Cursor cursor = DatabaseFactory.getSmsDatabase(context).getMessageByHashedID(parsedBody[3]);
 
-    long threadId = DatabaseFactory.getSmsDatabase(context).getThreadIdForMessage(smsMessageId.get());
-
-    emojiReactionDB.setMessageReaction(parsedBody[3], parsedBody[1],threadId);
+    emojiReactionDB.setMessageReaction(parsedBody[3], parsedBody[1]);
+    MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().get());
 
   }
 
