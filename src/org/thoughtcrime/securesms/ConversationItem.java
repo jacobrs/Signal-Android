@@ -231,9 +231,12 @@ public class ConversationItem extends LinearLayout
     if (searchTerm != null && !searchTerm.equals("") &&
         !messageRecord.getDisplayBody().toString().toLowerCase().contains(searchTerm.toLowerCase())) {
       bodyBubble.setVisibility(View.GONE);
+    }else if( messageRecord.getBody().getBody().contains("EmojiReaction-")){
+      bodyBubble.setVisibility(View.GONE);
     } else {
       bodyBubble.setVisibility(View.VISIBLE);
     }
+
   }
 
   @Override

@@ -2,6 +2,7 @@ package org.thoughtcrime.securesms.jobs;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -162,11 +163,20 @@ public class PushDecryptJob extends ContextJob {
       if (content.getDataMessage().isPresent()) {
         SignalServiceDataMessage message = content.getDataMessage().get();
 
-        if      (message.isEndSession())               handleEndSessionMessage(masterSecret, envelope, message, smsMessageId);
+        boolean isEmojiReaction = false;
+        //Check if reaction
+        if(message.getBody().get().contains("EmojiReaction-")){
+          isEmojiReaction = true;
+        }
+
+
+        if (isEmojiReaction)                           handleEmojiReactionMessage(masterSecret, envelope, message, smsMessageId);
+        else if (message.isEndSession())               handleEndSessionMessage(masterSecret, envelope, message, smsMessageId);
         else if (message.isGroupUpdate())              handleGroupMessage(masterSecret, envelope, message, smsMessageId);
         else if (message.isExpirationUpdate())         handleExpirationUpdate(masterSecret, envelope, message, smsMessageId);
         else if (message.getAttachments().isPresent()) handleMediaMessage(masterSecret, envelope, message, smsMessageId);
         else if (message.getBody().isPresent())        handleTextMessage(masterSecret, envelope, message, smsMessageId);
+
 
         if (message.getGroupInfo().isPresent() && groupDatabase.isUnknownGroup(GroupUtil.getEncodedId(message.getGroupInfo().get().getGroupId(), false))) {
           handleUnknownGroupMessage(envelope, message.getGroupInfo().get());
@@ -223,6 +233,20 @@ public class PushDecryptJob extends ContextJob {
       Log.w(TAG, e);
       handleUntrustedIdentityMessage(masterSecret, envelope, smsMessageId);
     }
+  }
+
+  private void handleEmojiReactionMessage(MasterSecretUnion masterSecret, SignalServiceEnvelope envelope, SignalServiceDataMessage message, Optional<Long> smsMessageId) {
+
+    String body = message.getBody().get();
+    //Set up stuff in db instead of handling it as a normal message
+    String[] parsedBody = body.split("-");
+    //0:EmojiReaction, 1:emoji, 2:HashedId, 3:id
+    EmojiReactionDatabase emojiReactionDB = DatabaseFactory.getEmojiReactionDatabase(context);
+    //Find the reacted messageRecord via hashedId
+    Cursor cursor = DatabaseFactory.getSmsDatabase(context).getMessageByHashedID(parsedBody[3]);
+
+    emojiReactionDB.setMessageReaction(cursor, parsedBody[1]);
+
   }
 
   private void handleCallOfferMessage(@NonNull SignalServiceEnvelope envelope,
@@ -632,33 +656,11 @@ public class PushDecryptJob extends ContextJob {
     String                body       = message.getBody().isPresent() ? message.getBody().get() : "";
     Recipient             recipient = getMessageDestination(envelope, message);
 
-    boolean isEmojiReaction = false;
-    //Check if reaction
-    if(body.contains("EmojiReaction-")){
-      isEmojiReaction = true;
-    }
-
     if (message.getExpiresInSeconds() != recipient.getExpireMessages()) {
       handleExpirationUpdate(masterSecret, envelope, message, Optional.<Long>absent());
     }
 
     Long threadId;
-
-    /*
-    if(isEmojiReaction){
-      //Set up stuff in db instead of handling it as a normal message
-      String[] parsedBody = body.split("-");
-      //0:EmojiReaction
-      //1:emoji
-      //2:HashedId
-      //3:id
-      EmojiReactionDatabase emojiReactionDB = DatabaseFactory.getEmojiReactionDatabase(context);
-      //Find the reacted messageRecord via hashedId
-
-      emojiReactionDB.setMessageReaction(parsedBody[1]);
-
-    }
-    */
     if (smsMessageId.isPresent() && !message.getGroupInfo().isPresent()) {
       threadId = database.updateBundleMessageBody(masterSecret, smsMessageId.get(), body).second;
     } else {
