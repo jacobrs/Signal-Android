@@ -45,6 +45,18 @@ public class EmojiReactionDatabase extends Database {
         return cursor;
     }
 
+    public boolean checkIsDataAlreadyInDBorNot(String TableName, String dbfield, String fieldValue) {
+        SQLiteDatabase sqldb = databaseHelper.getReadableDatabase();
+        String Query = "Select * from " + TableName + " where " + dbfield + " = " + fieldValue;
+        Cursor cursor = sqldb.rawQuery(Query, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
     public String getReactionEmoji(MessageRecord messageRecord){
         String emoji = null;
         String hashedId = messageRecord.getHashedId();
@@ -53,7 +65,10 @@ public class EmojiReactionDatabase extends Database {
         Cursor cursor = db.query(TABLE_NAME, PROJECTION, where, null, null, null, null);
 
         if(cursor.getCount() > 0) {
-            emoji = cursor.getString(cursor.getColumnIndexOrThrow(REACTION));
+            cursor.moveToNext();
+            int index = cursor.getColumnIndex(REACTION);
+
+            emoji = cursor.getString(index); //
         }
         return emoji;
     }
@@ -66,12 +81,7 @@ public class EmojiReactionDatabase extends Database {
             contentValues.put(REACTION, reaction);
             contentValues.put(HASHED_ID, messageRecord.getHashedId());
 
-            db.update(TABLE_NAME,
-                    contentValues,
-                    HASHED_ID + " = ? AND " + REACTION + " = ?",
-                    new String[]{
-                        contentValues.getAsString(HASHED_ID) + "",
-                        contentValues.getAsString(REACTION)});
+            db.insert(TABLE_NAME,null, contentValues);
 
             db.setTransactionSuccessful();
         }catch(Exception e){

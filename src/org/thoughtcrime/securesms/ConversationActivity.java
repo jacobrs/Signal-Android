@@ -661,12 +661,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
         @Override
         public void onEmojiSelected(String emoji) {
-          //For testing
-          String text = "Here is my selected emoji: " + emoji;
-          Snackbar mySnackbar = Snackbar.make(getCurrentFocus(), text, Snackbar.LENGTH_SHORT);
-          mySnackbar.show();
-          //
-
           //Add this new reaction to the emoji reaction db
           DatabaseFactory.getEmojiReactionDatabase(ConversationActivity.this).setMessageReaction(messageRecord, emoji);
 
@@ -687,7 +681,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
         }
       });
-    inputPanel.setVisibility(View.VISIBLE);
+    //inputPanel.setVisibility(View.VISIBLE);
   }
 
   @Override

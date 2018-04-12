@@ -16,6 +16,7 @@ public class MessageHashedId {
 
         try{
           id = Base64.encodeObject(messageBody + sentTime);
+          id.replaceAll("==", "");
           id.replaceAll("=","");
         } catch(IOException e){
             Log.e(TAG, "IOException caught.");
