@@ -1369,6 +1369,12 @@ public class MmsDatabase extends MessagingDatabase {
       }
     }
 
+    public Cursor getMessageByHashedID(String hashedId){
+      String where = HASHED_ID + "=" + hashedId;
+      SQLiteDatabase db = databaseHelper.getReadableDatabase();
+      return db.query(TABLE_NAME, MMS_PROJECTION, where, null, null, null, null );
+    }
+
     private SlideDeck getSlideDeck(@NonNull Cursor cursor) {
       Attachment attachment = DatabaseFactory.getAttachmentDatabase(context).getAttachment(masterSecret, cursor);
       return new SlideDeck(context, attachment);
