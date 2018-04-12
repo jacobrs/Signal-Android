@@ -93,22 +93,11 @@ public class EmojiReactionDatabase extends Database {
         notifyConversationListeners(threadId);
     }
 
-    public void setMessageReaction(Cursor cursor, String reaction){
+    public void setMessageReaction(String hashedId, String reaction, long threadId){
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
 
-        String hashedId = null;
-        long threadId = 0;
         try{
-            if(cursor.getCount() > 0) {
-                cursor.moveToNext();
-                int index = cursor.getColumnIndex("hashed_id");
-                hashedId = cursor.getString(index);
-
-                index = cursor.getColumnIndex("thread_id");
-                threadId = cursor.getLong(index);
-            }
-
             ContentValues contentValues = new ContentValues();
             contentValues.put(REACTION, reaction);
             contentValues.put(HASHED_ID, hashedId);

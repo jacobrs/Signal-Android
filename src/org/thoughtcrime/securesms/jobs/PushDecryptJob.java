@@ -245,7 +245,9 @@ public class PushDecryptJob extends ContextJob {
     //Find the reacted messageRecord via hashedId
     Cursor cursor = DatabaseFactory.getSmsDatabase(context).getMessageByHashedID(parsedBody[3]);
 
-    emojiReactionDB.setMessageReaction(cursor, parsedBody[1]);
+    long threadId = DatabaseFactory.getSmsDatabase(context).getThreadIdForMessage(smsMessageId.get());
+
+    emojiReactionDB.setMessageReaction(parsedBody[3], parsedBody[1],threadId);
 
   }
 
