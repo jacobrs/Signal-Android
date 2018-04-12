@@ -32,11 +32,34 @@ public class EmojiReactionDatabase extends Database {
             "FOREIGN KEY(" + SMS_MESSAGE_ID + ") REFERENCES " + SmsDatabase.TABLE_NAME + "(" + SmsDatabase.HASHED_ID + ")," +
             "FOREIGN KEY(" + MMS_MESSAGE_ID + ") REFERENCES " + MmsDatabase.TABLE_NAME + "(" + MmsDatabase.HASHED_ID + "));";
 
+    private static final String[] SMS_PROJECTION = new String[] {
+            ID, REACTION, SMS_MESSAGE_ID
+    };
+
+    private static final String[] MMS_PROJECTION = new String[] {
+            ID, REACTION, MMS_MESSAGE_ID
+    };
+
     public Cursor getMessageReaction(MessageRecord messageRecord){
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " +
+        Cursor cursor = db.rawQuery("SELECT " + REACTION + " FROM " + TABLE_NAME + " WHERE " +
             getMessageType(messageRecord) + " = ?", new String[]{messageRecord.getHashedId()});
         return cursor;
+    }
+
+    public String getReactionEmoji(MessageRecord messageRecord, String hashedId){
+        String where;
+        String messageType = getMessageType(messageRecord);
+        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        Cursor cursor;
+        if(messageType.equals(SMS_MESSAGE_ID)) {
+            where = SMS_MESSAGE_ID + "=" + hashedId;
+            cursor = db.query(TABLE_NAME, SMS_PROJECTION, where, null, null, null, null);
+        }else {
+            where = MMS_MESSAGE_ID + "=" + hashedId;
+            cursor = db.query(TABLE_NAME, MMS_PROJECTION, where, null, null, null, null);
+        }
+        return cursor.getString(cursor.getColumnIndexOrThrow(REACTION));
     }
 
     public void setMessageReaction(MessageRecord messageRecord, String reaction){
