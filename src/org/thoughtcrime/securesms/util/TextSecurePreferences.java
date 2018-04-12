@@ -108,6 +108,9 @@ public class TextSecurePreferences {
   public  static final String MEDIA_DOWNLOAD_WIFI_PREF         = "pref_media_download_wifi";
   public  static final String MEDIA_DOWNLOAD_ROAMING_PREF      = "pref_media_download_roaming";
 
+  public  static final String VIDEO_COMPRESSION_STATUS_PREF    = "pref_video_compression_status";
+  public  static final String VIDEO_COMPRESSION_LEVEL_PREF     = "pref_video_compression_level";
+
   public  static final String SYSTEM_EMOJI_PREF                = "pref_system_emoji";
   private static final String MULTI_DEVICE_PROVISIONED_PREF    = "pref_multi_device";
   public  static final String DIRECT_CAPTURE_CAMERA_ID         = "pref_direct_capture_camera_id";
