@@ -223,7 +223,7 @@
             android:layout_marginTop="4dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/black"
-            android:textSize="@dimen/conversation_item_body_text_size"
+            android:textSize="12sp"
             app:scaleEmojis="true"
             tools:text="emoji" />
 

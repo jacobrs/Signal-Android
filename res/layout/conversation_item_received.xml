@@ -228,7 +228,7 @@
             android:layout_toRightOf="@id/contact_photo"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/black"
-            android:textSize="@dimen/conversation_item_body_text_size"
+            android:textSize="12sp"
             android:background="@color/gray10"
             app:scaleEmojis="true"
             tools:text="emoji"/>
