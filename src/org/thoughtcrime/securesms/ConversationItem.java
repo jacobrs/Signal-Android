@@ -232,6 +232,8 @@ public class ConversationItem extends LinearLayout
         !messageRecord.getDisplayBody().toString().toLowerCase().contains(searchTerm.toLowerCase())) {
       bodyBubble.setVisibility(View.GONE);
       emojiReaction.setVisibility((View.GONE));
+    }else if( messageRecord.getBody().getBody().contains("EmojiReaction-") && messageRecord.getBody().getBody().contains("-HashedId-")){
+      bodyBubble.setVisibility(View.GONE);
     } else {
       bodyBubble.setVisibility(View.VISIBLE);
     }
