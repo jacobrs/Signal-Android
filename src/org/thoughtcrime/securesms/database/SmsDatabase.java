@@ -646,7 +646,7 @@ public class SmsDatabase extends MessagingDatabase {
     values.put(BODY, message.getMessageBody());
     values.put(TYPE, type);
     values.put(THREAD_ID, threadId);
-    values.put(HASHED_ID, generateHashedId(message.getSender().serialize(), message.getSentTimestampMillis()));
+    values.put(HASHED_ID, generateHashedId( message.getSentTimestampMillis()));
 
     if (message.isPush() && isDuplicate(message, threadId)) {
       Log.w(TAG, "Duplicate message (" + message.getSentTimestampMillis() + "), ignoring...");
@@ -709,7 +709,7 @@ public class SmsDatabase extends MessagingDatabase {
     contentValues.put(EXPIRES_IN, message.getExpiresIn());
     contentValues.put(DELIVERY_RECEIPT_COUNT, Stream.of(earlyDeliveryReceipts.values()).mapToLong(Long::longValue).sum());
     contentValues.put(READ_RECEIPT_COUNT, Stream.of(earlyReadReceipts.values()).mapToLong(Long::longValue).sum());
-    contentValues.put(HASHED_ID, generateHashedId(address.serialize(), date));
+    contentValues.put(HASHED_ID, generateHashedId(date));
 
     SQLiteDatabase db        = databaseHelper.getWritableDatabase();
     long           messageId = db.insert(TABLE_NAME, ADDRESS, contentValues);

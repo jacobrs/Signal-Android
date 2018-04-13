@@ -17,13 +17,13 @@ public class MessageHashedId {
     /*  Generate a hashed ID in Base64 using message body and time the message was sent as parameters.
         These values are accessible to both sender and recipient, so both can generate the same hash
         ID for each message. */
-    public static String generateHashedId(String serializedSender, long sentTime) {
+    public static String generateHashedId(long sentTime) {
         String id = null;
 
         try{
           //id.replaceAll("==", "");
           //id.replaceAll("=","");
-          String clearString = (sentTime +" " + serializedSender);
+          String clearString = (sentTime +" ");
           //id = getSha1Hex(clearString);
           id = Base64.encodeObject(clearString);
 
