@@ -550,7 +550,7 @@ public class ConversationFragment extends Fragment
                 setLastSeen(0);
                 getListAdapter().addFastRecord(messageRecord);
             }
-        //}
+       // }
 
         return messageRecord.getId();
     }
