@@ -544,13 +544,11 @@ public class ConversationFragment extends Fragment
     public long stageOutgoingMessage(OutgoingTextMessage message) {
         MessageRecord messageRecord = DatabaseFactory.getSmsDatabase(getContext()).readerFor(message, threadId).getCurrent();
 
-        //if(!message.getMessageBody().contains("EmojiReaction-")){
             if (getListAdapter() != null) {
                 getListAdapter().setHeaderView(null);
                 setLastSeen(0);
                 getListAdapter().addFastRecord(messageRecord);
             }
-       // }
 
         return messageRecord.getId();
     }

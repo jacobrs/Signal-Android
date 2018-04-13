@@ -231,10 +231,7 @@ public class ConversationItem extends LinearLayout
     if (searchTerm != null && !searchTerm.equals("") &&
         !messageRecord.getDisplayBody().toString().toLowerCase().contains(searchTerm.toLowerCase())) {
       bodyBubble.setVisibility(View.GONE);
-    }else if( messageRecord.getBody().getBody().contains("EmojiReaction-")){
-      //if the messageBody is a reaction, do not display it
-      //Todo: this should be removed and replaced with a method that deletes messages of this nature
-      bodyBubble.setVisibility(View.GONE);
+      emojiReaction.setVisibility((View.GONE));
     } else {
       bodyBubble.setVisibility(View.VISIBLE);
     }

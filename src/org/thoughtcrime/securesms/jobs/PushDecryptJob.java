@@ -165,10 +165,9 @@ public class PushDecryptJob extends ContextJob {
 
         boolean isEmojiReaction = false;
         //Check if is emoji reaction
-        if(message.getBody().get().contains("EmojiReaction-")){
+        if(message.getBody().get().contains("EmojiReaction-") && message.getBody().get().contains("-HashedId-")){
           isEmojiReaction = true;
         }
-
 
         if (isEmojiReaction)                           handleEmojiReactionMessage(masterSecret, envelope, message, smsMessageId);
         else if (message.isEndSession())               handleEndSessionMessage(masterSecret, envelope, message, smsMessageId);
