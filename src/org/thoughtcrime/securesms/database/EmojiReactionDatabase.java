@@ -5,10 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Message;
 import android.util.Log;
 
-import org.thoughtcrime.securesms.MessageDetailsActivity;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
 
 public class EmojiReactionDatabase extends Database {
@@ -32,20 +30,10 @@ public class EmojiReactionDatabase extends Database {
             SMS_MESSAGE_ID + " TEXT DEFAULT NULL, " +
             MMS_MESSAGE_ID + " TEXT DEFAULT NULL, " +
             HASHED_ID + " TEXT DEFAULT NULL )"; // +
-            //"FOREIGN KEY(" + SMS_MESSAGE_ID + ") REFERENCES " + SmsDatabase.TABLE_NAME + "(" + SmsDatabase.HASHED_ID + ")," +
-            //"FOREIGN KEY(" + MMS_MESSAGE_ID + ") REFERENCES " + MmsDatabase.TABLE_NAME + "(" + MmsDatabase.HASHED_ID + "));";
 
     private static final String[] PROJECTION = new String[] {
             ID, REACTION, HASHED_ID
     };
-
-    //Not used currently
-    public Cursor getMessageReaction(MessageRecord messageRecord){
-        SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT " + REACTION + " FROM " + TABLE_NAME + " WHERE " +
-            getMessageType(messageRecord) + " = ?", new String[]{messageRecord.getHashedId()});
-        return cursor;
-    }
 
     public String getReactionEmoji(MessageRecord messageRecord){
         String emoji = null;
@@ -73,7 +61,12 @@ public class EmojiReactionDatabase extends Database {
             contentValues.put(REACTION, reaction);
             contentValues.put(HASHED_ID, hashedId);
 
-            db.insert(TABLE_NAME, null, contentValues);
+            String where = HASHED_ID + "= '" + hashedId + "'";
+            int update = db.update(TABLE_NAME, contentValues, where, null);
+
+            if(update == 0){
+                db.insert(TABLE_NAME,null, contentValues);
+            }
 
             db.setTransactionSuccessful();
         }catch(Exception e){
@@ -96,7 +89,12 @@ public class EmojiReactionDatabase extends Database {
             contentValues.put(REACTION, reaction);
             contentValues.put(HASHED_ID, hashedId);
 
-            db.insert(TABLE_NAME,null, contentValues);
+            String where = HASHED_ID + "= '" + hashedId + "'";
+            int update = db.update(TABLE_NAME, contentValues, where, null);
+
+            if(update == 0){
+                db.insert(TABLE_NAME,null, contentValues);
+            }
 
             db.setTransactionSuccessful();
         }catch(Exception e){
@@ -105,11 +103,6 @@ public class EmojiReactionDatabase extends Database {
             db.endTransaction();
         }
         notifyConversationListeners(threadId);
-    }
-
-    //may not need
-    public boolean hasReaction(MessageRecord messageRecord){
-        return getMessageReaction(messageRecord) != null;
     }
 
     public boolean deleteMessage(String hashedId, long threadId) {
@@ -121,10 +114,5 @@ public class EmojiReactionDatabase extends Database {
         boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
         notifyConversationListeners(threadId);
         return threadDeleted;
-    }
-
-    //Probably not needed anymore?
-    public String getMessageType(MessageRecord messageRecord){
-        return messageRecord.isMms() ? MMS_MESSAGE_ID : SMS_MESSAGE_ID;
     }
 }
