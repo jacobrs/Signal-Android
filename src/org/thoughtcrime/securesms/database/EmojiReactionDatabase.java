@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Message;
 import android.util.Log;
 
+import org.thoughtcrime.securesms.MessageDetailsActivity;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
 
 public class EmojiReactionDatabase extends Database {
@@ -104,6 +105,22 @@ public class EmojiReactionDatabase extends Database {
             db.endTransaction();
         }
         notifyConversationListeners(threadId);
+    }
+
+    //may not need
+    public boolean hasReaction(MessageRecord messageRecord){
+        return getMessageReaction(messageRecord) != null;
+    }
+
+    public boolean deleteMessage(String hashedId, long threadId) {
+        Log.w("EmojiReactionDatabase", "Deleting: " + hashedId);
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        String where = HASHED_ID + "='" + hashedId + "'";
+        db.delete(TABLE_NAME, where, null);
+
+        boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
+        notifyConversationListeners(threadId);
+        return threadDeleted;
     }
 
     //Probably not needed anymore?

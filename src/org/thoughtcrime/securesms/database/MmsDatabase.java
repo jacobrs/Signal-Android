@@ -1011,8 +1011,23 @@ public class MmsDatabase extends MessagingDatabase {
     }
   }
 
+  public String getHashedIdByMessageId(long messageId){
+    //String where = ID + "=" + messageId;
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = db.query(TABLE_NAME, new String[]{ID, HASHED_ID}, ID_WHERE, new String[] {messageId+""}, null, null, null );
+    String hashedId = null;
+
+    if(cursor.getCount() > 0) {
+      cursor.moveToNext();
+      int index = cursor.getColumnIndex(HASHED_ID);
+      hashedId = cursor.getString(index);
+    }
+    return hashedId;
+  }
+
   public boolean delete(long messageId) {
     long               threadId           = getThreadIdForMessage(messageId);
+    String             hashedId           = getHashedIdByMessageId(messageId);
     AttachmentDatabase attachmentDatabase = DatabaseFactory.getAttachmentDatabase(context);
     attachmentDatabase.deleteAttachmentsForMessage(messageId);
 
@@ -1021,6 +1036,7 @@ public class MmsDatabase extends MessagingDatabase {
 
     SQLiteDatabase database = databaseHelper.getWritableDatabase();
     database.delete(TABLE_NAME, ID_WHERE, new String[] {messageId+""});
+    DatabaseFactory.getEmojiReactionDatabase(context).deleteMessage(hashedId, threadId);
     boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
     notifyConversationListeners(threadId);
     return threadDeleted;
