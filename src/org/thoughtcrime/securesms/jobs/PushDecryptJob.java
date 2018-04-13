@@ -164,7 +164,7 @@ public class PushDecryptJob extends ContextJob {
         SignalServiceDataMessage message = content.getDataMessage().get();
 
         boolean isEmojiReaction = false;
-        //Check if reaction
+        //Check if is emoji reaction
         if(message.getBody().get().contains("EmojiReaction-")){
           isEmojiReaction = true;
         }
@@ -238,13 +238,15 @@ public class PushDecryptJob extends ContextJob {
   private void handleEmojiReactionMessage(MasterSecretUnion masterSecret, SignalServiceEnvelope envelope, SignalServiceDataMessage message, Optional<Long> smsMessageId) {
 
     String body = message.getBody().get();
-    //Set up stuff in db instead of handling it as a normal message
-    String[] parsedBody = body.split("-");
-    //0:EmojiReaction, 1:emoji, 2:HashedId, 3:id
+
+    String[] parsedBody = body.split("-"); //0:EmojiReaction, 1:emoji, 2:HashedId, 3:id
+
     EmojiReactionDatabase emojiReactionDB = DatabaseFactory.getEmojiReactionDatabase(context);
 
-    emojiReactionDB.setMessageReaction(parsedBody[3], parsedBody[1]);
-    MessageNotifier.updateNotification(context, masterSecret.getMasterSecret().get());
+    Recipient recipient = getMessageDestination(envelope,message);
+    Long threadId = DatabaseFactory.getThreadDatabase(context).getThreadIdFor(recipient);
+
+    emojiReactionDB.setMessageReaction(parsedBody[3], parsedBody[1], threadId);
 
   }
 

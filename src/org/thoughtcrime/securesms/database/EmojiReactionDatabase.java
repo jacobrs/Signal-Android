@@ -38,23 +38,12 @@ public class EmojiReactionDatabase extends Database {
             ID, REACTION, HASHED_ID
     };
 
+    //Not used currently
     public Cursor getMessageReaction(MessageRecord messageRecord){
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT " + REACTION + " FROM " + TABLE_NAME + " WHERE " +
             getMessageType(messageRecord) + " = ?", new String[]{messageRecord.getHashedId()});
         return cursor;
-    }
-
-    public boolean checkIsDataAlreadyInDBorNot(String TableName, String dbfield, String fieldValue) {
-        SQLiteDatabase sqldb = databaseHelper.getReadableDatabase();
-        String Query = "Select * from " + TableName + " where " + dbfield + " = " + fieldValue;
-        Cursor cursor = sqldb.rawQuery(Query, null);
-        if(cursor.getCount() <= 0){
-            cursor.close();
-            return false;
-        }
-        cursor.close();
-        return true;
     }
 
     public String getReactionEmoji(MessageRecord messageRecord){
@@ -67,21 +56,23 @@ public class EmojiReactionDatabase extends Database {
         if(cursor.getCount() > 0) {
             cursor.moveToNext();
             int index = cursor.getColumnIndex(REACTION);
-
-            emoji = cursor.getString(index); //
+            emoji = cursor.getString(index);
         }
         return emoji;
     }
 
+    //Add emoji reaction (SENDER)
     public void setMessageReaction(MessageRecord messageRecord, String reaction){
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
-        try{
+        try {
+            String hashedId = messageRecord.getHashedId();
+
             ContentValues contentValues = new ContentValues();
             contentValues.put(REACTION, reaction);
-            contentValues.put(HASHED_ID, messageRecord.getHashedId());
+            contentValues.put(HASHED_ID, hashedId);
 
-            db.insert(TABLE_NAME,null, contentValues);
+            db.insert(TABLE_NAME, null, contentValues);
 
             db.setTransactionSuccessful();
         }catch(Exception e){
@@ -90,10 +81,12 @@ public class EmojiReactionDatabase extends Database {
             db.endTransaction();
         }
         long threadId = messageRecord.getThreadId();
+
         notifyConversationListeners(threadId);
     }
 
-    public void setMessageReaction(String hashedId, String reaction){
+    //Add emoji reaction (RECEIVER)
+    public void setMessageReaction(String hashedId, String reaction, long threadId){
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
 
@@ -110,11 +103,10 @@ public class EmojiReactionDatabase extends Database {
         }finally{
             db.endTransaction();
         }
-        //notifyConversationListeners(threadId);
+        notifyConversationListeners(threadId);
     }
 
-
-
+    //Probably not needed anymore?
     public String getMessageType(MessageRecord messageRecord){
         return messageRecord.isMms() ? MMS_MESSAGE_ID : SMS_MESSAGE_ID;
     }

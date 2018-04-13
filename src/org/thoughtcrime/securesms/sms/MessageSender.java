@@ -73,18 +73,8 @@ public class MessageSender {
       allocatedThreadId = threadId;
     }
 
-    if(message instanceof OutgoingEmojiReactionMessage){
-
-      //Note for morning: instead of making a different kind of send, this is where we can set the message body to something identifiable
-      //so when we receive it, we can categorize it as a reaction.
-      //sendEmojiReaction();
-
-      //After further investigation, we'd actually need to modify the message before this point since it is Final
-    }
-
     long messageId = database.insertMessageOutbox(new MasterSecretUnion(masterSecret), allocatedThreadId,
                                                   message, forceSms, System.currentTimeMillis(), insertListener);
-
 
     sendTextMessage(context, recipient, forceSms, keyExchange, messageId, message.getExpiresIn());
 
@@ -143,11 +133,6 @@ public class MessageSender {
     } catch (MmsException e) {
       Log.w(TAG, e);
     }
-  }
-
-  private static void sendEmojiReaction(Context context, MasterSecret masterSecret,
-                                        Recipient recipient, boolean forceSms){
-
   }
 
   private static void sendMediaMessage(Context context, MasterSecret masterSecret,

@@ -263,7 +263,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private boolean    isDefaultSms          = true;
   private boolean    isMmsEnabled          = true;
   private boolean    isSecurityInitialized = false;
-  private boolean    isEmojiReaction       = false;
 
   private final IdentityRecordList identityRecords = new IdentityRecordList();
   private final DynamicTheme       dynamicTheme    = new DynamicTheme();
@@ -627,31 +626,19 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
   }
 
-  public boolean isEmojiReaction() {
-    return isEmojiReaction;
-  }
-
-  public void setEmojiReaction(boolean emojiReaction) {
-    isEmojiReaction = emojiReaction;
-  }
-
-
   public void handleEmojiReaction(Activity activity, MessageRecord messageRecord){
 
-    setEmojiReaction(true);
-
+    //Get and open the emoji drawer
     EmojiDrawer eds = this.emojiDrawerStub.get();
     container.show(composeText, eds);
     inputPanel.setVisibility(View.GONE);
 
+    //Set the emoji listener
     emojiDrawerListener(eds, messageRecord);
-
 
   }
 
   private void emojiDrawerListener(EmojiDrawer eds, MessageRecord messageRecord){
-    //if(isEmojiReaction()) {
-      //CreateProfileActivity.java line 346 for reference
       eds.setEmojiEventListener(new EmojiDrawer.EmojiEventListener(){
 
         @Override
@@ -661,27 +648,24 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
         @Override
         public void onEmojiSelected(String emoji) {
+
           //Add this new reaction to the emoji reaction db
           DatabaseFactory.getEmojiReactionDatabase(ConversationActivity.this).setMessageReaction(messageRecord, emoji);
 
-          //Compose new message here?
+          //Compose the reaction message here
           String reactionMessage = "EmojiReaction-"+emoji+"-HashedId-"+messageRecord.getHashedId();
 
-          OutgoingEmojiReactionMessage outgoingMessage = new OutgoingEmojiReactionMessage(getRecipient(), reactionMessage, messageRecord.getSubscriptionId(),  messageRecord.getHashedId(), emoji);
+          OutgoingTextMessage outgoingMessage = new OutgoingTextMessage(getRecipient(), reactionMessage, messageRecord.getSubscriptionId());
           MessageSender.send(ConversationActivity.this, masterSecret, outgoingMessage, threadId, false, null);
 
           container.hideCurrentInput(composeText);
           inputPanel.setVisibility(View.VISIBLE);
 
-          //Refresh the page to show the reaction
-          //Maybe happens in in EmojiReactionDatabase
-
-          //set the listener back to the input panel
+          //Set the listener back to the input panel
           eds.setEmojiEventListener(inputPanel);
 
         }
       });
-    //inputPanel.setVisibility(View.VISIBLE);
   }
 
   @Override

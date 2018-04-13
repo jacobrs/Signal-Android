@@ -232,6 +232,8 @@ public class ConversationItem extends LinearLayout
         !messageRecord.getDisplayBody().toString().toLowerCase().contains(searchTerm.toLowerCase())) {
       bodyBubble.setVisibility(View.GONE);
     }else if( messageRecord.getBody().getBody().contains("EmojiReaction-")){
+      //if the messageBody is a reaction, do not display it
+      //Todo: this should be removed and replaced with a method that deletes messages of this nature
       bodyBubble.setVisibility(View.GONE);
     } else {
       bodyBubble.setVisibility(View.VISIBLE);
@@ -395,16 +397,17 @@ public class ConversationItem extends LinearLayout
   }
 
   private void setEmojiReaction(MessageRecord messageRecord){
-    //if this message record has an emoji reaction
+    //Get the emoji reaction database
     EmojiReactionDatabase erDB = DatabaseFactory.getEmojiReactionDatabase(context);
 
-    //String hashedID = messageRecord.getHashedId();
-
+    //Fetch the emoji
     String emoji = erDB.getReactionEmoji(messageRecord);
     if(emoji != null){
+      //if it exists, set it and make it visible
       emojiReaction.setText(emoji);
       emojiReaction.setVisibility(VISIBLE);
     }else
+      //else remove the emoji container
       emojiReaction.setVisibility(GONE);
   }
 
