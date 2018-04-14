@@ -237,7 +237,6 @@ public class ConversationItem extends LinearLayout
     } else {
       bodyBubble.setVisibility(View.VISIBLE);
     }
-
   }
 
   @Override

@@ -1012,7 +1012,6 @@ public class MmsDatabase extends MessagingDatabase {
   }
 
   public String getHashedIdByMessageId(long messageId){
-    //String where = ID + "=" + messageId;
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     Cursor cursor = db.query(TABLE_NAME, new String[]{ID, HASHED_ID}, ID_WHERE, new String[] {messageId+""}, null, null, null );
     String hashedId = null;
@@ -1036,7 +1035,7 @@ public class MmsDatabase extends MessagingDatabase {
 
     SQLiteDatabase database = databaseHelper.getWritableDatabase();
     database.delete(TABLE_NAME, ID_WHERE, new String[] {messageId+""});
-    DatabaseFactory.getEmojiReactionDatabase(context).deleteMessage(hashedId, threadId);
+    DatabaseFactory.getEmojiReactionDatabase(context).deleteReaction(hashedId, threadId);
     boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
     notifyConversationListeners(threadId);
     return threadDeleted;
@@ -1383,12 +1382,6 @@ public class MmsDatabase extends MessagingDatabase {
         Log.w("MmsDatabase", e);
         return new DisplayRecord.Body(context.getString(R.string.MmsDatabase_error_decrypting_message), true);
       }
-    }
-
-    public Cursor getMessageByHashedID(String hashedId){
-      String where = HASHED_ID + "=" + hashedId;
-      SQLiteDatabase db = databaseHelper.getReadableDatabase();
-      return db.query(TABLE_NAME, MMS_PROJECTION, where, null, null, null, null );
     }
 
     private SlideDeck getSlideDeck(@NonNull Cursor cursor) {

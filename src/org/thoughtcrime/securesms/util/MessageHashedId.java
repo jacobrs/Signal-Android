@@ -14,12 +14,11 @@ public class MessageHashedId {
 
     public static String TAG = MessageHashedId.class.getSimpleName();
 
-    /*  Generate a hashed ID with time the message was sent as parameters.
-        These values are accessible to both sender and recipient, so both can generate the same hash
-        ID for each message. */
+    /*  Generate a hashed ID with time the message was sent as parameters. This values is accessible
+        to sender and recipient, so both can generate the same hash ID for each message. */
     public static String generateHashedId(long sentTime) {
         String id = null;
-        String clearString = (sentTime +"");
+        String clearString = (sentTime + "");
         id = getSha1Hex(clearString);
         return id;
     }

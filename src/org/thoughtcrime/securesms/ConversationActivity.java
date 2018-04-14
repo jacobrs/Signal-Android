@@ -625,7 +625,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
   }
 
-  public void handleEmojiReaction(Activity activity, MessageRecord messageRecord){
+  public void handleEmojiReaction(MessageRecord messageRecord){
 
     //Get and open the emoji drawer
     EmojiDrawer eds = this.emojiDrawerStub.get();
@@ -634,7 +634,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
     //Set the emoji listener
     emojiDrawerListener(eds, messageRecord);
-
   }
 
   private void emojiDrawerListener(EmojiDrawer eds, MessageRecord messageRecord){
@@ -642,7 +641,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
         @Override
         public void onKeyEvent(KeyEvent keyEvent) {
-          //Not sure if we need this one but it needs to be overridden
+          // Unused. Required to be overridden.
         }
 
         @Override
@@ -652,7 +651,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
           DatabaseFactory.getEmojiReactionDatabase(ConversationActivity.this).setMessageReaction(messageRecord, emoji);
 
           //Compose the reaction message here
-          String reactionMessage = "EmojiReaction-"+emoji+"-HashedId-"+messageRecord.getHashedId();
+          String reactionMessage = "EmojiReaction-" + emoji + "-HashedId-" + messageRecord.getHashedId();
 
           OutgoingTextMessage outgoingMessage = new OutgoingTextMessage(getRecipient(), reactionMessage, messageRecord.getSubscriptionId());
           MessageSender.send(ConversationActivity.this, masterSecret, outgoingMessage, threadId, false, null);
@@ -662,7 +661,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
           //Set the listener back to the input panel
           eds.setEmojiEventListener(inputPanel);
-
         }
       });
   }

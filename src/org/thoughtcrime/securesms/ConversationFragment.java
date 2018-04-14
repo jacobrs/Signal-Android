@@ -761,7 +761,7 @@ public class ConversationFragment extends Fragment
                     return true;
                 case R.id.emoji_reaction:
                     ConversationActivity conversationActivity = (ConversationActivity) getActivity();
-                    conversationActivity.handleEmojiReaction(conversationActivity, getSelectedMessageRecord());
+                    conversationActivity.handleEmojiReaction(getSelectedMessageRecord());
                     actionMode.finish();
                     return true;
             }

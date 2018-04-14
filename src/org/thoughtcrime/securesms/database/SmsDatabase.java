@@ -734,12 +734,6 @@ public class SmsDatabase extends MessagingDatabase {
     return messageId;
   }
 
-  public Cursor getMessageByHashedID(String hashedId){
-    String where = HASHED_ID + "='" + hashedId +"'";
-    SQLiteDatabase db = databaseHelper.getReadableDatabase();
-    return db.query(TABLE_NAME, MESSAGE_PROJECTION, where, null, null, null, null );
-  }
-
   Cursor getMessages(int skip, int limit) {
     SQLiteDatabase db = databaseHelper.getReadableDatabase();
     return db.query(TABLE_NAME, MESSAGE_PROJECTION, null, null, null, null, ID, skip + "," + limit);
@@ -800,7 +794,7 @@ public class SmsDatabase extends MessagingDatabase {
     String hashedId = getHashedIdByMessageId(messageId);
     db.delete(TABLE_NAME, ID_WHERE, new String[] {messageId+""});
 
-    DatabaseFactory.getEmojiReactionDatabase(context).deleteMessage(hashedId, threadId);
+    DatabaseFactory.getEmojiReactionDatabase(context).deleteReaction(hashedId, threadId);
 
     boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
     notifyConversationListeners(threadId);
@@ -915,9 +909,6 @@ public class SmsDatabase extends MessagingDatabase {
       }
     }
 
-    /*TODO
-      Check that the null defined in the SmsMessageRecord constructor does not override the hashed message for the record.
-      Left as placeholder as it needs to be defined. */
     public MessageRecord getCurrent() {
       return new SmsMessageRecord(context, id, new DisplayRecord.Body(message.getMessageBody(), true),
                                   message.getRecipient(), message.getRecipient(),
@@ -966,7 +957,7 @@ public class SmsDatabase extends MessagingDatabase {
       long    expireStarted        = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.EXPIRE_STARTED));
       int     readReminder         = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.READ_REMINDER));
       int     pinned               = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.PINNED));
-      String  hashedId              = cursor.getString(cursor.getColumnIndexOrThrow(SmsDatabase.HASHED_ID));
+      String  hashedId             = cursor.getString(cursor.getColumnIndexOrThrow(SmsDatabase.HASHED_ID));
 
       if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
         readReceiptCount = 0;

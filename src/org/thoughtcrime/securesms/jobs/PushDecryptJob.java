@@ -164,18 +164,18 @@ public class PushDecryptJob extends ContextJob {
         SignalServiceDataMessage message = content.getDataMessage().get();
 
         boolean isEmojiReaction = false;
+
         //Check if is emoji reaction
         if(message.getBody().get().contains("EmojiReaction-") && message.getBody().get().contains("-HashedId-")){
           isEmojiReaction = true;
         }
 
-        if (isEmojiReaction)                           handleEmojiReactionMessage(masterSecret, envelope, message, smsMessageId);
+        if (isEmojiReaction)                           handleEmojiReactionMessage(envelope, message);
         else if (message.isEndSession())               handleEndSessionMessage(masterSecret, envelope, message, smsMessageId);
         else if (message.isGroupUpdate())              handleGroupMessage(masterSecret, envelope, message, smsMessageId);
         else if (message.isExpirationUpdate())         handleExpirationUpdate(masterSecret, envelope, message, smsMessageId);
         else if (message.getAttachments().isPresent()) handleMediaMessage(masterSecret, envelope, message, smsMessageId);
         else if (message.getBody().isPresent())        handleTextMessage(masterSecret, envelope, message, smsMessageId);
-
 
         if (message.getGroupInfo().isPresent() && groupDatabase.isUnknownGroup(GroupUtil.getEncodedId(message.getGroupInfo().get().getGroupId(), false))) {
           handleUnknownGroupMessage(envelope, message.getGroupInfo().get());
@@ -234,19 +234,17 @@ public class PushDecryptJob extends ContextJob {
     }
   }
 
-  private void handleEmojiReactionMessage(MasterSecretUnion masterSecret, SignalServiceEnvelope envelope, SignalServiceDataMessage message, Optional<Long> smsMessageId) {
+  private void handleEmojiReactionMessage(SignalServiceEnvelope envelope, SignalServiceDataMessage message) {
 
     String body = message.getBody().get();
-
-    String[] parsedBody = body.split("-"); //0:EmojiReaction, 1:emoji, 2:HashedId, 3:id
+    String[] parsedBody = body.split("-"); // 0:EmojiReaction, 1:emoji, 2:HashedId, 3:id
 
     EmojiReactionDatabase emojiReactionDB = DatabaseFactory.getEmojiReactionDatabase(context);
-
-    Recipient recipient = getMessageDestination(envelope,message);
+    Recipient recipient = getMessageDestination(envelope, message);
     Long threadId = DatabaseFactory.getThreadDatabase(context).getThreadIdFor(recipient);
 
+    // Passing in the hashed id and emoji reaction parsed from the reaction message body.
     emojiReactionDB.setMessageReaction(parsedBody[3], parsedBody[1], threadId);
-
   }
 
   private void handleCallOfferMessage(@NonNull SignalServiceEnvelope envelope,
