@@ -133,8 +133,8 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
 
 
   interface ItemClickListener {
-    void onItemClick(MessageRecord item, View v);
-    void onItemLongClick(MessageRecord item, View v);
+    void onItemClick(MessageRecord item);
+    void onItemLongClick(MessageRecord item);
   }
 
   @SuppressWarnings("ConstantConditions")
@@ -219,12 +219,12 @@ public class ConversationAdapter <V extends View & BindableConversationItem>
     final V itemView = ViewUtil.inflate(inflater, parent, getLayoutForViewType(viewType));
     itemView.setOnClickListener(view -> {
       if (clickListener != null) {
-        clickListener.onItemClick(itemView.getMessageRecord(), view);
+        clickListener.onItemClick(itemView.getMessageRecord());
       }
     });
     itemView.setOnLongClickListener(view -> {
       if (clickListener != null) {
-        clickListener.onItemLongClick(itemView.getMessageRecord(), view);
+        clickListener.onItemLongClick(itemView.getMessageRecord());
       }
       return true;
     });

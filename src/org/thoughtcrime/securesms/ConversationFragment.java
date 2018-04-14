@@ -677,7 +677,7 @@ public class ConversationFragment extends Fragment
     private class ConversationFragmentItemClickListener implements ItemClickListener {
 
         @Override
-        public void onItemClick(MessageRecord messageRecord, View clickedView) {
+        public void onItemClick(MessageRecord messageRecord) {
             if (actionMode == null && messageRecord.readReminderSet()) {
                 if (messageRecord.isMms()) {
                     DatabaseFactory.getMmsDatabase(getContext()).removeReadReminder(messageRecord.getThreadId(), messageRecord.getId());
@@ -695,7 +695,7 @@ public class ConversationFragment extends Fragment
         }
 
         @Override
-        public void onItemLongClick(MessageRecord messageRecord, View clickedView) {
+        public void onItemLongClick(MessageRecord messageRecord) {
             if (actionMode == null) {
                 ((ConversationAdapter) list.getAdapter()).toggleSelection(messageRecord);
                 list.getAdapter().notifyDataSetChanged();
