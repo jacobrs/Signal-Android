@@ -33,6 +33,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -663,12 +664,17 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
           eds.setEmojiEventListener(inputPanel);
         }
       });
+
+
   }
 
   @Override
   public void onBackPressed() {
     Log.w(TAG, "onBackPressed()");
-    if (container.isInputOpen()) container.hideCurrentInput(composeText);
+    if (container.isInputOpen()){
+      container.hideCurrentInput(composeText);
+      inputPanel.setVisibility(View.VISIBLE);
+    }
     else                         super.onBackPressed();
   }
 
