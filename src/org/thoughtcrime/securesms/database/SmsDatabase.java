@@ -505,7 +505,7 @@ public class SmsDatabase extends MessagingDatabase {
   }
 
   public void updateMessageBody(MasterSecretUnion masterSecret, long messageId, String body) {
-    body = getEncryptedBody(masterSecret, body);
+    String encryptedBody = getEncryptedBody(masterSecret, body);
 
     long type;
 
@@ -515,7 +515,7 @@ public class SmsDatabase extends MessagingDatabase {
         type = Types.ENCRYPTION_ASYMMETRIC_BIT;
     }
 
-    updateMessageBodyAndType(messageId, body, Types.ENCRYPTION_MASK, type);
+    updateMessageBodyAndType(messageId, encryptedBody, Types.ENCRYPTION_MASK, type);
   }
 
   protected Pair<Long, Long> updateMessageBodyAndType(long messageId, String body, long maskOff, long maskOn) {

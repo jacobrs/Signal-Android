@@ -2,7 +2,6 @@ package org.thoughtcrime.securesms.translation;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 
 import org.thoughtcrime.securesms.database.model.MessageRecord;
 import org.thoughtcrime.securesms.util.JsonUtils;
@@ -15,7 +14,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class TranslationTask extends AsyncTask<String, Void, TranslationResult> {
-    private String API_KEY = "trnsl.1.1.20180413T005640Z.e9d9285313a77d68.f90bbb8e14d7b2bd9257f87c43139b70f49023e1";
+    private String API_KEY;
     private OkHttpClient httpClient;
     private MessageRecord messageRecord;
     public TranslationResultHandler resultHandler;
