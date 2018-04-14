@@ -17,6 +17,7 @@ import org.hamcrest.TypeSafeMatcher;
 import org.thoughtcrime.securesms.R;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.Espresso.pressBack;
@@ -30,6 +31,7 @@ import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
+import static android.support.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
@@ -249,6 +251,20 @@ public class ConversationActions {
         ViewInteraction recyclerView = onView(
                 allOf(withId(android.R.id.list)));
         recyclerView.perform(actionOnItemAtPosition(messageIndex, click()));
+    }
+
+    public static void clickOnFirstEmoji(){
+        ViewInteraction emojiView = onView(allOf(withId(R.id.emoji), hasChildCount(45),
+                childAtPosition(withId(-1),0),
+                isDisplayed()));
+
+        emojiView.perform(click());
+    }
+
+    public static void clickOnEmojiTab(){
+        ViewInteraction emojiPeopleTabButton = onView(allOf(withId(R.id.tabs), isDisplayed()));
+
+        emojiPeopleTabButton.perform(click());
     }
 
     public static void searchInConversation(String searchTerm){

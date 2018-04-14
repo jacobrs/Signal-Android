@@ -109,12 +109,12 @@ public class EmojiReactionDatabase extends Database {
     }
 
     public boolean deleteReaction(String hashedId, long threadId) {
-
-        Log.w("EmojiReactionDatabase", "Deleting: " + hashedId);
+        Log.i("EmojiReactionDatabase", "Deleting: " + hashedId);
 
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         String where = HASHED_ID + "='" + hashedId + "'";
-        db.delete(TABLE_NAME, where, null);
+        int success = db.delete(TABLE_NAME, where, null);
+        Log.i("EmojiReactionDatabase", "Deleted: " + success + " rows where " + where);
 
         boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
         notifyConversationListeners(threadId);

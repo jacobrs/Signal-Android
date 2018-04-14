@@ -243,7 +243,7 @@ public class ConversationFragment extends Fragment
             menu.findItem(R.id.menu_context_save_attachment).setVisible(false);
             menu.findItem(R.id.menu_context_resend).setVisible(false);
             menu.findItem(R.id.menu_context_copy).setVisible(!actionMessage);
-            menu.findItem(R.id.emoji_reaction).setVisible(false);
+            menu.findItem(R.id.menu_emoji_reaction).setVisible(false);
         } else {
             MessageRecord messageRecord = messageRecords.iterator().next();
 
@@ -256,7 +256,7 @@ public class ConversationFragment extends Fragment
             menu.findItem(R.id.menu_context_forward).setVisible(!actionMessage);
             menu.findItem(R.id.menu_context_details).setVisible(!actionMessage);
             menu.findItem(R.id.menu_context_copy).setVisible(!actionMessage);
-            menu.findItem(R.id.emoji_reaction).setVisible((messageRecord.isOutgoing() ? false : true));
+            menu.findItem(R.id.menu_emoji_reaction).setVisible(true);
             if (messageRecord.isPinned()) {
                 menu.findItem(R.id.menu_context_unpin_message).setVisible(!actionMessage);
             } else {
@@ -759,7 +759,7 @@ public class ConversationFragment extends Fragment
                     handleMarkAsUnread(getListAdapter().getSelectedItems());
                     actionMode.finish();
                     return true;
-                case R.id.emoji_reaction:
+                case R.id.menu_emoji_reaction:
                     ConversationActivity conversationActivity = (ConversationActivity) getActivity();
                     conversationActivity.handleEmojiReaction(getSelectedMessageRecord());
                     actionMode.finish();
