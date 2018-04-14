@@ -18,10 +18,6 @@ public class EmojiReactionDatabase extends Database {
     public static final String REACTION             = "reaction";
     public static final String HASHED_ID            = "hashed_id";
 
-    public EmojiReactionDatabase(Context context, SQLiteOpenHelper databaseHelper){
-        super(context, databaseHelper);
-    }
-
     public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
             ID + " INTEGER PRIMARY KEY, " +
             REACTION + " TEXT NOT NULL, " +
@@ -30,6 +26,10 @@ public class EmojiReactionDatabase extends Database {
     private static final String[] PROJECTION = new String[] {
             ID, REACTION, HASHED_ID
     };
+
+    public EmojiReactionDatabase(Context context, SQLiteOpenHelper databaseHelper){
+        super(context, databaseHelper);
+    }
 
     public String getReactionEmoji(MessageRecord messageRecord){
         String emoji = null;

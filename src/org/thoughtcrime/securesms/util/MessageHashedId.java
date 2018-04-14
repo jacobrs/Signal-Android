@@ -1,14 +1,6 @@
 package org.thoughtcrime.securesms.util;
 
-import android.util.Log;
-
-import com.fasterxml.jackson.databind.ser.Serializers;
-
-import org.thoughtcrime.securesms.database.model.MessageRecord;
-
-import java.io.IOException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class MessageHashedId {
 

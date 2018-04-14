@@ -1,5 +1,4 @@
-package org.thoughtcrime.securesms.espressoTests;
-
+package org.thoughtcrime.securesms.espressotests;
 
 import android.support.test.rule.ActivityTestRule;
 
@@ -9,7 +8,6 @@ import org.thoughtcrime.securesms.ConversationListActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.util.ConversationActions;
 import org.thoughtcrime.securesms.util.Expectations;
-import org.thoughtcrime.securesms.util.ViewUtil;
 
 /*
 IMPORTANT:
