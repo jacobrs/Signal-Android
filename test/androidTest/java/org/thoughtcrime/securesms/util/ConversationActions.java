@@ -221,6 +221,15 @@ public class ConversationActions {
         actionMenuItemView.perform(click());
     }
 
+    public static void translateMessageAt(int index) {
+        longPressMessageAt(index);
+
+        ViewInteraction actionMenuItemView = onView(
+                allOf(withId(R.id.menu_context_translate), withContentDescription("Translate Text"),
+                        isDisplayed()));
+        actionMenuItemView.perform(click());
+    }
+
     public static void markAsUnread() {
         ViewInteraction actionMenuItemView = onView(
                 allOf(withId(R.id.menu_context_mark_as_unread),
