@@ -63,7 +63,6 @@ public class TranslationTaskUnitTest extends BaseUnitTest {
 
         try {
             when(clientCalled.execute()).thenThrow(new IOException("Testing"));
-            Response test = task.translate("test", "en", requestBuilder);
             fail("Should have handled an IO Exception");
         } catch (IOException e) {
             // Passes
