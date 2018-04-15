@@ -57,5 +57,4 @@ public class VideoCompressionTest {
         mc.getCompressedVideo(testContext, null,attachment );
     }
 
-
 }

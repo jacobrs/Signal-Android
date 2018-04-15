@@ -698,11 +698,11 @@ public class TextSecurePreferences {
   }
 
   public static String getVideoCompressionStatus(Context context) {
-    return getStringPreference(context, VIDEO_COMPRESSION_STATUS_PREF, null);
+    return getStringPreference(context, VIDEO_COMPRESSION_STATUS_PREF, "yes");
   }
 
   public static String getVideoCompressionLevel(Context context) {
-    return getStringPreference(context, VIDEO_COMPRESSION_LEVEL_PREF, null);
+    return getStringPreference(context, VIDEO_COMPRESSION_LEVEL_PREF, "medium");
   }
 
   public static @NonNull Set<String> getMobileMediaDownloadAllowed(Context context) {
