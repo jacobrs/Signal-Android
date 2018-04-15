@@ -35,7 +35,7 @@
             android:title="@string/preferences_chats__video_compression_status"
             android:persistent="true"
             android:entries="@array/preferences_chats__video_compression_status_values"
-            android:entryValues="@array/pref_media_download_entries"
+            android:entryValues="@array/preferences_chats__video_compression_status_entries"
             android:defaultValue="no">
         </org.thoughtcrime.securesms.preferences.widgets.SignalListPreference>
         <org.thoughtcrime.securesms.preferences.widgets.SignalListPreference
@@ -43,7 +43,7 @@
             android:title="@string/preferences_chats__video_compression_level"
             android:persistent="true"
             android:entries="@array/preferences_chats__video_compression_level_values"
-            android:entryValues="@array/pref_media_download_entries"
+            android:entryValues="@array/preferences_chats__video_compression_level_entries"
             android:defaultValue="medium">
         </org.thoughtcrime.securesms.preferences.widgets.SignalListPreference>
     </PreferenceCategory>

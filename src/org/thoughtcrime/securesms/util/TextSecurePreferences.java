@@ -697,6 +697,14 @@ public class TextSecurePreferences {
     return getBooleanPreference(context, SYSTEM_EMOJI_PREF, false);
   }
 
+  public static String getVideoCompressionStatus(Context context) {
+    return getStringPreference(context, VIDEO_COMPRESSION_STATUS_PREF, null);
+  }
+
+  public static String getVideoCompressionLevel(Context context) {
+    return getStringPreference(context, VIDEO_COMPRESSION_LEVEL_PREF, null);
+  }
+
   public static @NonNull Set<String> getMobileMediaDownloadAllowed(Context context) {
     return getMediaDownloadAllowed(context, MEDIA_DOWNLOAD_MOBILE_PREF, R.array.pref_media_download_mobile_data_default);
   }

@@ -1173,8 +1173,8 @@
     <string name="preferences_events__contact_joined_signal">Contact joined Signal</string>
     <string name="preferences_notifications__priority">Priority</string>
     <string name="preferences_chats__video_compression">Video compression</string>
-    <string name="preferences_chats__video_compression_status">Disable</string>
-    <string name="preferences_chats__video_compression_level">Level</string>
+    <string name="preferences_chats__video_compression_status">Enabled</string>
+    <string name="preferences_chats__video_compression_level">Compression Level</string>
     <string name="preferences_chats__video_compression_wifi">Only off wifi</string>
     <string name="preferences_chats__video_compression_low">Low</string>
     <string name="preferences_chats__video_compression_medium">Medium</string>

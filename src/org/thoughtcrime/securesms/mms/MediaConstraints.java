@@ -15,6 +15,7 @@ import org.thoughtcrime.securesms.mms.DecryptableStreamUriLoader.DecryptableUri;
 import org.thoughtcrime.securesms.util.BitmapDecodingException;
 import org.thoughtcrime.securesms.util.BitmapUtil;
 import org.thoughtcrime.securesms.util.MediaUtil;
+import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.Util;
 
 import java.io.ByteArrayInputStream;
@@ -27,6 +28,16 @@ import java.net.URISyntaxException;
 
 public abstract class MediaConstraints {
   private static final String TAG = MediaConstraints.class.getSimpleName();
+
+  private static final int LOW_VIDEO_COMPRESSION_HEIGHT  = 1080;
+  private static final int LOW_VIDEO_COMPRESSION_WIDTH  = 1920;
+  private static final int LOW_VIDEO_COMPRESSION_BITRATE = 750000;
+  private static final int MEDIUM_VIDEO_COMPRESSION_HEIGHT  = 720;
+  private static final int MEDIUM_VIDEO_COMPRESSION_WIDTH  = 1280;
+  private static final int MEDIUM_VIDEO_COMPRESSION_BITRATE = 600000;
+  private static final int HIGH_VIDEO_COMPRESSION_HEIGHT  = 480;
+  private static final int HIGH_VIDEO_COMPRESSION_WIDTH  = 640;
+  private static final int HIGH_VIDEO_COMPRESSION_BITRATE =  450000;
 
   public static MediaConstraints getPushMediaConstraints() {
     return new PushMediaConstraints();
@@ -105,7 +116,14 @@ public abstract class MediaConstraints {
       String path = context.getCacheDir().toString()+"/"+fileName+attachment.getContentType().replace('/','.');
       FileOutputStream out = new FileOutputStream(path);
       out.write(data);
-      String output = SiliCompressor.with(context).compressVideo(path,context.getCacheDir().toString() );
+      String output = null;
+      if(TextSecurePreferences.getVideoCompressionLevel(context).equals("high")) {
+        output = SiliCompressor.with(context).compressVideo(path, context.getCacheDir().toString() , HIGH_VIDEO_COMPRESSION_WIDTH , HIGH_VIDEO_COMPRESSION_HEIGHT , HIGH_VIDEO_COMPRESSION_BITRATE);
+      }else if(TextSecurePreferences.getVideoCompressionLevel(context).equals("medium")){
+        output = SiliCompressor.with(context).compressVideo(path, context.getCacheDir().toString(), MEDIUM_VIDEO_COMPRESSION_WIDTH, MEDIUM_VIDEO_COMPRESSION_HEIGHT , MEDIUM_VIDEO_COMPRESSION_BITRATE);
+      }else{
+        output = SiliCompressor.with(context).compressVideo(path, context.getCacheDir().toString(), LOW_VIDEO_COMPRESSION_WIDTH , LOW_VIDEO_COMPRESSION_HEIGHT , LOW_VIDEO_COMPRESSION_BITRATE);
+      }
       out.close();
       File file = new File(path);
       file.delete();
