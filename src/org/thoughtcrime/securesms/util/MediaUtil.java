@@ -202,8 +202,9 @@ public class MediaUtil {
         return !mWifi.isConnected();
       case "yes":
         return true;
+      default:
+        return false;
     }
-    return false;
   }
 
   public static boolean hasVideoThumbnail(Uri uri) {

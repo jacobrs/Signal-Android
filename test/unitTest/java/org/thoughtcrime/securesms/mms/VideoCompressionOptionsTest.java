@@ -25,14 +25,14 @@ public class VideoCompressionOptionsTest extends BaseUnitTest {
 
     @Test
     public void testDefaultOptions(){
-        assert (MediaUtil.isCompressionEnabled(context));
-        assert (TextSecurePreferences.getVideoCompressionLevel(context).equals("medium"));
+        assert(MediaUtil.isCompressionEnabled(context));
+        assert(TextSecurePreferences.getVideoCompressionLevel(context).equals("medium"));
     }
     @Test
     public void testDisableCompression(){
         mockStatic(TextSecurePreferences.class);
         when(TextSecurePreferences.getVideoCompressionStatus(context)).thenReturn("no");
-        assert (!MediaUtil.isCompressionEnabled(context));
+        assert(!MediaUtil.isCompressionEnabled(context));
         verifyStatic(times(1));
     }
 
