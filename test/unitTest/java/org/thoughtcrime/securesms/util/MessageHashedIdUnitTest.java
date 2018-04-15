@@ -1,56 +1,48 @@
 package org.thoughtcrime.securesms.util;
 
-import android.util.Log;
-
 import org.junit.Test;
-
-import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
 
+import static org.thoughtcrime.securesms.util.MessageHashedId.generateHashedId;
+import static org.thoughtcrime.securesms.util.MessageHashedId.getSha1Hex;
+
 public class MessageHashedIdUnitTest {
 
-    private static String TAG = MessageHashedIdUnitTest.class.getSimpleName();
-
-    // Test purity of the Base64 encode() method given same values and different values.
+    // Test purity of the Sha1Hex hashing method given same and different values.
     @Test
-    public void testBase64Method(){
-        String sender = "benjenkins";
+    public void testGetSha1HexMethod(){
         String datetime1 = "mondayevening";
-        String datetime2 = "mondayEvening";
+        String datetime2 = "wednesdayEvening";
 
-        String hashId1 = null;
-        String hashId2 = null;
-        String hashId3 = null;
-        String hashId4 = null;
-        String hashId5 = null;
-
-        try{
-            hashId1 = Base64.encodeObject(sender);
-            hashId2 = Base64.encodeObject(sender);
-        }catch(IOException e){
-            Log.e(TAG, "IOException caught.");
-        }
+        String hashId1 = getSha1Hex(datetime1);
+        String hashId2 = getSha1Hex(datetime1);
 
         assertNotNull(hashId1);
         assertNotNull(hashId2);
         assertEquals(hashId1, hashId2);
 
-        try{
-            hashId3 = Base64.encodeObject(sender + datetime1);
-            hashId4 = Base64.encodeObject(sender + datetime1);
-            hashId5 = Base64.encodeObject(sender + datetime2);
-        }catch(IOException e){
-            Log.e(TAG, "IOException caught.");
-        }
+        String hashId3 = getSha1Hex(datetime2);
 
         assertNotNull(hashId3);
-        assertNotNull(hashId4);
-        assertNotNull(hashId5);
-        assertEquals(hashId3, hashId4);
-        assertNotSame(hashId4, hashId5);
-        assertNotSame(hashId1, hashId4);
+
+        assertNotSame(hashId1, hashId3);
+        assertNotSame(hashId2, hashId3);
+    }
+
+    // Test generateHashedId() method returns correct hashed id string value given long timestamp.
+    @Test
+    public void testGenerateHashedId(){
+        String datetime1 = "123456789";
+        long datetime2 = 123456789;
+
+        String hashedDatetime1 = getSha1Hex(datetime1);
+        String hashedDatetime2 = generateHashedId(datetime2);
+
+        assertNotNull(hashedDatetime1);
+        assertNotNull(hashedDatetime2);
+        assertEquals(hashedDatetime1, hashedDatetime2);
     }
 }
