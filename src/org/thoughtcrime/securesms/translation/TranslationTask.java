@@ -14,7 +14,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class TranslationTask extends AsyncTask<String, Void, TranslationResult> {
-    private String API_KEY = "trnsl.1.1.20180414T123741Z.cb33892c63f8cdf4.7ad0218e05c0224d9231c1e35b7d121988a91aac";
+    private String API_KEY;
     private OkHttpClient httpClient;
     private MessageRecord messageRecord;
     public TranslationResultHandler resultHandler;

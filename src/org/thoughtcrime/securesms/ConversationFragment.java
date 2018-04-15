@@ -469,6 +469,11 @@ public class ConversationFragment extends Fragment
         this.getActivity().finish();
     }
 
+    private void handleTranslateMessage(final MessageRecord messageRecord, TranslationTask task) {
+        task.resultHandler = this;
+        task.execute(messageRecord.getDisplayBody().toString(), locale.toString().split("_")[0]);
+    }
+
     private void handleTranslateMessage(final MessageRecord messageRecord) {
         TranslationTask task = new TranslationTask(messageRecord);
         task.resultHandler = this;

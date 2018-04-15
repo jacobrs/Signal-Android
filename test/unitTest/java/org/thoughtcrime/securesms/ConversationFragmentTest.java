@@ -1,6 +1,7 @@
 package org.thoughtcrime.securesms;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.junit.Before;
@@ -15,6 +16,8 @@ import org.thoughtcrime.securesms.database.MmsDatabase;
 import org.thoughtcrime.securesms.database.SmsDatabase;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
+import org.thoughtcrime.securesms.translation.TranslationResult;
+import org.thoughtcrime.securesms.translation.TranslationTask;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +25,7 @@ import java.util.Set;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -152,5 +156,30 @@ public class ConversationFragmentTest {
     } catch (Exception e) {
       Log.d(TAG, e.getMessage());
     }
+  }
+
+  @Test
+  public void verifyTranslationTaskIsCalled() {
+      //Class being tested
+      ConversationFragment convoFrag = new ConversationFragment();
+
+      //Method to test
+      String handleTranslate = "handleTranslateMessage";
+
+      Set<MessageRecord> mockedMessage = new HashSet<>();
+      mockedMessage.add(mockMessageRecord);
+      TranslationTask mockedTask = mock(TranslationTask.class);
+      AsyncTask<String, Void, TranslationResult> mockedAsync = mock(AsyncTask.class);
+
+      try {
+          when(mockedTask.execute(anyString(), anyString())).thenReturn(mockedAsync);
+
+          //Invoke the translate method
+          Whitebox.invokeMethod(convoFrag, handleTranslate, mockedMessage, mockedTask);
+
+          verify(mockedTask).execute(anyString(), anyString());
+      } catch (Exception e) {
+          Log.e(TAG, e.getMessage());
+      }
   }
 }
