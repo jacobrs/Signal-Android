@@ -24,6 +24,11 @@ public class TranslationTask extends AsyncTask<String, Void, TranslationResult> 
         this.messageRecord = messageRecord;
     }
 
+    public TranslationTask(OkHttpClient client, MessageRecord messageRecord) {
+        this.httpClient = client;
+        this.messageRecord = messageRecord;
+    }
+
     @Override
     protected TranslationResult doInBackground(String... strings) {
         TranslationResult result = null;
@@ -38,11 +43,6 @@ public class TranslationTask extends AsyncTask<String, Void, TranslationResult> 
     @Override
     protected void onPostExecute(TranslationResult result) {
         resultHandler.processTranslationResult(result, messageRecord);
-    }
-
-    public TranslationTask(OkHttpClient client, MessageRecord messageRecord) {
-        this.httpClient = client;
-        this.messageRecord = messageRecord;
     }
 
     public TranslationResult getTranslationResult(String text, String language) throws IOException {
