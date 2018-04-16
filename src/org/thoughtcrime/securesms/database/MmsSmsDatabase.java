@@ -62,6 +62,7 @@ public class MmsSmsDatabase extends Database {
                                               MmsSmsColumns.EXPIRE_STARTED,
                                               MmsSmsColumns.NOTIFIED,
                                               MmsSmsColumns.PINNED,
+                                              MmsSmsColumns.HASHED_ID,
                                               TRANSPORT,
                                               AttachmentDatabase.ATTACHMENT_ID_ALIAS,
                                               AttachmentDatabase.UNIQUE_ID,
@@ -178,6 +179,7 @@ public class MmsSmsDatabase extends Database {
                               MmsSmsColumns.MISMATCHED_IDENTITIES,
                               MmsSmsColumns.SUBSCRIPTION_ID, MmsSmsColumns.EXPIRES_IN, MmsSmsColumns.EXPIRE_STARTED,
                               MmsSmsColumns.NOTIFIED, MmsSmsColumns.PINNED,
+                              MmsSmsColumns.HASHED_ID,
                               MmsDatabase.NETWORK_FAILURE, TRANSPORT,
                               AttachmentDatabase.UNIQUE_ID,
                               AttachmentDatabase.MMS_ID,
@@ -212,6 +214,7 @@ public class MmsSmsDatabase extends Database {
                               MmsSmsColumns.SUBSCRIPTION_ID, MmsSmsColumns.EXPIRES_IN, MmsSmsColumns.EXPIRE_STARTED,
                               MmsSmsColumns.NOTIFIED,
                               MmsSmsColumns.PINNED,
+                              MmsSmsColumns.HASHED_ID,
                               MmsDatabase.NETWORK_FAILURE, TRANSPORT,
                               AttachmentDatabase.UNIQUE_ID,
                               AttachmentDatabase.MMS_ID,
@@ -255,6 +258,7 @@ public class MmsSmsDatabase extends Database {
     mmsColumnsPresent.add(MmsSmsColumns.READ_RECEIPT_COUNT);
     mmsColumnsPresent.add(MmsSmsColumns.READ_REMINDER);
     mmsColumnsPresent.add(MmsSmsColumns.PINNED);
+    mmsColumnsPresent.add(MmsSmsColumns.HASHED_ID);
     mmsColumnsPresent.add(MmsSmsColumns.MISMATCHED_IDENTITIES);
     mmsColumnsPresent.add(MmsSmsColumns.SUBSCRIPTION_ID);
     mmsColumnsPresent.add(MmsSmsColumns.EXPIRES_IN);
@@ -304,6 +308,7 @@ public class MmsSmsDatabase extends Database {
     smsColumnsPresent.add(MmsSmsColumns.EXPIRE_STARTED);
     smsColumnsPresent.add(MmsSmsColumns.NOTIFIED);
     smsColumnsPresent.add(MmsSmsColumns.PINNED);
+    smsColumnsPresent.add(MmsSmsColumns.HASHED_ID);
     smsColumnsPresent.add(SmsDatabase.TYPE);
     smsColumnsPresent.add(SmsDatabase.SUBJECT);
     smsColumnsPresent.add(SmsDatabase.DATE_SENT);

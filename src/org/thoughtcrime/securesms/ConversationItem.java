@@ -58,6 +58,7 @@ import org.thoughtcrime.securesms.components.ThumbnailView;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
 import org.thoughtcrime.securesms.database.AttachmentDatabase;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
+import org.thoughtcrime.securesms.database.EmojiReactionDatabase;
 import org.thoughtcrime.securesms.database.MmsDatabase;
 import org.thoughtcrime.securesms.database.MmsSmsDatabase;
 import org.thoughtcrime.securesms.database.SmsDatabase;
@@ -127,6 +128,7 @@ public class ConversationItem extends LinearLayout
   private AlertView          alertView;
   private ImageView          pinnedIndicator;
   private ImageView          readReminder;
+  private TextView           emojiReaction;
 
   private @NonNull  Set<MessageRecord>  batchSelected = new HashSet<>();
   private @NonNull  Recipient           conversationRecipient;
@@ -182,6 +184,7 @@ public class ConversationItem extends LinearLayout
     this.groupSenderHolder       =            findViewById(R.id.group_sender_holder);
     this.pinnedIndicator         =            findViewById(R.id.pinned_indicator);
     this.readReminder            =            findViewById(R.id.read_reminder);
+    this.emojiReaction           =            findViewById(R.id.emoji_reaction);
 
     setOnClickListener(new ClickListener(null));
 
@@ -223,9 +226,13 @@ public class ConversationItem extends LinearLayout
     setMinimumWidth();
     setSimInfo(messageRecord);
     setExpiration(messageRecord);
+    setEmojiReaction(messageRecord);
 
     if (searchTerm != null && !searchTerm.equals("") &&
         !messageRecord.getDisplayBody().toString().toLowerCase().contains(searchTerm.toLowerCase())) {
+      bodyBubble.setVisibility(View.GONE);
+      emojiReaction.setVisibility((View.GONE));
+    }else if( messageRecord.getBody().getBody().contains("EmojiReaction-") && messageRecord.getBody().getBody().contains("-HashedId-")){
       bodyBubble.setVisibility(View.GONE);
     } else {
       bodyBubble.setVisibility(View.VISIBLE);
@@ -385,6 +392,21 @@ public class ConversationItem extends LinearLayout
       }
       bodyText.setVisibility(View.VISIBLE);
     }
+  }
+
+  private void setEmojiReaction(MessageRecord messageRecord){
+    //Get the emoji reaction database
+    EmojiReactionDatabase erDB = DatabaseFactory.getEmojiReactionDatabase(context);
+
+    //Fetch the emoji
+    String emoji = erDB.getReactionEmoji(messageRecord);
+    if(emoji != null){
+      //if it exists, set it and make it visible
+      emojiReaction.setText(emoji);
+      emojiReaction.setVisibility(VISIBLE);
+    }else
+      //else remove the emoji container
+      emojiReaction.setVisibility(GONE);
   }
 
   private void setMediaAttributes(MessageRecord messageRecord) {

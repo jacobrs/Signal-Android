@@ -55,6 +55,7 @@ public abstract class MessageRecord extends DisplayRecord {
   private final long                      expireStarted;
   private final int                       readReminder;
   private final int                       pinned;
+  private final String                    hashedId;
 
   MessageRecord(Context context, long id, Body body, Recipient conversationRecipient,
                 Recipient individualRecipient, int recipientDeviceId,
@@ -63,7 +64,7 @@ public abstract class MessageRecord extends DisplayRecord {
                 List<IdentityKeyMismatch> mismatches,
                 List<NetworkFailure> networkFailures,
                 int subscriptionId, long expiresIn, long expireStarted,
-                int readReceiptCount, int reminderToRead, int pinned)
+                int readReceiptCount, int reminderToRead, int pinned, String hashedId)
   {
     super(context, body, conversationRecipient, dateSent, dateReceived,
           threadId, deliveryStatus, deliveryReceiptCount, type, readReceiptCount);
@@ -77,6 +78,7 @@ public abstract class MessageRecord extends DisplayRecord {
     this.expireStarted       = expireStarted;
     this.readReminder        = reminderToRead;
     this.pinned              = pinned;
+    this.hashedId            = hashedId;
   }
 
   public abstract boolean isMms();
@@ -97,6 +99,8 @@ public abstract class MessageRecord extends DisplayRecord {
   public boolean isPinned() {return this.pinned == 1;}
   public int getPinned() {return this.pinned;}
   public boolean readReminderSet() { return this.readReminder != 0; }
+
+  public String getHashedId() { return this.hashedId; }
 
   @Override
   public SpannableString getDisplayBody() {

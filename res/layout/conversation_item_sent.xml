@@ -207,6 +207,26 @@
             </LinearLayout>
         </LinearLayout>
 
+        <org.thoughtcrime.securesms.components.emoji.EmojiTextView
+            android:id="@+id/emoji_reaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/body_bubble"
+            android:layout_alignParentRight="true"
+            android:background="@color/gray10"
+            android:gravity="right"
+            android:paddingBottom="2dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="2dp"
+            android:layout_marginRight="19dp"
+            android:layout_marginTop="4dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:scaleEmojis="true"
+            tools:text="emoji" />
+
         <TextView android:id="@+id/indicator_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

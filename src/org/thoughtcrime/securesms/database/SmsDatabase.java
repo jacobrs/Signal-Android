@@ -57,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.thoughtcrime.securesms.util.MessageHashedId.generateHashedId;
+
 /**
  * Database for storage of SMS messages.
  *
@@ -84,7 +86,7 @@ public class SmsDatabase extends MessagingDatabase {
     DELIVERY_RECEIPT_COUNT + " INTEGER DEFAULT 0," + SUBJECT + " TEXT, " + BODY + " TEXT, " +
     MISMATCHED_IDENTITIES + " TEXT DEFAULT NULL, " + SERVICE_CENTER + " TEXT, " + SUBSCRIPTION_ID + " INTEGER DEFAULT -1, " +
     EXPIRES_IN + " INTEGER DEFAULT 0, " + EXPIRE_STARTED + " INTEGER DEFAULT 0, " + NOTIFIED + " DEFAULT 0, " +
-    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0," + READ_REMINDER +" INTEGER DEFAULT 0, " + PINNED + " INTEGER DEFAULT 0);";
+    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0," + READ_REMINDER +" INTEGER DEFAULT 0, " + PINNED + " INTEGER DEFAULT 0," + HASHED_ID + " TEXT DEFAULT NULL);";
 
   public static final String[] CREATE_INDEXS = {
     "CREATE INDEX IF NOT EXISTS sms_thread_id_index ON " + TABLE_NAME + " (" + THREAD_ID + ");",
@@ -102,7 +104,7 @@ public class SmsDatabase extends MessagingDatabase {
       PROTOCOL, READ, STATUS, TYPE,
       REPLY_PATH_PRESENT, SUBJECT, BODY, SERVICE_CENTER, DELIVERY_RECEIPT_COUNT,
       MISMATCHED_IDENTITIES, SUBSCRIPTION_ID, EXPIRES_IN, EXPIRE_STARTED,
-      NOTIFIED, READ_RECEIPT_COUNT, READ_REMINDER, PINNED
+      NOTIFIED, READ_RECEIPT_COUNT, READ_REMINDER, PINNED, HASHED_ID
   };
 
   private static final EarlyReceiptCache earlyDeliveryReceiptCache = new EarlyReceiptCache();
@@ -661,6 +663,7 @@ public class SmsDatabase extends MessagingDatabase {
     values.put(BODY, message.getMessageBody());
     values.put(TYPE, type);
     values.put(THREAD_ID, threadId);
+    values.put(HASHED_ID, generateHashedId( message.getSentTimestampMillis()));
 
     if (message.isPush() && isDuplicate(message, threadId)) {
       Log.w(TAG, "Duplicate message (" + message.getSentTimestampMillis() + "), ignoring...");
@@ -723,6 +726,7 @@ public class SmsDatabase extends MessagingDatabase {
     contentValues.put(EXPIRES_IN, message.getExpiresIn());
     contentValues.put(DELIVERY_RECEIPT_COUNT, Stream.of(earlyDeliveryReceipts.values()).mapToLong(Long::longValue).sum());
     contentValues.put(READ_RECEIPT_COUNT, Stream.of(earlyReadReceipts.values()).mapToLong(Long::longValue).sum());
+    contentValues.put(HASHED_ID, generateHashedId(date));
 
     SQLiteDatabase db        = databaseHelper.getWritableDatabase();
     long           messageId = db.insert(TABLE_NAME, ADDRESS, contentValues);
@@ -794,11 +798,29 @@ public class SmsDatabase extends MessagingDatabase {
     return cursor;
   }
 
+  public String getHashedIdByMessageId(long messageId){
+    String where = ID + "='" + messageId +"'";
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = db.query(TABLE_NAME, MESSAGE_PROJECTION, where, null, null, null, null );
+    String hashedId = null;
+
+    if(cursor.getCount() > 0) {
+      cursor.moveToNext();
+      int index = cursor.getColumnIndex(HASHED_ID);
+      hashedId = cursor.getString(index);
+    }
+    return hashedId;
+  }
+
   public boolean deleteMessage(long messageId) {
     Log.w("MessageDatabase", "Deleting: " + messageId);
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
     long threadId     = getThreadIdForMessage(messageId);
+    String hashedId = getHashedIdByMessageId(messageId);
     db.delete(TABLE_NAME, ID_WHERE, new String[] {messageId+""});
+
+    DatabaseFactory.getEmojiReactionDatabase(context).deleteReaction(hashedId, threadId);
+
     boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
     notifyConversationListeners(threadId);
     return threadDeleted;
@@ -919,7 +941,7 @@ public class SmsDatabase extends MessagingDatabase {
                                   0, message.isSecureMessage() ? MmsSmsColumns.Types.getOutgoingEncryptedMessageType() : MmsSmsColumns.Types.getOutgoingSmsMessageType(),
                                   threadId, 0, new LinkedList<IdentityKeyMismatch>(),
                                   message.getSubscriptionId(), message.getExpiresIn(),
-                                  System.currentTimeMillis(), 0, 0, 0);
+                                  System.currentTimeMillis(), 0, 0, 0, null);
     }
   }
 
@@ -958,8 +980,9 @@ public class SmsDatabase extends MessagingDatabase {
       int     subscriptionId       = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.SUBSCRIPTION_ID));
       long    expiresIn            = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.EXPIRES_IN));
       long    expireStarted        = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.EXPIRE_STARTED));
-      int     readReminder       = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.READ_REMINDER));
+      int     readReminder         = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.READ_REMINDER));
       int     pinned               = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.PINNED));
+      String  hashedId             = cursor.getString(cursor.getColumnIndexOrThrow(SmsDatabase.HASHED_ID));
 
       if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
         readReceiptCount = 0;
@@ -974,7 +997,7 @@ public class SmsDatabase extends MessagingDatabase {
                                   addressDeviceId,
                                   dateSent, dateReceived, deliveryReceiptCount, type,
                                   threadId, status, mismatches, subscriptionId,
-                                  expiresIn, expireStarted, readReceiptCount, readReminder, pinned);
+                                  expiresIn, expireStarted, readReceiptCount, readReminder, pinned, hashedId);
     }
 
     private List<IdentityKeyMismatch> getMismatches(String document) {

@@ -62,7 +62,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -119,6 +118,7 @@ import org.thoughtcrime.securesms.database.MmsSmsColumns.Types;
 import org.thoughtcrime.securesms.database.RecipientDatabase.RegisteredState;
 import org.thoughtcrime.securesms.database.ThreadDatabase;
 import org.thoughtcrime.securesms.database.identity.IdentityRecordList;
+import org.thoughtcrime.securesms.database.model.MessageRecord;
 import org.thoughtcrime.securesms.events.ReminderUpdateEvent;
 import org.thoughtcrime.securesms.jobs.MultiDeviceBlockedUpdateJob;
 import org.thoughtcrime.securesms.jobs.RetrieveProfileJob;
@@ -621,10 +621,55 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
   }
 
+  public void handleEmojiReaction(MessageRecord messageRecord){
+
+    //Get and open the emoji drawer
+    EmojiDrawer eds = this.emojiDrawerStub.get();
+    container.show(composeText, eds);
+    inputPanel.setVisibility(View.GONE);
+
+    //Set the emoji listener
+    emojiDrawerListener(eds, messageRecord);
+  }
+
+  private void emojiDrawerListener(EmojiDrawer eds, MessageRecord messageRecord){
+      eds.setEmojiEventListener(new EmojiDrawer.EmojiEventListener(){
+
+        @Override
+        public void onKeyEvent(KeyEvent keyEvent) {
+          // Unused. Required to be overridden.
+        }
+
+        @Override
+        public void onEmojiSelected(String emoji) {
+
+          //Add this new reaction to the emoji reaction db
+          DatabaseFactory.getEmojiReactionDatabase(ConversationActivity.this).setMessageReaction(messageRecord, emoji);
+
+          //Compose the reaction message here
+          String reactionMessage = "EmojiReaction-" + emoji + "-HashedId-" + messageRecord.getHashedId();
+
+          OutgoingTextMessage outgoingMessage = new OutgoingTextMessage(getRecipient(), reactionMessage, messageRecord.getSubscriptionId());
+          MessageSender.send(ConversationActivity.this, masterSecret, outgoingMessage, threadId, false, null);
+
+          container.hideCurrentInput(composeText);
+          inputPanel.setVisibility(View.VISIBLE);
+
+          //Set the listener back to the input panel
+          eds.setEmojiEventListener(inputPanel);
+        }
+      });
+
+
+  }
+
   @Override
   public void onBackPressed() {
     Log.w(TAG, "onBackPressed()");
-    if (container.isInputOpen()) container.hideCurrentInput(composeText);
+    if (container.isInputOpen()){
+      container.hideCurrentInput(composeText);
+      inputPanel.setVisibility(View.VISIBLE);
+    }
     else                         super.onBackPressed();
   }
 

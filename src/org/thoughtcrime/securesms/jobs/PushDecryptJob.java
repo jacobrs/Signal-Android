@@ -19,6 +19,7 @@ import org.thoughtcrime.securesms.crypto.storage.SignalProtocolStoreImpl;
 import org.thoughtcrime.securesms.crypto.storage.TextSecureSessionStore;
 import org.thoughtcrime.securesms.database.Address;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
+import org.thoughtcrime.securesms.database.EmojiReactionDatabase;
 import org.thoughtcrime.securesms.database.EncryptingSmsDatabase;
 import org.thoughtcrime.securesms.database.GroupDatabase;
 import org.thoughtcrime.securesms.database.MessagingDatabase;
@@ -161,7 +162,15 @@ public class PushDecryptJob extends ContextJob {
       if (content.getDataMessage().isPresent()) {
         SignalServiceDataMessage message = content.getDataMessage().get();
 
-        if      (message.isEndSession())               handleEndSessionMessage(masterSecret, envelope, message, smsMessageId);
+        boolean isEmojiReaction = false;
+
+        //Check if is emoji reaction
+        if(message.getBody().get().contains("EmojiReaction-") && message.getBody().get().contains("-HashedId-")){
+          isEmojiReaction = true;
+        }
+
+        if (isEmojiReaction)                           handleEmojiReactionMessage(envelope, message);
+        else if (message.isEndSession())               handleEndSessionMessage(masterSecret, envelope, message, smsMessageId);
         else if (message.isGroupUpdate())              handleGroupMessage(masterSecret, envelope, message, smsMessageId);
         else if (message.isExpirationUpdate())         handleExpirationUpdate(masterSecret, envelope, message, smsMessageId);
         else if (message.getAttachments().isPresent()) handleMediaMessage(masterSecret, envelope, message, smsMessageId);
@@ -222,6 +231,19 @@ public class PushDecryptJob extends ContextJob {
       Log.w(TAG, e);
       handleUntrustedIdentityMessage(masterSecret, envelope, smsMessageId);
     }
+  }
+
+  private void handleEmojiReactionMessage(SignalServiceEnvelope envelope, SignalServiceDataMessage message) {
+
+    String body = message.getBody().get();
+    String[] parsedBody = body.split("-"); // 0:EmojiReaction, 1:emoji, 2:HashedId, 3:id
+
+    EmojiReactionDatabase emojiReactionDB = DatabaseFactory.getEmojiReactionDatabase(context);
+    Recipient recipient = getMessageDestination(envelope, message);
+    Long threadId = DatabaseFactory.getThreadDatabase(context).getThreadIdFor(recipient);
+
+    // Passing in the hashed id and emoji reaction parsed from the reaction message body.
+    emojiReactionDB.setMessageReaction(parsedBody[3], parsedBody[1], threadId);
   }
 
   private void handleCallOfferMessage(@NonNull SignalServiceEnvelope envelope,
@@ -636,7 +658,6 @@ public class PushDecryptJob extends ContextJob {
     }
 
     Long threadId;
-
     if (smsMessageId.isPresent() && !message.getGroupInfo().isPresent()) {
       threadId = database.updateBundleMessageBody(masterSecret, smsMessageId.get(), body).second;
     } else {
