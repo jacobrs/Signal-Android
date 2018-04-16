@@ -31,6 +31,9 @@ import android.util.Pair;
 import com.annimon.stream.Stream;
 
 import org.thoughtcrime.securesms.ApplicationContext;
+import org.thoughtcrime.securesms.crypto.AsymmetricMasterCipher;
+import org.thoughtcrime.securesms.crypto.MasterCipher;
+import org.thoughtcrime.securesms.crypto.MasterSecretUnion;
 import org.thoughtcrime.securesms.database.documents.IdentityKeyMismatch;
 import org.thoughtcrime.securesms.database.documents.IdentityKeyMismatchList;
 import org.thoughtcrime.securesms.database.model.DisplayRecord;
@@ -503,6 +506,20 @@ public class SmsDatabase extends MessagingDatabase {
     notifyConversationListeners(threadId);
   }
 
+  public void updateMessageBody(MasterSecretUnion masterSecret, long messageId, String body) {
+    String encryptedBody = getEncryptedBody(masterSecret, body);
+
+    long type;
+
+    if (masterSecret.getMasterSecret().isPresent()) {
+        type = Types.ENCRYPTION_SYMMETRIC_BIT;
+    } else {
+        type = Types.ENCRYPTION_ASYMMETRIC_BIT;
+    }
+
+    updateMessageBodyAndType(messageId, encryptedBody, Types.ENCRYPTION_MASK, type);
+  }
+
   protected Pair<Long, Long> updateMessageBodyAndType(long messageId, String body, long maskOff, long maskOn) {
     SQLiteDatabase db = databaseHelper.getWritableDatabase();
     db.execSQL("UPDATE " + TABLE_NAME + " SET " + BODY + " = ?, " +
@@ -749,6 +766,14 @@ public class SmsDatabase extends MessagingDatabase {
     String where       = TYPE + " & " + (Types.ENCRYPTION_ASYMMETRIC_BIT) + " != 0";
     SQLiteDatabase db  = databaseHelper.getReadableDatabase();
     return db.query(TABLE_NAME, MESSAGE_PROJECTION, where, null, null, null, null);
+  }
+
+  private String getEncryptedBody(MasterSecretUnion masterSecret, String body) {
+    if (masterSecret.getMasterSecret().isPresent()) {
+        return new MasterCipher(masterSecret.getMasterSecret().get()).encryptBody(body);
+    } else {
+        return new AsymmetricMasterCipher(masterSecret.getAsymmetricMasterSecret().get()).encryptBody(body);
+    }
   }
 
 //  public Cursor getEncryptedRogueMessages(Recipient recipient) {

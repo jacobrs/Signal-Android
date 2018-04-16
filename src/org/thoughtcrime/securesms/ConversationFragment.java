@@ -53,6 +53,7 @@ import android.widget.Toast;
 import org.thoughtcrime.securesms.ConversationAdapter.HeaderViewHolder;
 import org.thoughtcrime.securesms.ConversationAdapter.ItemClickListener;
 import org.thoughtcrime.securesms.crypto.MasterSecret;
+import org.thoughtcrime.securesms.crypto.MasterSecretUnion;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.MmsSmsDatabase;
 import org.thoughtcrime.securesms.database.RecipientDatabase;
@@ -69,9 +70,12 @@ import org.thoughtcrime.securesms.profiles.UnknownSenderView;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.sms.MessageSender;
 import org.thoughtcrime.securesms.sms.OutgoingTextMessage;
+import org.thoughtcrime.securesms.translation.TranslationResult;
+import org.thoughtcrime.securesms.translation.TranslationResultHandler;
 import org.thoughtcrime.securesms.util.SaveAttachmentTask;
 import org.thoughtcrime.securesms.util.SaveAttachmentTask.Attachment;
 import org.thoughtcrime.securesms.util.StickyHeaderDecoration;
+import org.thoughtcrime.securesms.translation.TranslationTask;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.task.ProgressDialogAsyncTask;
 
@@ -84,7 +88,7 @@ import java.util.Set;
 
 @SuppressLint("StaticFieldLeak")
 public class ConversationFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>, TranslationResultHandler {
     private static final String TAG = ConversationFragment.class.getSimpleName();
 
     private static long PARTIAL_CONVERSATION_LIMIT = 500L;
@@ -239,6 +243,7 @@ public class ConversationFragment extends Fragment
             menu.findItem(R.id.menu_context_forward).setVisible(false);
             menu.findItem(R.id.menu_context_details).setVisible(false);
             menu.findItem(R.id.menu_context_pin_message).setVisible(false);
+            menu.findItem(R.id.menu_context_translate).setVisible(false);
             menu.findItem(R.id.menu_context_unpin_message).setVisible(false);
             menu.findItem(R.id.menu_context_save_attachment).setVisible(false);
             menu.findItem(R.id.menu_context_resend).setVisible(false);
@@ -256,6 +261,7 @@ public class ConversationFragment extends Fragment
             menu.findItem(R.id.menu_context_forward).setVisible(!actionMessage);
             menu.findItem(R.id.menu_context_details).setVisible(!actionMessage);
             menu.findItem(R.id.menu_context_copy).setVisible(!actionMessage);
+            menu.findItem(R.id.menu_context_translate).setVisible(true);
             menu.findItem(R.id.menu_emoji_reaction).setVisible(true);
             if (messageRecord.isPinned()) {
                 menu.findItem(R.id.menu_context_unpin_message).setVisible(!actionMessage);
@@ -463,6 +469,32 @@ public class ConversationFragment extends Fragment
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         this.getActivity().finish();
+    }
+
+    private void handleTranslateMessage(final MessageRecord messageRecord, TranslationTask task) {
+        task.resultHandler = this;
+        task.execute(messageRecord.getDisplayBody().toString(), locale.toString().split("_")[0]);
+    }
+
+    private void handleTranslateMessage(final MessageRecord messageRecord) {
+        TranslationTask task = new TranslationTask(messageRecord);
+        task.resultHandler = this;
+        task.execute(messageRecord.getDisplayBody().toString(), locale.toString().split("_")[0]);
+    }
+
+    @Override
+    public void processTranslationResult(TranslationResult result, final MessageRecord messageRecord) {
+        if (result != null && result.getCode() == 200) {
+            String[] translation = result.getTranslation();
+
+            if (messageRecord.isMms()) {
+                DatabaseFactory.getMmsDatabase(getContext()).updateMessageBody(new MasterSecretUnion(masterSecret), messageRecord.getId(), translation[0] + " [" + messageRecord.getDisplayBody().toString() + "]");
+            } else {
+                DatabaseFactory.getSmsDatabase(getContext()).updateMessageBody(new MasterSecretUnion(masterSecret), messageRecord.getId(), translation[0] + " [" + messageRecord.getDisplayBody().toString() + "]");
+            }
+        } else {
+            Toast.makeText(getActivity(), "Error: " + result.getCode() + " could not translate", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -757,6 +789,10 @@ public class ConversationFragment extends Fragment
                     return true;
                 case R.id.menu_context_mark_as_unread:
                     handleMarkAsUnread(getListAdapter().getSelectedItems());
+                    actionMode.finish();
+                    return true;
+                case R.id.menu_context_translate:
+                    handleTranslateMessage(getSelectedMessageRecord());
                     actionMode.finish();
                     return true;
                 case R.id.menu_emoji_reaction:
