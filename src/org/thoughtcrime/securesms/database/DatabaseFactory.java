@@ -138,6 +138,7 @@ public class DatabaseFactory {
   private final RecipientDatabase recipientDatabase;
   private final ContactsDatabase contactsDatabase;
   private final GroupReceiptDatabase groupReceiptDatabase;
+  private final EmojiReactionDatabase emojiReactionDatabase;
 
   public static DatabaseFactory getInstance(Context context) {
     synchronized (lock) {
@@ -204,22 +205,27 @@ public class DatabaseFactory {
     return getInstance(context).groupReceiptDatabase;
   }
 
+  public static EmojiReactionDatabase getEmojiReactionDatabase(Context context){
+    return getInstance(context).emojiReactionDatabase;
+  }
+
   private DatabaseFactory(Context context) {
-    this.databaseHelper       = new DatabaseHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
-    this.sms                  = new SmsDatabase(context, databaseHelper);
-    this.encryptingSms        = new EncryptingSmsDatabase(context, databaseHelper);
-    this.mms                  = new MmsDatabase(context, databaseHelper);
-    this.attachments          = new AttachmentDatabase(context, databaseHelper);
-    this.media                = new MediaDatabase(context, databaseHelper);
-    this.thread               = new ThreadDatabase(context, databaseHelper);
-    this.mmsSmsDatabase       = new MmsSmsDatabase(context, databaseHelper);
-    this.identityDatabase     = new IdentityDatabase(context, databaseHelper);
-    this.draftDatabase        = new DraftDatabase(context, databaseHelper);
-    this.pushDatabase         = new PushDatabase(context, databaseHelper);
-    this.groupDatabase        = new GroupDatabase(context, databaseHelper);
-    this.recipientDatabase    = new RecipientDatabase(context, databaseHelper);
-    this.groupReceiptDatabase = new GroupReceiptDatabase(context, databaseHelper);
-    this.contactsDatabase     = new ContactsDatabase(context);
+    this.databaseHelper        = new DatabaseHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
+    this.sms                   = new SmsDatabase(context, databaseHelper);
+    this.encryptingSms         = new EncryptingSmsDatabase(context, databaseHelper);
+    this.mms                   = new MmsDatabase(context, databaseHelper);
+    this.attachments           = new AttachmentDatabase(context, databaseHelper);
+    this.media                 = new MediaDatabase(context, databaseHelper);
+    this.thread                = new ThreadDatabase(context, databaseHelper);
+    this.mmsSmsDatabase        = new MmsSmsDatabase(context, databaseHelper);
+    this.identityDatabase      = new IdentityDatabase(context, databaseHelper);
+    this.draftDatabase         = new DraftDatabase(context, databaseHelper);
+    this.pushDatabase          = new PushDatabase(context, databaseHelper);
+    this.groupDatabase         = new GroupDatabase(context, databaseHelper);
+    this.recipientDatabase     = new RecipientDatabase(context, databaseHelper);
+    this.groupReceiptDatabase  = new GroupReceiptDatabase(context, databaseHelper);
+    this.contactsDatabase      = new ContactsDatabase(context);
+    this.emojiReactionDatabase = new EmojiReactionDatabase(context, databaseHelper);
   }
 
   public void reset(Context context) {
@@ -238,6 +244,7 @@ public class DatabaseFactory {
     this.groupDatabase.reset(databaseHelper);
     this.recipientDatabase.reset(databaseHelper);
     this.groupReceiptDatabase.reset(databaseHelper);
+    this.emojiReactionDatabase.reset(databaseHelper);
     old.close();
   }
 
@@ -552,6 +559,7 @@ public class DatabaseFactory {
       db.execSQL(GroupDatabase.CREATE_TABLE);
       db.execSQL(RecipientDatabase.CREATE_TABLE);
       db.execSQL(GroupReceiptDatabase.CREATE_TABLE);
+      db.execSQL(EmojiReactionDatabase.CREATE_TABLE);
 
       executeStatements(db, SmsDatabase.CREATE_INDEXS);
       executeStatements(db, MmsDatabase.CREATE_INDEXS);

@@ -51,12 +51,12 @@ public class NotificationMmsMessageRecord extends MmsMessageRecord {
                                       long threadId, byte[] contentLocation, long messageSize,
                                       long expiry, int status, byte[] transactionId, long mailbox,
                                       int subscriptionId, SlideDeck slideDeck, int readReceiptCount,
-                                      int markedUnread, int pinned)
+                                      int markedUnread, int pinned, String hashedId)
   {
     super(context, id, new Body("", true), conversationRecipient, individualRecipient, recipientDeviceId,
           dateSent, dateReceived, threadId, Status.STATUS_NONE, deliveryReceiptCount, mailbox,
           new LinkedList<IdentityKeyMismatch>(), new LinkedList<NetworkFailure>(), subscriptionId,
-          0, 0, slideDeck, readReceiptCount, markedUnread, pinned);
+          0, 0, slideDeck, readReceiptCount, markedUnread, pinned, hashedId);
 
     this.contentLocation = contentLocation;
     this.messageSize     = messageSize;

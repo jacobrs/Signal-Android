@@ -55,6 +55,12 @@ public class PushTextSendJob extends PushSendJob implements InjectableType {
       Log.w(TAG, "Sending message: " + messageId);
 
       deliver(record);
+
+      //After delivering the message you no longer need it if its a reaction, delete
+      if(record.getDisplayBody().toString().contains("EmojiReaction-") && record.getDisplayBody().toString().contains("-HashedId-")) {
+        database.deleteMessage(messageId);
+        return;
+      }
       database.markAsSent(messageId, true);
 
       if (record.getExpiresIn() > 0) {

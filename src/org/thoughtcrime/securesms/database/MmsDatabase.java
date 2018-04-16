@@ -75,6 +75,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.thoughtcrime.securesms.util.MessageHashedId.generateHashedId;
+
 public class MmsDatabase extends MessagingDatabase {
 
   private static final String TAG = MmsDatabase.class.getSimpleName();
@@ -108,7 +110,7 @@ public class MmsDatabase extends MessagingDatabase {
     NETWORK_FAILURE + " TEXT DEFAULT NULL," + "d_rpt" + " INTEGER, " +
     SUBSCRIPTION_ID + " INTEGER DEFAULT -1, " + EXPIRES_IN + " INTEGER DEFAULT 0, " +
     EXPIRE_STARTED + " INTEGER DEFAULT 0, " + NOTIFIED + " INTEGER DEFAULT 0, " +
-    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0, "+ READ_REMINDER +" INTEGER DEFAULT 0, "+ PINNED + " INTEGER DEFAULT 0);";
+    READ_RECEIPT_COUNT + " INTEGER DEFAULT 0, "+ READ_REMINDER +" INTEGER DEFAULT 0, "+ PINNED + " INTEGER DEFAULT 0, " + HASHED_ID + " TEXT DEFAULT NULL );";
 
   public static final String[] CREATE_INDEXS = {
     "CREATE INDEX IF NOT EXISTS mms_thread_id_index ON " + TABLE_NAME + " (" + THREAD_ID + ");",
@@ -128,7 +130,7 @@ public class MmsDatabase extends MessagingDatabase {
       MESSAGE_SIZE, STATUS, TRANSACTION_ID,
       BODY, PART_COUNT, ADDRESS, ADDRESS_DEVICE_ID,
       DELIVERY_RECEIPT_COUNT, READ_RECEIPT_COUNT, MISMATCHED_IDENTITIES, NETWORK_FAILURE, SUBSCRIPTION_ID,
-      EXPIRES_IN, EXPIRE_STARTED, NOTIFIED,
+      EXPIRES_IN, EXPIRE_STARTED, NOTIFIED, HASHED_ID,
       AttachmentDatabase.TABLE_NAME + "." + AttachmentDatabase.ROW_ID + " AS " + AttachmentDatabase.ATTACHMENT_ID_ALIAS,
       AttachmentDatabase.UNIQUE_ID,
       AttachmentDatabase.MMS_ID,
@@ -765,6 +767,7 @@ public class MmsDatabase extends MessagingDatabase {
     contentValues.put(SUBSCRIPTION_ID, retrieved.getSubscriptionId());
     contentValues.put(EXPIRES_IN, retrieved.getExpiresIn());
     contentValues.put(READ, retrieved.isExpirationUpdate() ? 1 : 0);
+    contentValues.put(HASHED_ID, generateHashedId(retrieved.getSentTimeMillis()));
 
     if (!contentValues.containsKey(DATE_SENT)) {
       contentValues.put(DATE_SENT, contentValues.getAsLong(DATE_RECEIVED));
@@ -921,6 +924,7 @@ public class MmsDatabase extends MessagingDatabase {
     contentValues.put(ADDRESS, message.getRecipient().getAddress().serialize());
     contentValues.put(DELIVERY_RECEIPT_COUNT, Stream.of(earlyDeliveryReceipts.values()).mapToLong(Long::longValue).sum());
     contentValues.put(READ_RECEIPT_COUNT, Stream.of(earlyReadReceipts.values()).mapToLong(Long::longValue).sum());
+    contentValues.put(HASHED_ID, generateHashedId(message.getSentTimeMillis()));
 
     long messageId = insertMediaMessage(masterSecret, message.getBody(), message.getAttachments(), contentValues, insertListener);
 
@@ -1007,8 +1011,22 @@ public class MmsDatabase extends MessagingDatabase {
     }
   }
 
+  public String getHashedIdByMessageId(long messageId){
+    SQLiteDatabase db = databaseHelper.getReadableDatabase();
+    Cursor cursor = db.query(TABLE_NAME, new String[]{ID, HASHED_ID}, ID_WHERE, new String[] {messageId+""}, null, null, null );
+    String hashedId = null;
+
+    if(cursor.getCount() > 0) {
+      cursor.moveToNext();
+      int index = cursor.getColumnIndex(HASHED_ID);
+      hashedId = cursor.getString(index);
+    }
+    return hashedId;
+  }
+
   public boolean delete(long messageId) {
     long               threadId           = getThreadIdForMessage(messageId);
+    String             hashedId           = getHashedIdByMessageId(messageId);
     AttachmentDatabase attachmentDatabase = DatabaseFactory.getAttachmentDatabase(context);
     attachmentDatabase.deleteAttachmentsForMessage(messageId);
 
@@ -1017,6 +1035,7 @@ public class MmsDatabase extends MessagingDatabase {
 
     SQLiteDatabase database = databaseHelper.getWritableDatabase();
     database.delete(TABLE_NAME, ID_WHERE, new String[] {messageId+""});
+    DatabaseFactory.getEmojiReactionDatabase(context).deleteReaction(hashedId, threadId);
     boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
     notifyConversationListeners(threadId);
     return threadDeleted;
@@ -1192,7 +1211,7 @@ public class MmsDatabase extends MessagingDatabase {
                                        new LinkedList<NetworkFailure>(),
                                        message.getSubscriptionId(),
                                        message.getExpiresIn(),
-                                       System.currentTimeMillis(), 0, 0, 0);
+                                       System.currentTimeMillis(), 0, 0, 0, null);
     }
   }
 
@@ -1247,6 +1266,7 @@ public class MmsDatabase extends MessagingDatabase {
       int       subscriptionId       = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.SUBSCRIPTION_ID));
       int       readReminder         = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.READ_REMINDER));
       int       pinned               = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.PINNED));
+      String    hashedId             = cursor.getString(cursor.getColumnIndexOrThrow(MmsDatabase.HASHED_ID));
 
       if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
         readReceiptCount = 0;
@@ -1268,7 +1288,7 @@ public class MmsDatabase extends MessagingDatabase {
                                               addressDeviceId, dateSent, dateReceived, deliveryReceiptCount, threadId,
                                               contentLocationBytes, messageSize, expiry, status,
                                               transactionIdBytes, mailbox, subscriptionId, slideDeck,
-                                              readReceiptCount, readReminder, pinned);
+                                              readReceiptCount, readReminder, pinned, hashedId);
     }
 
     private MediaMmsMessageRecord getMediaMmsMessageRecord(Cursor cursor) {
@@ -1290,6 +1310,7 @@ public class MmsDatabase extends MessagingDatabase {
       long               expireStarted        = cursor.getLong(cursor.getColumnIndexOrThrow(MmsDatabase.EXPIRE_STARTED));
       int                markedUnread         = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.READ_REMINDER));    
       int                pinned               = cursor.getInt(cursor.getColumnIndexOrThrow(MmsDatabase.PINNED));
+      String             hashedId             = cursor.getString(cursor.getColumnIndexOrThrow(MmsDatabase.HASHED_ID));
       
       if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
         readReceiptCount = 0;
@@ -1304,7 +1325,7 @@ public class MmsDatabase extends MessagingDatabase {
                                        addressDeviceId, dateSent, dateReceived, deliveryReceiptCount,
                                        threadId, body, slideDeck, partCount, box, mismatches,
                                        networkFailures, subscriptionId, expiresIn, expireStarted,
-                                       readReceiptCount, markedUnread, pinned);
+                                       readReceiptCount, markedUnread, pinned, hashedId);
     }
 
     private Recipient getRecipientFor(String serialized) {

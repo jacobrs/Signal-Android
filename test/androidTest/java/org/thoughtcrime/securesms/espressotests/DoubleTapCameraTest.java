@@ -1,4 +1,4 @@
-package org.thoughtcrime.securesms.espressoTests;
+package org.thoughtcrime.securesms.espressotests;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -7,7 +7,6 @@ import android.test.suitebuilder.annotation.LargeTest;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.thoughtcrime.securesms.ConversationActivity;
 import org.thoughtcrime.securesms.ConversationListActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.util.ConversationActions;
