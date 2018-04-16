@@ -35,6 +35,10 @@ public class ChatsPreferenceFragment extends ListSummaryPreferenceFragment {
         .setOnPreferenceChangeListener(new MediaDownloadChangeListener());
     findPreference(TextSecurePreferences.MESSAGE_BODY_TEXT_SIZE_PREF)
         .setOnPreferenceChangeListener(new ListSummaryListener());
+    findPreference(TextSecurePreferences.VIDEO_COMPRESSION_STATUS_PREF)
+            .setOnPreferenceChangeListener(new ListSummaryListener());
+    findPreference(TextSecurePreferences.VIDEO_COMPRESSION_LEVEL_PREF)
+            .setOnPreferenceChangeListener(new ListSummaryListener());
 
     findPreference(TextSecurePreferences.THREAD_TRIM_NOW)
         .setOnPreferenceClickListener(new TrimNowClickListener());
@@ -42,6 +46,8 @@ public class ChatsPreferenceFragment extends ListSummaryPreferenceFragment {
         .setOnPreferenceChangeListener(new TrimLengthValidationListener());
 
     initializeListSummary((ListPreference) findPreference(TextSecurePreferences.MESSAGE_BODY_TEXT_SIZE_PREF));
+    initializeListSummary((ListPreference) findPreference(TextSecurePreferences.VIDEO_COMPRESSION_STATUS_PREF));
+    initializeListSummary((ListPreference) findPreference(TextSecurePreferences.VIDEO_COMPRESSION_LEVEL_PREF));
   }
 
   @Override

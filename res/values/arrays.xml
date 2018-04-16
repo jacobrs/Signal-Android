@@ -225,6 +225,30 @@
 
   <string-array name="pref_media_download_roaming_default" />
 
+    <string-array name="preferences_chats__video_compression_status_values">
+        <item>@string/no</item>
+        <item>@string/preferences_chats__video_compression_wifi</item>
+        <item>@string/yes</item>
+    </string-array>
+
+    <string-array name="preferences_chats__video_compression_status_entries">
+        <item>no</item>
+        <item>only off wifi</item>
+        <item>yes</item>
+    </string-array>
+
+    <string-array name="preferences_chats__video_compression_level_values">
+        <item>@string/preferences_chats__video_compression_low</item>
+        <item>@string/preferences_chats__video_compression_medium</item>
+        <item>@string/preferences_chats__video_compression_high</item>
+    </string-array>
+
+    <string-array name="preferences_chats__video_compression_level_entries">
+        <item>low</item>
+        <item>medium</item>
+        <item>high</item>
+    </string-array>
+
     <!-- RedPhone -->
 
     <array name="incoming_call_widget_targets">

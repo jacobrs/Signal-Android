@@ -3,6 +3,8 @@ package org.thoughtcrime.securesms.util;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -187,6 +189,22 @@ public class MediaUtil {
 
   public static boolean isVideoType(String contentType) {
     return (null != contentType) && contentType.startsWith("video/");
+  }
+
+  public static boolean isCompressionEnabled(Context context){
+    String option = TextSecurePreferences.getVideoCompressionStatus(context);
+    switch (option){
+      case "no":
+        return false;
+      case "only off wifi":
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return !mWifi.isConnected();
+      case "yes":
+        return true;
+      default:
+        return false;
+    }
   }
 
   public static boolean hasVideoThumbnail(Uri uri) {

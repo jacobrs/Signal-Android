@@ -12,14 +12,11 @@ import org.junit.runner.RunWith;
 import org.thoughtcrime.securesms.attachments.Attachment;
 import org.thoughtcrime.securesms.util.MediaUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -56,6 +53,5 @@ public class VideoCompressionTest {
         when(attachment.getContentType()).thenReturn(MediaUtil.IMAGE_JPEG);
         mc.getCompressedVideo(testContext, null,attachment );
     }
-
 
 }
