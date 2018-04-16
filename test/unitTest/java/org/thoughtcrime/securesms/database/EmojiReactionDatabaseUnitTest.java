@@ -28,55 +28,49 @@ public class EmojiReactionDatabaseUnitTest {
 
     // Fields
     private String          TABLE_NAME;
-    private String          ID;
     private String          REACTION;
     private String          HASHED_ID;
-    private String          hashedId;
     private String          where;
     private long            threadId;
-    private String[]        PROJECTION;
     private ContentValues   testContents;
 
     // Mocked classes
     private SQLiteDatabase          mockSql;
-    private SQLiteOpenHelper        mockSqlHelper;
-    private SQLiteStatement         mockSqlStatement;
-    private Context                 mockContext;
     private MessageRecord           mockMessageRecord;
-    private Cursor                  mockCursor;
-    private Database                mockDatabase;
-    private ContentResolver         mockContentResolver;
-    private ThreadDatabase          mockThreadDatabase;
 
     // Non-mocked classes
     private EmojiReactionDatabase   emojiReactionDatabase;
 
     @Before
-    public void setup(){
+    public void setUp(){
 
-        // Initalizing fields
+        // Declaring and initializing local fields
+        String ID                  = "id";
+        String hashedId            = "hashed_id";
+        String[] PROJECTION          = new String[] { ID, REACTION, HASHED_ID };
+
+        // Initalizing global fields
         TABLE_NAME          = "emoji_reactions";
-        ID                  = "id";
         REACTION            = "reaction";
         HASHED_ID           = "hashed_id";
-        hashedId            = "hashed_id";
         where               = "hashed_id= '" + hashedId + "'";
         threadId            = 123;
         testContents        = new ContentValues();
-        PROJECTION          = new String[] { ID, REACTION, HASHED_ID };
 
-        // Initializing mocked classes
-        mockSql                 = PowerMockito.mock(SQLiteDatabase.class);
-        mockSqlHelper           = PowerMockito.mock(SQLiteOpenHelper.class);
-        mockSqlStatement        = PowerMockito.mock(SQLiteStatement.class);
-        mockContext             = PowerMockito.mock(Context.class);
-        mockMessageRecord       = PowerMockito.mock(MessageRecord.class);
-        mockCursor              = PowerMockito.mock(Cursor.class);
-        mockDatabase            = PowerMockito.mock(Database.class);
-        mockContentResolver     = PowerMockito.mock(ContentResolver.class);
-        mockThreadDatabase      = PowerMockito.mock(ThreadDatabase.class);
+        // Declaring and initializing local mocked classes
+        SQLiteOpenHelper mockSqlHelper      = PowerMockito.mock(SQLiteOpenHelper.class);
+        SQLiteStatement mockSqlStatement    = PowerMockito.mock(SQLiteStatement.class);
+        Context mockContext                 = PowerMockito.mock(Context.class);
+        Cursor mockCursor                   = PowerMockito.mock(Cursor.class);
+        Database mockDatabase               = PowerMockito.mock(Database.class);
+        ContentResolver mockContentResolver = PowerMockito.mock(ContentResolver.class);
+        ThreadDatabase mockThreadDatabase   = PowerMockito.mock(ThreadDatabase.class);
 
-        // Initializing non-mocked class
+        // Initializing global mocked classes
+        mockSql           = PowerMockito.mock(SQLiteDatabase.class);
+        mockMessageRecord = PowerMockito.mock(MessageRecord.class);
+
+        // Initializing global non-mocked class
         emojiReactionDatabase = new EmojiReactionDatabase(mockContext, mockSqlHelper);
 
         // Mocking static classes

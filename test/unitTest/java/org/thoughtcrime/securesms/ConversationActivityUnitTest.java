@@ -20,25 +20,22 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.verifyPrivate;
 
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DatabaseFactory.class)
 public class ConversationActivityUnitTest {
     private final String TAG = ConversationActivity.class.getSimpleName();
 
-    long threadId = 1111;
-    long messageId = 1112;
-
-    private ThreadDatabase mockThreadDb;
-    private Context mockContext;
     private EmojiReactionDatabase mockEmojiDb;
     private MessageRecord mockMessageRecord;
 
     @Before
-    public void setup(){
-        mockThreadDb = PowerMockito.mock(ThreadDatabase.class);
+    public void setUp(){
+
+        long messageId = 1112;
+
+        ThreadDatabase mockThreadDb = PowerMockito.mock(ThreadDatabase.class);
+        Context mockContext = PowerMockito.mock(Context.class);
         mockEmojiDb = PowerMockito.mock(EmojiReactionDatabase.class);
-        mockContext = PowerMockito.mock(Context.class);
         PowerMockito.mockStatic(DatabaseFactory.class);
 
         when(DatabaseFactory.getThreadDatabase(mockContext)).thenReturn(mockThreadDb);

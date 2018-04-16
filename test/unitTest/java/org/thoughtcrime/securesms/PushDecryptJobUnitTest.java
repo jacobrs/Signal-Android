@@ -19,25 +19,15 @@ import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.messages.SignalServiceEnvelope;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.verifyPrivate;
-
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DatabaseFactory.class)
 public class PushDecryptJobUnitTest {
   private final String TAG = PushDecryptJob.class.getSimpleName();
 
-  long threadId = 1111;
-  long messageId = 1112;
+  private long messageId = 1112;
 
   private ThreadDatabase mockThreadDb;
   private Context mockContext;
@@ -45,11 +35,12 @@ public class PushDecryptJobUnitTest {
   private MessageRecord mockMessageRecord;
   private SignalServiceEnvelope mockEnvelope;
   private SignalServiceDataMessage mockDataMessage;
-  private Optional<String> messageString;
   private Recipient mockRecipient;
 
   @Before
-  public void setup(){
+  public void setUp(){
+
+    long threadId = 1111;
 
     //Mocks
     mockThreadDb = PowerMockito.mock(ThreadDatabase.class);
@@ -59,7 +50,8 @@ public class PushDecryptJobUnitTest {
     mockEnvelope = PowerMockito.mock(SignalServiceEnvelope.class);
     mockDataMessage = PowerMockito.mock(SignalServiceDataMessage.class);
     mockRecipient = PowerMockito.mock(Recipient.class);
-    messageString = PowerMockito.mock(Optional.class);
+
+    Optional<String> messageString = PowerMockito.mock(Optional.class);
 
     //Stubs
     when(DatabaseFactory.getThreadDatabase(mockContext)).thenReturn(mockThreadDb);
