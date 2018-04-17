@@ -13,6 +13,7 @@ import org.thoughtcrime.securesms.BaseUnitTest;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 
+import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
@@ -24,15 +25,10 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class VideoCompressionOptionsTest extends BaseUnitTest {
 
     @Test
-    public void testDefaultOptions(){
-        assert(MediaUtil.isCompressionEnabled(context));
-        assert(TextSecurePreferences.getVideoCompressionLevel(context).equals("medium"));
-    }
-    @Test
     public void testDisableCompression(){
         mockStatic(TextSecurePreferences.class);
         when(TextSecurePreferences.getVideoCompressionStatus(context)).thenReturn("no");
-        assert(!MediaUtil.isCompressionEnabled(context));
+        assertEquals (MediaUtil.isCompressionEnabled(context),false);
         verifyStatic(times(1));
     }
 
@@ -40,7 +36,7 @@ public class VideoCompressionOptionsTest extends BaseUnitTest {
     public void testEnableCompression(){
         mockStatic(TextSecurePreferences.class);
         when(TextSecurePreferences.getVideoCompressionStatus(context)).thenReturn("yes");
-        assert (MediaUtil.isCompressionEnabled(context));
+        assertEquals (MediaUtil.isCompressionEnabled(context),true);
         verifyStatic(times(1));
     }
 
@@ -58,7 +54,7 @@ public class VideoCompressionOptionsTest extends BaseUnitTest {
         when(TextSecurePreferences.getVideoCompressionStatus(context)).thenReturn("only off wifi");
 
         //act/assert
-        assert (MediaUtil.isCompressionEnabled(context));
+        assertEquals (MediaUtil.isCompressionEnabled(context),false);
         verifyStatic(times(1));
     }
 
@@ -76,7 +72,7 @@ public class VideoCompressionOptionsTest extends BaseUnitTest {
         when(TextSecurePreferences.getVideoCompressionStatus(context)).thenReturn("only off wifi");
 
         //act/assert
-        assert (!MediaUtil.isCompressionEnabled(context));
+        assertEquals (MediaUtil.isCompressionEnabled(context),true);
         verifyStatic(times(1));
     }
 }
