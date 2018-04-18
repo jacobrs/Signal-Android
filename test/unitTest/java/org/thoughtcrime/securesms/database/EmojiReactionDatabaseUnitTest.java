@@ -19,6 +19,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.thoughtcrime.securesms.database.model.MessageRecord;
 
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -85,7 +86,7 @@ public class EmojiReactionDatabaseUnitTest {
         PowerMockito.when(mockSqlHelper.getReadableDatabase()).thenReturn(mockSql);
         PowerMockito.when(mockSqlHelper.getWritableDatabase()).thenReturn(mockSql);
 
-        PowerMockito.when(mockSql.query(TABLE_NAME, PROJECTION, where, null, null, null, null)).thenReturn(mockCursor);
+        PowerMockito.when(mockSql.query(Matchers.anyString(), any(), Matchers.anyString(), any(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString())).thenReturn(mockCursor);
         PowerMockito.when(mockSql.delete(TABLE_NAME, where, null)).thenReturn(1);
 
         PowerMockito.when(mockCursor.getCount()).thenReturn(1);
@@ -100,7 +101,7 @@ public class EmojiReactionDatabaseUnitTest {
         PowerMockito.when(DatabaseFactory.getThreadDatabase(mockContext)).thenReturn(mockThreadDatabase);
 
         PowerMockito.doNothing().when(mockDatabase).notifyConversationListeners(threadId);
-        PowerMockito.doNothing().when(mockContentResolver).notifyChange(Matchers.any(Uri.class), Matchers.any());
+        PowerMockito.doNothing().when(mockContentResolver).notifyChange(any(Uri.class), any());
     }
 
     @Test
@@ -113,12 +114,12 @@ public class EmojiReactionDatabaseUnitTest {
     @Test
     public void testSetMessageReactionBySender() {
         // Stubbing update method; should return 0 meaning that the reaction does not currently exist.
-        PowerMockito.when(mockSql.update(Matchers.anyString(), Matchers.any(ContentValues.class), Matchers.anyString(), Matchers.any())).thenReturn(0);
+        PowerMockito.when(mockSql.update(Matchers.anyString(), any(ContentValues.class), Matchers.anyString(), any())).thenReturn(0);
 
         // Verify that update and insert methods were called (reaction was set).
         emojiReactionDatabase.setMessageReaction(mockMessageRecord, REACTION);
-        verify(mockSql).update(Matchers.anyString(), Matchers.any(ContentValues.class), Matchers.anyString(), Matchers.any());
-        verify(mockSql).insert(Matchers.anyString(), Matchers.any(), Matchers.any(ContentValues.class));
+        verify(mockSql).update(Matchers.anyString(), any(ContentValues.class), Matchers.anyString(), any());
+        verify(mockSql).insert(Matchers.anyString(), any(), any(ContentValues.class));
 
         // Assert that the update value returned 0 (a reaction did not exist previously).
         int update = mockSql.update(TABLE_NAME, testContents, where, null);
@@ -132,12 +133,12 @@ public class EmojiReactionDatabaseUnitTest {
     @Test
     public void testUpdateMessageReactionBySender() {
         // Stubbing update method; should return 1 meaning that the reaction currently exists.
-        PowerMockito.when(mockSql.update(Matchers.anyString(), Matchers.any(ContentValues.class), Matchers.anyString(), Matchers.any())).thenReturn(1);
+        PowerMockito.when(mockSql.update(Matchers.anyString(), any(ContentValues.class), Matchers.anyString(), any())).thenReturn(1);
 
         // Verify that update method was called, but not the insert method (reaction is updated).
         emojiReactionDatabase.setMessageReaction(mockMessageRecord, REACTION);
-        verify(mockSql).update(Matchers.anyString(), Matchers.any(ContentValues.class), Matchers.anyString(), Matchers.any());
-        verify(mockSql, never()).insert(Matchers.anyString(), Matchers.any(), Matchers.any(ContentValues.class));
+        verify(mockSql).update(Matchers.anyString(), any(ContentValues.class), Matchers.anyString(), any());
+        verify(mockSql, never()).insert(Matchers.anyString(), any(), any(ContentValues.class));
 
         // Assert that the update value returned 1 (a reaction existed previously).
         int update = mockSql.update(TABLE_NAME, testContents, where, null);
@@ -151,12 +152,12 @@ public class EmojiReactionDatabaseUnitTest {
     @Test
     public void testSetMessageReactionByRecipient() {
         // Stubbing update method; should return 0 meaning that the reaction does not currently exist.
-        PowerMockito.when(mockSql.update(Matchers.anyString(), Matchers.any(ContentValues.class), Matchers.anyString(), Matchers.any())).thenReturn(0);
+        PowerMockito.when(mockSql.update(Matchers.anyString(), any(ContentValues.class), Matchers.anyString(), any())).thenReturn(0);
 
         // Verify that update and insert methods were called (reaction was set).
         emojiReactionDatabase.setMessageReaction(HASHED_ID, REACTION, threadId);
-        verify(mockSql).update(Matchers.anyString(), Matchers.any(ContentValues.class), Matchers.anyString(), Matchers.any());
-        verify(mockSql).insert(Matchers.anyString(), Matchers.any(), Matchers.any(ContentValues.class));
+        verify(mockSql).update(Matchers.anyString(), any(ContentValues.class), Matchers.anyString(), any());
+        verify(mockSql).insert(Matchers.anyString(), any(), any(ContentValues.class));
 
         // Assert that the update value returned 0 (a reaction did not exist previously).
         int update = mockSql.update(TABLE_NAME, testContents, where, null);
@@ -170,12 +171,12 @@ public class EmojiReactionDatabaseUnitTest {
     @Test
     public void testUpdateMessageReactionByRecipient() {
         // Stubbing update method; should return 1 meaning that the reaction currently exists.
-        PowerMockito.when(mockSql.update(Matchers.anyString(), Matchers.any(ContentValues.class), Matchers.anyString(), Matchers.any())).thenReturn(1);
+        PowerMockito.when(mockSql.update(Matchers.anyString(), any(ContentValues.class), Matchers.anyString(), any())).thenReturn(1);
 
         // Verify that update method was called, but not the insert method (reaction is updated).
         emojiReactionDatabase.setMessageReaction(HASHED_ID, REACTION, threadId);
-        verify(mockSql).update(Matchers.anyString(), Matchers.any(ContentValues.class), Matchers.anyString(), Matchers.any());
-        verify(mockSql, never()).insert(Matchers.anyString(), Matchers.any(), Matchers.any(ContentValues.class));
+        verify(mockSql).update(Matchers.anyString(), any(ContentValues.class), Matchers.anyString(), any());
+        verify(mockSql, never()).insert(Matchers.anyString(), any(), any(ContentValues.class));
 
         // Assert that the update value returned 1 (a reaction existed previously).
         int update = mockSql.update(TABLE_NAME, testContents, where, null);
@@ -189,14 +190,14 @@ public class EmojiReactionDatabaseUnitTest {
     @Test
     public void testDeleteReaction() {
         // Stubbing delete method; should return 1, which is the number of rows in DB deleted.
-        PowerMockito.when(mockSql.delete(Matchers.anyString(), Matchers.anyString(), Matchers.any())).thenReturn(1);
+        PowerMockito.when(mockSql.delete(Matchers.anyString(), Matchers.anyString(), any())).thenReturn(1);
 
         // Verify that the delete method was called (reaction is deleted from DB).
         emojiReactionDatabase.deleteReaction(HASHED_ID, threadId);
-        verify(mockSql).delete(Matchers.anyString(), Matchers.anyString(), Matchers.any());
+        verify(mockSql).delete(Matchers.anyString(), Matchers.anyString(), any());
 
         // Assert that the delete value returned 1 (number of rows deleted from the database).
-        int deleted = mockSql.delete(Matchers.anyString(), Matchers.anyString(), Matchers.any());
+        int deleted = mockSql.delete(Matchers.anyString(), Matchers.anyString(), any());
         assertEquals(1, deleted);
     }
 }
