@@ -86,7 +86,7 @@ public class EmojiReactionDatabaseUnitTest {
         PowerMockito.when(mockSqlHelper.getReadableDatabase()).thenReturn(mockSql);
         PowerMockito.when(mockSqlHelper.getWritableDatabase()).thenReturn(mockSql);
 
-        PowerMockito.when(mockSql.query(Matchers.anyString(), Matchers.any(), Matchers.anyString(), Matchers.any(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString())).thenReturn(mockCursor);
+        PowerMockito.when(mockSql.query(Matchers.anyString(), any(), Matchers.anyString(), any(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString())).thenReturn(mockCursor);
         PowerMockito.when(mockSql.delete(TABLE_NAME, where, null)).thenReturn(1);
 
         PowerMockito.when(mockCursor.getCount()).thenReturn(1);
